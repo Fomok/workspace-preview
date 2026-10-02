@@ -1012,14 +1012,8 @@ function fitPreview(it, maxw, maxh){
 
   const draw = im => {
     cx.clearRect(0,0,W,H);
-    // Keep the texture fitting identical to export; overlay subtle cell guides.
+    // Draw the guides first so the item texture stays unobstructed.
     cx.fillStyle = "#0e1013"; cx.fillRect(0,0,W,H);
-    if(im){
-      const f = BUILD.fitRect(im.width, im.height, W, H, it.fit);
-      cx.save(); cx.beginPath(); cx.rect(0,0,W,H); cx.clip();
-      cx.drawImage(im, f.x, f.y, f.w, f.h);
-      cx.restore();
-    }
     // Interior guides are quiet; the complete outer frame stays inside the canvas.
     cx.strokeStyle = "rgba(160,174,184,0.25)";
     cx.lineWidth = 1;
@@ -1029,6 +1023,12 @@ function fitPreview(it, maxw, maxh){
       cx.beginPath(); cx.moveTo(0,y); cx.lineTo(W,y); cx.stroke(); }
     cx.strokeStyle = "#75818a";
     cx.strokeRect(0.5,0.5,W-1,H-1);
+    if(im){
+      const f = BUILD.fitRect(im.width, im.height, W, H, it.fit);
+      cx.save(); cx.beginPath(); cx.rect(0,0,W,H); cx.clip();
+      cx.drawImage(im, f.x, f.y, f.w, f.h);
+      cx.restore();
+    }
   };
   const im = new Image();
   im.onload = ()=>draw(im);
