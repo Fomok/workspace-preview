@@ -1,0 +1,27 @@
+[
+  {
+    "tag_name": "2026.9.12",
+    "name": "2026.9.12 + Squared Away",
+    "draft": false,
+    "prerelease": false,
+    "published_at": "2026-09-18T21:46:53Z",
+    "body": "Custom moddedexes based on 2026.9.12 from themrdemonized to work with Squared Away new version (3.48+)\r\n\r\nattached all DX version but only tested on DX11-AVX but should work on other.\r\n\r\nalso zip with files for engine merge for developers that know what to do with it.\r\n",
+    "assets": [
+      {
+        "name": "SquaredAway_3.48.0.zip",
+        "size": 4407932,
+        "browser_download_url": "https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/2026.9.12/SquaredAway_3.48.0.zip"
+      },
+      {
+        "name": "SquaredAway_engine_changes_for_developers.zip",
+        "size": 198711,
+        "browser_download_url": "https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/2026.9.12/SquaredAway_engine_changes_for_developers.zip"
+      },
+      {
+        "name": "STALKER-Anomaly-modded-exes-MT-TEST_2026.9.12-SquaredAway.zip",
+        "size": 536870105,
+        "browser_download_url": "https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/2026.9.12/STALKER-Anomaly-modded-exes-MT-TEST_2026.9.12-SquaredAway.zip"
+      }
+    ]
+  }
+]

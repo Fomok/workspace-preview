@@ -1,20 +1,21 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="The Squared Away item workbench. Build rigs, boxes, pouches and your own add-ons."><title>ZoneBench · Squared Away</title><link rel="stylesheet" href="styles.css?v=community-share-1"><link rel="icon" href="favicon.svg"></head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="The Squared Away item workbench. Build rigs, boxes, pouches and your own add-ons."><title>ZoneBench · Squared Away</title><link rel="stylesheet" href="styles.css?v=armory1"><link rel="stylesheet" href="armory.css?v=armory1"><link rel="icon" href="favicon.svg"></head>
 <body>
 <div id="app">
-  <header>
-    <div class="brand">ZONEBENCH<small>squared away</small></div>
-    
-    <div class="spacer"></div>
-    <span id="dirty"></span>
-    <button hidden class="tool" id="btnMod" title="Teach the tool a newer Squared Away">Update the mod</button>
-    <button class="tool" id="btnLoad">Open project</button>
-    <input type="file" id="modIn" accept=".zip,application/zip" hidden>
-    <input type="file" id="shareIn" accept=".json,application/json" hidden>
-    <button class="tool primary" id="btnSave">Save project</button>
-    <input type="file" id="fileIn" accept=".json,application/json" hidden>
-    <input type="file" id="imgIn" accept="image/*" hidden>
+  <header class="site-header">
+    <button class="brand" type="button" aria-label="ZoneBench home">ZONEBENCH<small>TOOLS FOR THE ZONE</small></button>
+    <nav id="site-nav" aria-label="Main navigation"></nav>
   </header>
+  <div id="project-tools" class="project-toolbar" hidden>
+    <span class="project-caption">YOUR WORKBENCH</span><span id="dirty"></span><div class="spacer"></div>
+    <button hidden class="tool" id="btnMod">Update the mod</button>
+    <button class="tool" id="btnLoad">Open project</button>
+    <button class="tool primary" id="btnSave">Save project</button>
+  </div>
+  <input type="file" id="modIn" accept=".zip,application/zip" hidden>
+  <input type="file" id="shareIn" accept=".json,application/json" hidden>
+  <input type="file" id="fileIn" accept=".json,application/json" hidden>
+  <input type="file" id="imgIn" accept="image/*" hidden>
   <nav id="nav" aria-label="Editor sections"></nav>
   <main>
     <div id="list"></div>
@@ -23,15 +24,17 @@
 </div>
 
 <noscript>ZoneBench needs JavaScript to edit and export items. Your project stays in your browser.</noscript>
-<script defer src="src/emit.js?v=community-share-1"></script>
-<script defer src="src/archive.js?v=community-share-1"></script>
-<script defer src="data/baseline.js?v=community-share-1"></script>
-<script defer src="src/compatibility.js?v=community-share-1"></script>
-<script defer src="vendor/appwrite-28.1.0.js?v=community-share-1"></script>
-<script defer src="src/community-config.js?v=community-share-1"></script>
-<script defer src="src/community-client.js?v=community-share-1"></script>
-<script defer src="src/addon-preview.js?v=community-share-1"></script>
-<script defer src="src/community-ui.js?v=community-share-1"></script>
-<script defer src="src/editor.js?v=community-share-1"></script>
-<script defer src="src/catalog.js?v=community-share-1"></script>
+<script defer src="src/emit.js?v=armory1"></script>
+<script defer src="src/archive.js?v=armory1"></script>
+<script defer src="data/baseline.js?v=armory1"></script>
+<script defer src="src/compatibility.js?v=armory1"></script>
+<script defer src="vendor/appwrite-28.1.0.js?v=armory1"></script>
+<script defer src="src/community-config.js?v=armory1"></script>
+<script defer src="src/community-client.js?v=armory1"></script>
+<script defer src="src/addon-preview.js?v=armory1"></script>
+<script defer src="src/community-ui.js?v=armory1"></script>
+<script defer src="src/releases.js?v=armory1"></script>
+<script defer src="src/site.js?v=armory1"></script>
+<script defer src="src/editor.js?v=armory1"></script>
+<script defer src="src/catalog.js?v=armory1"></script>
 </body></html>

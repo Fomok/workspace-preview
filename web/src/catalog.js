@@ -22,7 +22,11 @@ async function drawCatalog(P){
  try{
   if(!CATALOG){const r=await fetch('catalog/index.json',{cache:'no-cache'});if(!r.ok)throw new Error('Catalog could not be loaded.');CATALOG=await r.json();}
   if(!P.contains(status))return;status.remove();
-  if(!CATALOG.addons.length){P.appendChild(el('div','empty-catalog','<h2>Room for your next idea.</h2><p>No public packs have been published yet. The catalog is ready for reviewed rigs, containers and pouches.</p><p>You can already create a pack in <b>Share items</b>. Public submissions and bug reporting are not enabled in this version.</p>'));return;}
+  if(!CATALOG.addons.length){
+   const card=el('div','empty-catalog','<h2>The community library is in preview.</h2><p>Browse published add-ons, inspect their items, or sign in to share your own creations.</p>');
+   const url=new URL(location.href);url.searchParams.set('community-preview','1');url.hash='community';
+   const link=document.createElement('a');link.className='tool primary';link.href=url.href;link.textContent='Open community preview';card.appendChild(link);P.appendChild(card);return;
+  }
   const grid=el('div','catalog-grid');P.appendChild(grid);
   for(const entry of CATALOG.addons){
    const row=el('article','card addon-listing');const card=el('div','addon-listing-content');row.appendChild(card);card.appendChild(el('h2',null,esc(entry.name)));card.appendChild(el('p','hint',esc(entry.author)+' · '+esc(entry.version)));card.appendChild(el('p',null,esc(entry.description)));

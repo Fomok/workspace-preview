@@ -14,7 +14,7 @@ The browser workbench for **Squared Away**. Edit rigs, containers, expansion pou
 - Browser autosave, portable JSON projects and selective item-pack imports.
 - A curated public add-on catalog. Initially empty; no fabricated community packs.
 
-No accounts, analytics, bug-report feature, submission server or paid hosting. Editing and ZIP generation happen in the browser. GitHub Pages serves the site and catalog; normal hosting requests still occur.
+Editing and ZIP generation happen in the browser. GitHub Pages hosts the site; the opt-in community preview uses Appwrite email-code accounts and public add-on publishing. No analytics or bug-report feature is included.
 
 ## Compatibility and installation
 
@@ -86,3 +86,13 @@ This repository does not grant a new license to third-party game or mod assets. 
 ## Community library integration (pending activation)
 
 Account and community publishing code is prepared for Appwrite. See [setup instructions](docs/community-setup.md). The feature flag remains off until the backend is provisioned and live authentication and access checks pass. Creators can publish immediately, update one listing and unpublish their own packs. Maintainers can remove listings, block publishing and save exact versions privately for the next mod release. Bug reporting remains excluded.
+
+## Clean Armory site and releases
+
+The default page is Home. Main navigation separates Editor, Community, Downloads, Help and Account. Editor project autosave and exports are unchanged. Community account/publishing access remains opt-in with `?community-preview=1`.
+
+The Downloads page reads public releases from `Fomok/xray-monolith-inventory-edits`. It only offers complete mod/engine pairs from the same release, excludes drafts, labels previews explicitly, and keeps older releases available. Publish an updated version to that repository to update the site automatically. New asset names must match the conventions in `web/src/releases.js`; ambiguous or incomplete pairs are not offered. `web/data/releases.json` is a last-verified fallback for GitHub API outages/rate limits, clearly labelled when used; update it alongside a new release.
+
+Prepared draft release (kept private until website completion): `v3.49.2-native-preview`, engine `75cbdbc8436d1f5d0fe4ee774ae3913b910f3373`. Mod archive combines unchanged Preview28 gameplay and the accepted rig v4 / box v1 model patches. New game required when migrating from the old public release.
+
+Hero artwork: `web/assets/site/clean-armory-hero.png`, generated using the built-in image-generation tool from the approved Clean Armory mockup. Prompt: recreate only the cinematic hero background with worn black chest rig, olive hard case and utility pouch on a wooden workbench inside an abandoned industrial workshop; gear on the right, dark negative space on the left, warm side lighting, no words or UI. This is atmospheric artwork, not an in-game screenshot.

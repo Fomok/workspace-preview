@@ -117,7 +117,7 @@ function recipeOf(slots){
 /* ==========================================================
    STATE
    ========================================================== */
-let DB = null, TAB = "rigs", SEL = {}, DIRTY = false, PAINT = "2x2";
+let DB = null, TAB = Site.tabFromHash(), SEL = {}, DIRTY = false, PAINT = "2x2";
 let PENDING_ICON = null;
 const $ = s => document.querySelector(s);
 const el = (t,c,h) => { const e=document.createElement(t);
@@ -523,11 +523,12 @@ const TABS = [["rigs","Rigs"],["pouches","Pouches"],["boxes","Containers"],
               ["catalog","Public add-ons"], ["account","Account"], ["share","Share items"], ["build","Export mod"],
               ["help","How this works"]];
 function render(){
+  Site.shell();
   const nav=$("#nav"); nav.innerHTML="";
-  for(const [k,label] of TABS){
+  for(const [k,label] of TABS.filter(([key])=>!["catalog","account","help"].includes(key))){
     const b=el("button", k===TAB?"on":"", esc(label)
       + (DB[k]&&DB[k].length ? ' <span class="cnt">'+DB[k].length+'</span>' : ""));
-    b.onclick=()=>{TAB=k;render();};
+    b.onclick=()=>Site.go(k);
     nav.appendChild(b);
   }
   const brand = document.querySelector(".brand small");
@@ -601,6 +602,9 @@ function fmt(n){ return String(n==null?0:n).replace(/\B(?=(\d{3})+(?!\d))/g,",")
 
 function renderPane(){
   const P=$("#pane"); P.innerHTML="";
+  P.classList.remove("site-content");
+  if(TAB==="home")return Site.home(P);
+  if(TAB==="downloads")return Site.downloads(P);
   TITLE_NODE = IDCHIP_NODE = null; IDECHO = []; ICOPAINT = [];
   if(TAB==="account") return drawCommunityAccount(P);
   if(TAB==="catalog") return drawCatalog(P);
@@ -609,7 +613,7 @@ function renderPane(){
   if(TAB==="notes") return drawNotes(P);
   if(TAB==="share") return drawShare(P);
   if(TAB==="build") return drawBuild(P);
-  if(TAB==="help") return drawHelp(P);
+  if(TAB==="help") return Site.help(P);
   const it=cur();
   if(!it){
     /* THE BACKPACKS PAGE HAS SOMETHING TO SAY WITH NO PACK SELECTED -
