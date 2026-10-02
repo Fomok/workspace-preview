@@ -1012,7 +1012,7 @@ function fitPreview(it, maxw, maxh){
 
   const draw = im => {
     cx.clearRect(0,0,W,H);
-    // THE GRID FIRST, so the picture sits on it rather than under it.
+    // Keep the texture fitting identical to export; overlay subtle cell guides.
     cx.fillStyle = "#0e1013"; cx.fillRect(0,0,W,H);
     if(im){
       const f = BUILD.fitRect(im.width, im.height, W, H, it.fit);
@@ -1020,12 +1020,15 @@ function fitPreview(it, maxw, maxh){
       cx.drawImage(im, f.x, f.y, f.w, f.h);
       cx.restore();
     }
-    cx.strokeStyle = "rgba(200,162,74,0.38)";
+    // Interior guides are quiet; the complete outer frame stays inside the canvas.
+    cx.strokeStyle = "rgba(160,174,184,0.25)";
     cx.lineWidth = 1;
-    for(let i=0;i<=cw;i++){ const x=Math.round(i*S)+0.5;
+    for(let i=1;i<cw;i++){ const x=Math.round(i*W/cw)+0.5;
       cx.beginPath(); cx.moveTo(x,0); cx.lineTo(x,H); cx.stroke(); }
-    for(let j=0;j<=ch;j++){ const y=Math.round(j*S)+0.5;
+    for(let j=1;j<ch;j++){ const y=Math.round(j*H/ch)+0.5;
       cx.beginPath(); cx.moveTo(0,y); cx.lineTo(W,y); cx.stroke(); }
+    cx.strokeStyle = "#75818a";
+    cx.strokeRect(0.5,0.5,W-1,H-1);
   };
   const im = new Image();
   im.onload = ()=>draw(im);
