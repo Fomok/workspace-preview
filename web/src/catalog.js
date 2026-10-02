@@ -25,8 +25,8 @@ async function drawCatalog(P){
   if(!CATALOG.addons.length){P.appendChild(el('div','empty-catalog','<h2>Room for your next idea.</h2><p>No public packs have been published yet. The catalog is ready for reviewed rigs, containers and pouches.</p><p>You can already create a pack in <b>Share items</b>. Public submissions and bug reporting are not enabled in this version.</p>'));return;}
   const grid=el('div','catalog-grid');P.appendChild(grid);
   for(const entry of CATALOG.addons){
-   const card=el('article','card');card.appendChild(el('h2',null,esc(entry.name)));card.appendChild(el('p','hint',esc(entry.author)+' · '+esc(entry.version)));card.appendChild(el('p',null,esc(entry.description)));
-   grid.appendChild(card);
+   const row=el('article','card addon-listing');const card=el('div','addon-listing-content');row.appendChild(card);card.appendChild(el('h2',null,esc(entry.name)));card.appendChild(el('p','hint',esc(entry.author)+' · '+esc(entry.version)));card.appendChild(el('p',null,esc(entry.description)));
+   grid.appendChild(row);
    const show=AddonPreview.card(card,entry,async()=>{
     if(!/^[a-z0-9_-]+\.json$/.test(entry.file))throw new Error('Invalid catalog file.');
     const response=await fetch('catalog/'+entry.file);if(!response.ok)throw new Error('Could not download this pack.');

@@ -49,7 +49,7 @@ async function drawCommunityCatalog(P){
   if(!result.items.length)communityMessage(P,selected?'No versions selected for the next mod update.':'No add-ons here yet. Create items in the editor, then publish them from Share items.');
   const grid=el('div','catalog-grid');P.appendChild(grid);
   for(const listing of result.items){
-   const card=el('article','card');grid.appendChild(card);const title=el('h2');title.textContent=listing.name;card.appendChild(title);
+   const row=el('article','card addon-listing');grid.appendChild(row);const card=el('div','addon-listing-content');row.appendChild(card);const title=el('h2');title.textContent=listing.name;card.appendChild(title);
    communityMessage(card,listing.author+' · '+listing.version+(listing.status&&listing.status!=='published'?' · '+listing.status:''));
    if(listing.description)communityMessage(card,listing.description);
    if(listing.dependencies)communityMessage(card,'Requires: '+listing.dependencies);

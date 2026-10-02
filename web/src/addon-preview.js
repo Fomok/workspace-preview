@@ -25,8 +25,7 @@ function geometry(entry){
 function picture(entry,large=false){
  const wrap=node('div','addon-picture'+(large?' large':''));const it=entry.item;
  if(it.icon&&/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=\s]+$/.test(it.icon)){
-  // Use the exporter's fitting calculation, including the author's crop and offset.
-  const cv=fitPreview(it,large?240:100,large?240:100);cv.setAttribute('role','img');cv.setAttribute('aria-label',it.name+' inventory icon');wrap.appendChild(cv);
+  const img=node('img');img.src=it.icon;img.alt=it.name+' inventory icon';img.decoding='async';wrap.appendChild(img);
  }else wrap.appendChild(node('span','hint','No icon supplied'));
  return wrap;
 }
@@ -80,7 +79,7 @@ let active=0;const queue=[];
 function schedule(fn){return new Promise((resolve,reject)=>{queue.push({fn,resolve,reject});pump();});}
 function pump(){while(active<2&&queue.length){const job=queue.shift();active++;Promise.resolve().then(job.fn).then(job.resolve,job.reject).finally(()=>{active--;pump();});}}
 function card(parent,listing,load,onImport){
- const cover=button('Loading item previews…',()=>show());cover.className='addon-cover';cover.setAttribute('aria-label','View '+listing.name);parent.prepend(cover);
+ const cover=button('Loading item previews…',()=>show());cover.className='addon-cover';cover.setAttribute('aria-label','View '+listing.name);parent.parentElement.prepend(cover);
  let pending=null;
  const get=()=>pending||(pending=schedule(async()=>{const r=await load();ZB.validateAddon(r.pack);return r;}).catch(e=>{pending=null;throw e;}));
  const paint=async()=>{try{const r=await get();if(!cover.isConnected)return;cover.replaceChildren();cover.dataset.count=String(Math.min(4,r.pack.items.length));for(const entry of coverItems(r.pack))cover.appendChild(picture(entry));cover.appendChild(node('span','addon-count',`${r.pack.items.length} ${r.pack.items.length===1?'item':'items'}`));}catch{cover.textContent='Preview unavailable · click to retry';}};

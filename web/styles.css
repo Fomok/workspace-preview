@@ -292,13 +292,13 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {o
 .community-actions{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}.community-field{display:flex;flex-direction:column;gap:6px;margin:12px 0;max-width:620px}.community-field input,.community-field textarea{padding:10px;border:1px solid var(--line);background:var(--bg);border-radius:5px}.community-field textarea{min-height:100px}.catalog-grid .tool,.model-card .tool{margin:4px}.community-field+button{margin-top:8px}
 
 /* Actual add-on contents, independent of the editable project. */
-.addon-cover{position:relative;width:100%;height:230px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,1fr);gap:8px;background:#0e1013;border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:16px;cursor:pointer;color:var(--ink)}
+.addon-cover{position:relative;width:180px;height:180px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,1fr);gap:8px;background:#0e1013;border:1px solid var(--line);border-radius:8px;padding:14px;margin:0;cursor:pointer;color:var(--ink)}
 .addon-cover[data-count="1"]{grid-template-columns:1fr;grid-template-rows:1fr}
 .addon-cover[data-count="2"]{grid-template-rows:1fr}
 .addon-cover:hover,.addon-tile:hover{border-color:var(--hot2)}
 .addon-count{position:absolute;bottom:6px;right:8px;background:#111c;padding:2px 6px;font-size:12px}
 .addon-picture{display:flex;align-items:center;justify-content:center;min-width:0;height:104px;overflow:hidden}
-.addon-picture canvas{max-width:100%;max-height:100%;object-fit:contain}
+.addon-picture img{display:block;width:100%;height:100%;object-fit:contain}
 .addon-picture.large{width:240px;height:240px;flex:none}
 .addon-dialog{color:var(--ink);background:var(--bg,#14171b);border:1px solid var(--line);border-radius:12px;width:min(960px,94vw);max-height:90vh;padding:0;box-shadow:0 20px 80px #0009}
 .addon-dialog::backdrop{background:#000b}
@@ -315,3 +315,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {o
 .addon-settings dt{color:var(--dim)}.addon-settings dd{margin:0;min-width:0}.addon-settings .addon-settings{margin:0}.addon-values{margin:0;padding-left:20px}.addon-dialog pre{white-space:pre-wrap;overflow-wrap:anywhere}.addon-section{margin:24px 0}
 .tick>.addon-picture{width:70px;height:70px;flex:none;margin-right:10px}
 @media(max-width:580px){.addon-item-heading{flex-direction:column;align-items:flex-start}.addon-dialog-body{padding:16px}.addon-settings{grid-template-columns:1fr}.addon-settings dd{margin-bottom:12px}.addon-dialog-header{padding:12px}}
+
+.addon-listing{display:flex;align-items:flex-start;gap:22px}.addon-listing>.addon-cover{flex:none}.addon-listing-content{flex:1;min-width:0;overflow-wrap:anywhere}.addon-listing-content>h2{margin-top:0}.addon-cover>.addon-picture{width:100%;height:100%;min-height:0}.addon-cover[data-count="1"]>.addon-picture{padding:8px}.addon-tile>.addon-picture{width:100%}
+@media(max-width:580px){.addon-listing{gap:14px}.addon-listing>.addon-cover{width:112px;height:112px;padding:8px;gap:4px}.addon-count{font-size:10px}}
+
+.addon-picture{box-sizing:border-box;border:1px solid #424953;border-radius:5px;background:#14181d;padding:7px}.addon-cover[data-count="1"]>.addon-picture{padding:8px}
