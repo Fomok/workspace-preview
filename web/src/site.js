@@ -1,7 +1,7 @@
 /* Site navigation and read-only home/download pages. The editor keeps its own project. */
 (function(root){
 'use strict';
-const editing=['rigs','boxes','pouches','packs','drops','check','notes','share','build'];
+const editing=['rigs','boxes','pouches','packs','drops','check','share','build'];
 const routes={home:'home',catalog:'community',downloads:'downloads',help:'help',account:'account'};
 const n=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e;};
 function route(tab){return '#'+(routes[tab]||'editor/'+tab);}

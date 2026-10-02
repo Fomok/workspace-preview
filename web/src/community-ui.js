@@ -7,6 +7,7 @@ function communityField(parent,label,value='',type='text'){
 }
 async function drawCommunityAccount(P){
  P.appendChild(el('h1',null,'Your account'));
+ drawProjectReset(P);
  if(!Community.enabled){communityMessage(P,'Community accounts will open after backend setup is complete. The editor and local project files are available now.');return;}
  const status=communityMessage(P,'Checking sign-in…');
  let user;try{user=await Community.refresh();}catch(e){status.textContent=e.message;return;}if(!P.contains(status))return;status.remove();

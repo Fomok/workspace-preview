@@ -519,7 +519,7 @@ function famOf(it){ return (DB.families||{})[it.takes]; }
 const TABS = [["rigs","Rigs"],["pouches","Pouches"],["boxes","Containers"],
               ["packs","Backpacks"],
               
-              ["drops","Drops"],["check","Check"],["notes","Project notes"],
+              ["drops","Drops"],["check","Check"],
               ["catalog","Public add-ons"], ["account","Account"], ["share","Share items"], ["build","Export mod"],
               ["help","How this works"]];
 function render(){
@@ -611,7 +611,6 @@ function renderPane(){
   if(TAB==="catalog") return drawCatalog(P);
   if(TAB==="drops") return drawDrops(P);
   if(TAB==="check") return drawCheck(P);
-  if(TAB==="notes") return drawNotes(P);
   if(TAB==="share") return drawShare(P);
   if(TAB==="build") return drawBuild(P);
   if(TAB==="help") return Site.help(P);
@@ -3579,69 +3578,18 @@ function dedupe(a){ return [...new Set(a)]; }
 /* ==========================================================
    NOTES
    ========================================================== */
-function drawNotes(P){
-  P.appendChild(el("h1",null,"Anything you want to tell me"));
-  P.appendChild(el("div","hint",
-    "This travels with the save. Use it for the things there is no box for "
-    +"&mdash; \"the Leshy should be quieter\", \"put the parts box on the "
-    +"mechanic only\", whatever it is."));
-  const c=el("div","card");
-  const ta=txt(DB,"notes",{area:true});
-  ta.style.minHeight="320px";
-  ta.placeholder="Write here...";
-  c.appendChild(ta);
-  P.appendChild(c);
-  drawKeep(P);
-}
-
-/* ==========================================================
-   WHERE THIS BENCH IS KEPT
-
-   On the Notes page rather than a page of its own, because it is one
-   card and it is the sort of thing you look at once. What it has to
-   say is: it keeps itself, here is where, and here is how to throw it
-   away - which is the only dangerous button in the tool and is behind
-   a question.
-   ========================================================== */
-function drawKeep(P){
-  P.appendChild(el("div","sect","Where this bench is kept"));
-  const c=el("div","card"); c.style.maxWidth="640px";
-  const where = KEEP_HOW === "idb" ? "in this browser's own store"
-              : KEEP_HOW === "ls"  ? "in this browser's small store"
-              : "nowhere";
-  if(KEEP_HOW === "off"){
-    c.appendChild(el("div","warn",
-      "<b>This browser is not keeping the bench.</b> "
-      + esc(KEEP_ERR || "It refused to store anything.") + "<br><br>"
-      + "Everything still works; it just will not be here when you come back. "
-      + "Use <b>Save project</b> and <b>Open project</b>, and if this is a "
-      + "private window, try an ordinary one."));
-  } else {
-    c.appendChild(el("div","hint",
-      "Everything you do is written back a moment after you do it, "
-      + esc(where) + ", under this page. Close it, restart the computer, open "
-      + "it again &mdash; it is exactly as you left it. There is nothing to "
-      + "load and no mod zip to feed it."
-      + (KEEP_HOW === "ls" ? "<br><br><b>This browser would not give the "
-         + "bigger store</b>, so what is kept is capped at about five "
-         + "megabytes. Numbers and layouts are nothing; a dozen pictures "
-         + "might not fit. The corner will say so if it stops fitting." : "")));
-    c.appendChild(el("div","hint",
-      "It belongs to <b>this browser on this computer</b>. "
-      + "<b>Save project</b> is still the copy you send me, send your "
-      + "friend, or keep somewhere safe &mdash; that has not changed."));
-  }
-  c.appendChild(el("div","hint","Built against Squared Away <b>"
-    + esc(DB.modVersion || "unknown") + "</b>"
-    + (DB.filesFromZip ? ", read from a zip you fed it." : ", the copy baked "
-       + "into this page.")));
-
-  const wipe=el("button","danger","Forget everything and start fresh");
-  wipe.style.marginTop="4px";
+function drawProjectReset(P){
+  const c=el("section","card");
+  c.appendChild(el("h2",null,"Reset local item customizations"));
+  c.appendChild(el("p","hint","Restore the original Squared Away items and settings in this browser. This removes your custom items, imported items, and edits to layouts, textures, prices, crafting and other project settings."));
+  c.appendChild(el("p","hint","This does not delete your account, sign you out, or remove your published add-ons. Downloaded project files and installed game files are unchanged."));
+  const backup=el("button","tool","Save project backup");
+  backup.onclick=()=>document.querySelector('#btnSave').click();
+  c.appendChild(backup);
+  const wipe=el("button","danger","Reset item customizations");
+  wipe.style.marginLeft="8px";
   wipe.onclick=async()=>{
-    if(!confirm("Throw away everything in this bench and go back to the "
-      + "shipped Squared Away?\n\nEvery item you added here is lost unless "
-      + "you have saved a file.")) return;
+    if(!confirm("Reset this browser's item customizations to the original Squared Away defaults?\n\nYour custom and imported items and project edits will be removed. Save a project backup first if you want to keep them.\n\nYour account and published add-ons will NOT be deleted.")) return;
     clearTimeout(KEEP_T);
     await keepClear();
     fresh(); KEEP_SAID = ""; render();
@@ -3699,9 +3647,6 @@ function beyondTheBench(){
     "a pouch with no picture",
     "It will build and spawn and work, and it will be a blank square in "
     + "your bag until you drop a PNG on it.");
-  if(String(DB.notes||"").trim())
-    out.push({ what:"your notes", who:[], why:
-      "Project notes are saved with your project; they do not change game behavior." });
   return out;
 }
 
