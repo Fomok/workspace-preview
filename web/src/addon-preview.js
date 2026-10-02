@@ -49,7 +49,7 @@ function layoutView(entry){
   for(let y=1;y<r.h;y++)line(r.x*32+1,r.y*32+y*32,(r.x+r.w)*32-1,r.y*32+y*32);
  }
  function line(x1,y1,x2,y2){const l=document.createElementNS(svg.namespaceURI,'line');for(const [k,v] of Object.entries({x1,y1,x2,y2}))l.setAttribute(k,String(v));svg.appendChild(l);}
- section.appendChild(svg);section.appendChild(node('p','hint',automatic?'Pocket sizes shown; the game arranges their positions automatically.':`${width} columns × ${height} rows · ${rects.reduce((n,r)=>n+r.w*r.h,0)} usable cells`));return section;
+ section.appendChild(svg);section.appendChild(node('p','hint',automatic?'Pocket sizes shown; the game arranges their positions automatically.':`${width} columns Ã— ${height} rows Â· ${rects.reduce((n,r)=>n+r.w*r.h,0)} usable cells`));return section;
 }
 function details(parent,entry,pack){
  const it=entry.item;const top=node('div','addon-item-heading');top.appendChild(picture(entry,true));const text=node('div');text.appendChild(node('h2',null,it.name||it.id));text.appendChild(node('p','hint',labels[entry.kind]||entry.kind));text.appendChild(node('p','addon-description',it.descr||'No description supplied.'));top.appendChild(text);parent.appendChild(top);
@@ -57,7 +57,7 @@ function details(parent,entry,pack){
  const facts={};for(const k of ['id','cost','weight','cellw','cellh','kg','takes','stack','model','modelPath'])if(it[k]!==undefined)facts[k]=it[k];parent.appendChild(valueView(facts));
  const craft=it.craft?.parts?.length?it.craft:entry.kind==='rigs'?EMIT.rigRecipe(it):entry.kind==='pouches'&&EMIT.ourPouch(it)?EMIT.pouchCraftOf(it):null;
  parent.appendChild(node('h3',null,'Crafting'));
- if(craft){parent.appendChild(node('p','hint',it.craft?.parts?.length?'Recipe supplied by the creator.':'Recipe calculated from this item’s pockets using the current editor.'));parent.appendChild(valueView({kit:craft.kit,book:craft.book,...(craft.cat?{cat:craft.cat}:{}),Ingredients:Object.fromEntries(craft.parts||[])}));}
+ if(craft){parent.appendChild(node('p','hint',it.craft?.parts?.length?'Recipe supplied by the creator.':'Recipe calculated from this itemâ€™s pockets using the current editor.'));parent.appendChild(valueView({kit:craft.kit,book:craft.book,...(craft.cat?{cat:craft.cat}:{}),Ingredients:Object.fromEntries(craft.parts||[])}));}
  else parent.appendChild(node('p','hint','No crafting override in this add-on. Existing game recipes, if any, stay in effect.'));
  if(it.takes&&pack.families?.[it.takes]){parent.appendChild(node('h3',null,'Allowed contents'));parent.appendChild(valueView(pack.families[it.takes]));}
  const rest={};for(const [k,v] of Object.entries(it))if(!['icon','name','descr','craft','communitySource','iconNew',...Object.keys(facts)].includes(k))rest[k]=v;
@@ -70,7 +70,7 @@ function dialog(title){
 function openItem(entry,pack){const {d,body}=dialog(entry.item.name||entry.item.id);details(body,entry,pack);d.showModal();}
 function openPack(result,onImport){
  ZB.validateAddon(result.pack);const {d,body}=dialog(result.listing.name||'Add-on contents');const pack=result.pack;
- body.appendChild(node('h2',null,result.listing.name||'Add-on contents'));body.appendChild(node('p','hint',`${pack.items.length} items · ${result.listing.version||''}`));if(result.listing.description)body.appendChild(node('p','addon-description',result.listing.description));
+ body.appendChild(node('h2',null,result.listing.name||'Add-on contents'));body.appendChild(node('p','hint',`${pack.items.length} ${pack.items.length===1?'item':'items'} Â· ${result.listing.version||''}`));if(result.listing.description)body.appendChild(node('p','addon-description',result.listing.description));
  body.appendChild(node('p','hint','Click an item to inspect its texture, layout and settings. Your project stays unchanged until you confirm an import.'));
  const tiles=node('div','addon-tiles');for(const entry of pack.items){const tile=button('',()=>openItem(entry,pack));tile.className='addon-tile';tile.appendChild(picture(entry));tile.appendChild(node('strong',null,entry.item.name||entry.item.id));tile.appendChild(node('span','hint',labels[entry.kind]||entry.kind));tiles.appendChild(tile);}body.appendChild(tiles);
  const go=button('Choose items to import',()=>{d.close();onImport(result);});go.classList.add('primary');body.appendChild(go);d.showModal();
@@ -80,11 +80,11 @@ let active=0;const queue=[];
 function schedule(fn){return new Promise((resolve,reject)=>{queue.push({fn,resolve,reject});pump();});}
 function pump(){while(active<2&&queue.length){const job=queue.shift();active++;Promise.resolve().then(job.fn).then(job.resolve,job.reject).finally(()=>{active--;pump();});}}
 function card(parent,listing,load,onImport){
- const cover=button('Loading item previews…',()=>show());cover.className='addon-cover';cover.setAttribute('aria-label','View '+listing.name);parent.prepend(cover);
+ const cover=button('Loading item previewsâ€¦',()=>show());cover.className='addon-cover';cover.setAttribute('aria-label','View '+listing.name);parent.prepend(cover);
  let pending=null;
  const get=()=>pending||(pending=schedule(async()=>{const r=await load();ZB.validateAddon(r.pack);return r;}).catch(e=>{pending=null;throw e;}));
- const paint=async()=>{try{const r=await get();if(!cover.isConnected)return;cover.replaceChildren();cover.dataset.count=String(Math.min(4,r.pack.items.length));for(const entry of coverItems(r.pack))cover.appendChild(picture(entry));cover.appendChild(node('span','addon-count',`${r.pack.items.length} items`));}catch{cover.textContent='Preview unavailable · click to retry';}};
- async function show(){try{const r=await get();if(parent.isConnected)openPack(r,onImport);}catch(e){cover.textContent=e.message+' · click to retry';}}
+ const paint=async()=>{try{const r=await get();if(!cover.isConnected)return;cover.replaceChildren();cover.dataset.count=String(Math.min(4,r.pack.items.length));for(const entry of coverItems(r.pack))cover.appendChild(picture(entry));cover.appendChild(node('span','addon-count',`${r.pack.items.length} ${r.pack.items.length===1?'item':'items'}`));}catch{cover.textContent='Preview unavailable Â· click to retry';}};
+ async function show(){try{const r=await get();if(parent.isConnected)openPack(r,onImport);}catch(e){cover.textContent=e.message+' Â· click to retry';}}
  const observer=new IntersectionObserver(entries=>{if(!cover.isConnected){observer.disconnect();return;}if(entries.some(x=>x.isIntersecting)){observer.disconnect();paint();}},{rootMargin:'150px'});observer.observe(cover);
  return show;
 }
