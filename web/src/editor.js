@@ -597,12 +597,13 @@ function renderList(){
   const ad=el("button","addbtn","+ adopt an existing "+one);
   ad.style.marginTop="6px";
   ad.onclick=()=>addItem(true); L.appendChild(ad);
+  EditorView.list(L);
 }
 function fmt(n){ return String(n==null?0:n).replace(/\B(?=(\d{3})+(?!\d))/g,","); }
 
 function renderPane(){
   const P=$("#pane"); P.innerHTML="";
-  P.classList.remove("site-content");
+  P.classList.remove("site-content","item-editor");
   if(TAB==="home")return Site.home(P);
   if(TAB==="downloads")return Site.downloads(P);
   TITLE_NODE = IDCHIP_NODE = null; IDECHO = []; ICOPAINT = [];
@@ -632,6 +633,7 @@ function renderPane(){
   else if(TAB==="packs" || TAB==="items") drawItemPage(P,it);
   else drawPouch(P,it);
   if(TAB==="rigs" || TAB==="boxes") drawModel(P,it);
+  EditorView.organize(P,it);
 }
 
 /* small field builders --------------------------------------------- */
