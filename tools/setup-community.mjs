@@ -15,7 +15,17 @@ const scopes=['rows.read','rows.write','files.read','files.write'];
 async function main(){
  if(!process.argv.includes('--apply')){console.log(JSON.stringify({project,endpoint,database:'zonebench (serverless)',tables:Object.keys(schema),privateBucket:'zonebench-packs',function:functionId,functionScopes:scopes,changes:'Create missing resources and deploy code. No public table or storage permissions. No paid database specification.'},null,2));console.log('Review docs/community-setup.md. Use --apply only with a temporary project API key in APPWRITE_API_KEY.');return;}
  const key=process.env.APPWRITE_API_KEY;if(!key)throw Error('APPWRITE_API_KEY is missing. Do not paste it into source files or chat.');
- async function api(route,method='GET',body){const r=await fetch(endpoint+route,{method,headers:{'X-Appwrite-Project':project,'X-Appwrite-Key':key,...(body instanceof FormData?{}:{'Content-Type':'application/json'})},body:body==null?undefined:body instanceof FormData?body:JSON.stringify(body),signal:AbortSignal.timeout(30000)});const data=r.status===204?null:await r.json();if(!r.ok){const e=new Error(method+' '+route+': '+(data?.message||r.status));e.status=r.status;throw e;}return data;}
+ async function api(route,method='GET',body){
+  // A referenced timer keeps Node alive even when the pending network request does not.
+  const controller=new AbortController();
+  const timeout=setTimeout(()=>controller.abort(new Error('Request timed out: '+method+' '+route)),30000);
+  try{
+   const r=await fetch(endpoint+route,{method,headers:{'X-Appwrite-Project':project,...(route==='/functions/runtimes' && method==='GET'?{}:{'X-Appwrite-Key':key}),...(body instanceof FormData?{}:{'Content-Type':'application/json'})},body:body==null?undefined:body instanceof FormData?body:JSON.stringify(body),signal:controller.signal});
+   const data=r.status===204?null:await r.json();
+   if(!r.ok){const e=new Error(method+' '+route+': '+(data?.message||r.status));e.status=r.status;throw e;}
+   return data;
+  }finally{clearTimeout(timeout);}
+ }
  const ensure=async(get,post,data)=>{try{return await api(get);}catch(e){if(e.status!==404)throw e;console.log('Creating '+get);return api(post,'POST',data);}};
  await ensure('/tablesdb/zonebench','/tablesdb',{databaseId:'zonebench',name:'ZoneBench community',specification:'serverless'});
  for(const [table,columns] of Object.entries(schema)){
@@ -23,6 +33,7 @@ async function main(){
   const existing=await ensure(base,'/tablesdb/zonebench/tables',{tableId:table,name:table,permissions:[],rowSecurity:true,enabled:true});
   if(existing.$permissions?.length||existing.permissions?.length)throw Error('Unexpected table permissions on '+table+'. Stop and review before continuing.');
   for(const column of columns){const {type,...data}=column;await ensure(base+'/columns/'+data.key,base+'/columns/'+type,data);}
+  console.log('Waiting for columns: '+table);
   let ready=false;for(let attempt=0;attempt<20;attempt++){const result=await api(base+'/columns');if(result.columns.every(x=>x.status==='available')){ready=true;break;}if(result.columns.some(x=>x.status==='failed'))throw Error('Column creation failed for '+table);await new Promise(r=>setTimeout(r,1500));}
   if(!ready)throw Error('Columns still processing. Run setup again later.');
  }
@@ -46,4 +57,6 @@ async function main(){
  const deployment=await api('/functions/'+functionId+'/deployments','POST',form);console.log(JSON.stringify({deployment:deployment.$id,status:deployment.status}));
  console.log('Backend submitted. Keep frontend community enabled:false until live email, guest access, ownership and moderation tests pass. Revoke the temporary setup key afterward.');
 }
-if(process.argv[1]===fileURLToPath(import.meta.url))main().catch(e=>{console.error(e.message);process.exitCode=1;});
+if(process.argv[1]===fileURLToPath(import.meta.url)){
+ try{await main();}catch(e){console.error('Setup failed: '+e.message);process.exitCode=1;}
+}

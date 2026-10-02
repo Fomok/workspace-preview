@@ -5,7 +5,7 @@ The GitHub Pages platform hostname is `fomok.github.io` and has been verified.
 
 ## Current status
 
-Implementation is local and community publishing is disabled. Mocked service tests pass; live email delivery, deployment and permission tests are still required. The project ID and endpoint do not grant permission to create tables, buckets or functions.
+Backend deployment 6abff8c2651e3143fb03 is running. Live guest browsing succeeds; anonymous publishing and private selections are denied. Community features remain disabled by default; append ?community-preview=1 to the site URL for sign-in testing. Live email delivery, authenticated ownership and moderation tests are still required. The project ID and endpoint do not grant permission to create tables, buckets or functions.
 
 ## Temporary setup access
 
