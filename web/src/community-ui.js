@@ -55,7 +55,8 @@ async function drawCommunityCatalog(P){
    if(listing.dependencies)communityMessage(card,'Requires: '+listing.dependencies);
    const imports=['rigs','boxes','pouches','packs','items'].flatMap(k=>DB[k]||[]).filter(x=>x.communitySource?.id===listing.id);
    if(imports.length)communityMessage(card,imports.some(x=>x.communitySource.revision<listing.revision)?'Update available — your imported version stays unchanged until you choose to import.':'Items from this version are in your project.');
-   communityButton(card,selected?'Preview saved version':'Preview and import',async()=>Community.preview(await Community.request(selected?'selectedPack':'pack',{id:listing.id})),true);
+   const show=AddonPreview.card(card,listing,()=>Community.request(selected?'selectedPack':'pack',{id:listing.id}),result=>Community.preview(result));
+   communityButton(card,'View items',show,true);
    if(listing.canEdit){
     communityButton(card,'Edit / update',async()=>{COMMUNITY_EDIT=listing;renderPane();});
     if(listing.status!=='removed')communityButton(card,listing.status==='published'?'Unpublish':'Publish again',async()=>{

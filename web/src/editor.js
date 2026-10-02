@@ -4246,7 +4246,11 @@ function drawIncoming(P) {
       + (clash ? ' <span class="pill t5">you already have this id</span>' : "")
       + '</span>';
     row.querySelector("input").onchange = e => { entry.take = e.target.checked; renderPane(); };
+    row.prepend(AddonPreview.picture(entry));
     c.appendChild(row);
+    const inspect=el('button','tool','Inspect item');
+    inspect.onclick=()=>AddonPreview.openItem(entry,INCOMING);
+    c.appendChild(inspect);
     if (clash && entry.take) {
       /* AN ID THAT ALREADY EXISTS IS THE ONE THING THAT CANNOT BE
          WAVED THROUGH. Two items with one section name is a game that

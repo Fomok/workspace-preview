@@ -26,17 +26,16 @@ async function drawCatalog(P){
   const grid=el('div','catalog-grid');P.appendChild(grid);
   for(const entry of CATALOG.addons){
    const card=el('article','card');card.appendChild(el('h2',null,esc(entry.name)));card.appendChild(el('p','hint',esc(entry.author)+' · '+esc(entry.version)));card.appendChild(el('p',null,esc(entry.description)));
-   const button=el('button','tool primary','Preview items');card.appendChild(button);grid.appendChild(card);
-   button.onclick=async()=>{
-    button.disabled=true;
-    try{
-     if(!/^[a-z0-9_-]+\.json$/.test(entry.file))throw new Error('Invalid catalog file.');
-     const r=await fetch('catalog/'+entry.file);if(!r.ok)throw new Error('Could not download this pack.');
-     const pack=ZB.validateAddon(await r.json());
-     INCOMING={from:pack.from,families:pack.families||{},items:pack.items.map(x=>({kind:x.kind,item:x.item,take:true,how:'rename'}))};
-     TAB='share';render();
-    }catch(error){alert(error.message);button.disabled=false;}
-   };
+   grid.appendChild(card);
+   const show=AddonPreview.card(card,entry,async()=>{
+    if(!/^[a-z0-9_-]+\.json$/.test(entry.file))throw new Error('Invalid catalog file.');
+    const response=await fetch('catalog/'+entry.file);if(!response.ok)throw new Error('Could not download this pack.');
+    return {listing:entry,pack:ZB.validateAddon(await response.json())};
+   },({pack})=>{
+    INCOMING={from:pack.from,families:pack.families||{},items:pack.items.map(x=>({kind:x.kind,item:x.item,take:true,how:'rename'}))};
+    TAB='share';render();
+   });
+   const button=el('button','tool primary','View items');button.onclick=show;card.appendChild(button);
   }
  }catch(error){status.textContent=error.message+' Your project is still available. Reopen this tab to retry.';CATALOG=null;}
 }
