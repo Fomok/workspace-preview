@@ -4138,58 +4138,41 @@ let SHARE_PICK = null;     // what to send
 let INCOMING = null;       // what somebody sent, and what to take of it
 
 function drawShare(P) {
-  P.appendChild(el("h1", null, "Share items"));
-  P.appendChild(el("div", "hint",
-    "Send somebody the items you made rather than your whole bench. They open "
-    + "the file here and tick the ones they want; everything else of theirs is "
-    + "left exactly as it was."));
-
-  // ---------------- what came in ----------------
-  if (INCOMING) { drawIncoming(P); return; }
-
-  // ---------------- what to send ----------------
-  P.appendChild(el("div", "sect", "Send"));
-  const mine = mineToShare();
-  const c = el("div", "card");
-  if (!mine.length) {
-    c.appendChild(el("div", null, "You have not added anything yet. Make a rig, "
-      + "a pouch or a container and it will be offered here."));
-  } else {
-    if (!SHARE_PICK) SHARE_PICK = new Set(mine.map(m => m.kind + "/" + m.it.id));
-    mine.forEach(({ kind, it }) => {
-      const key = kind + "/" + it.id;
-      const row = el("label", "tick");
-      row.innerHTML = '<input type="checkbox"' + (SHARE_PICK.has(key) ? " checked" : "")
-        + '><span>' + esc(it.name || it.id)
-        + ' <span style="color:var(--faint)">' + esc(it.id)
-        + (it.adopt ? " &middot; adopted" : "") + '</span></span>';
-      row.querySelector("input").onchange = e => {
-        if (e.target.checked) SHARE_PICK.add(key); else SHARE_PICK.delete(key);
-        renderPane();
-      };
-      c.appendChild(row);
-    });
-    const n = mine.filter(m => SHARE_PICK.has(m.kind + "/" + m.it.id)).length;
-    const go = el("button", "tool primary");
-    go.textContent = "Save " + n + " item" + (n === 1 ? "" : "s") + " to a file";
-    go.style.marginTop = "10px";
-    if (!n) go.disabled = true; else go.onclick = () => exportItems(mine);
-    c.appendChild(go);
+  P.appendChild(el('h1',null,INCOMING?'Review import':'Share items'));
+  if(INCOMING){drawIncoming(P);return;}
+  P.appendChild(el('p','hint','Build an add-on from your items, preview it, then publish it for others to browse.'));
+  const mine=mineToShare();
+  if(!SHARE_PICK)SHARE_PICK=new Set(mine.map(m=>m.kind+'/'+m.it.id));
+  const selected=()=>mine.filter(m=>SHARE_PICK.has(m.kind+'/'+m.it.id));
+  const section=el('section','card share-selection');P.appendChild(section);
+  section.appendChild(el('h2',null,'1. Choose items'));
+  const count=selected().length;
+  section.appendChild(el('p',count>20?'warn':'hint',count+' selected / 20 per public add-on'));
+  if(!mine.length){
+    section.appendChild(el('p','hint','Create a rig, container or pouch first. Your custom and adopted items will appear here.'));
+    for(const [tab,label] of [['rigs','Create a rig'],['boxes','Create a container'],['pouches','Create a pouch']])communityButton(section,label,async()=>{TAB=tab;render();});
+  }else{
+    const controls=el('div','community-actions');section.appendChild(controls);
+    communityButton(controls,'Select all',async()=>{SHARE_PICK=new Set(mine.map(m=>m.kind+'/'+m.it.id));renderPane();});
+    communityButton(controls,'Clear selection',async()=>{SHARE_PICK.clear();renderPane();});
+    const tiles=el('div','share-item-grid');section.appendChild(tiles);
+    for(const {kind,it} of mine){
+      const key=kind+'/'+it.id;const card=el('div','share-item'+(SHARE_PICK.has(key)?' selected':''));
+      const label=document.createElement('label');label.className='share-item-label';
+      const check=document.createElement('input');check.type='checkbox';check.checked=SHARE_PICK.has(key);check.setAttribute('aria-label','Include '+(it.name||it.id));
+      check.onchange=()=>{if(check.checked)SHARE_PICK.add(key);else SHARE_PICK.delete(key);renderPane();};
+      label.appendChild(check);label.appendChild(AddonPreview.picture({kind,item:it}));
+      const name=document.createElement('strong');name.textContent=it.name||it.id;label.appendChild(name);
+      const type=el('span','hint');type.textContent=SHARE_KINDS.find(x=>x[0]===kind)?.[1]||kind;label.appendChild(type);card.appendChild(label);
+      communityButton(card,'Inspect',async()=>AddonPreview.openItem({kind,item:it},{families:DB.families||{}}));tiles.appendChild(card);
+    }
   }
-  P.appendChild(c);
-
   drawCommunityPublish(P);
-
-  // ---------------- receiving ----------------
-  P.appendChild(el("div", "sect", "Receive"));
-  const c2 = el("div", "card");
-  c2.appendChild(el("div", "hint",
-    "Open a file somebody sent you. You choose what comes in."));
-  const inb = el("button", "tool");
-  inb.textContent = "Open an items file";
-  inb.onclick = () => { const f = $("#shareIn"); f.value = ""; f.click(); };
-  c2.appendChild(inb);
-  P.appendChild(c2);
+  const local=document.createElement('details');local.className='card share-files';
+  const summary=document.createElement('summary');summary.textContent='File sharing and backups';local.appendChild(summary);
+  local.appendChild(el('p','hint','Optional: save the selected items as a file, or open an item file someone sent you. No account needed.'));
+  const save=communityButton(local,'Save selected items to file',async()=>exportItems(mine));save.disabled=!count;
+  communityButton(local,'Open an items file',async()=>{const input=$('#shareIn');input.value='';input.click();});P.appendChild(local);
 }
 
 function exportItems(mine) {

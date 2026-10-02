@@ -79,25 +79,43 @@ async function drawCommunityCatalog(P){
   if(COMMUNITY_OFFSET+24<result.total)communityButton(pages,'Next page',async()=>{COMMUNITY_OFFSET+=24;renderPane();});
  }catch(e){status.textContent=e.message+' Your local project is unchanged.';}
 }
-function drawCommunityPublish(P,listing=null){
- const card=el('div','card');P.appendChild(card);card.appendChild(el('h2',null,listing?'Update this listing':'Publish to the community'));
- if(!Community.enabled){communityMessage(card,'Community publishing is awaiting backend setup.');return;}
- if(!Community.user){communityButton(card,'Sign in to publish',async()=>{TAB='account';render();},true);return;}
- const pack=Community.packSelection();
- communityMessage(card,listing?'Updating keeps the same listing. Select items in Share items first to replace its contents.':'The selected items and their inventory icons will become public immediately.');
- const name=communityField(card,'Pack name',listing?.name||'');name.maxLength=100;
- const author=communityField(card,'Author display name',listing?.author||Community.user.name||'');author.maxLength=60;
- const version=communityField(card,'Pack version',listing?.version||'1.0');version.maxLength=32;
- const description=communityField(card,'Pack description',listing?.description||'','textarea');description.maxLength=2000;
- const dependencies=communityField(card,'Required mods',listing?.dependencies||'');dependencies.maxLength=500;
- let replace=null;if(listing){const label=el('label','tick');replace=document.createElement('input');replace.type='checkbox';replace.disabled=!pack.items.length;label.appendChild(replace);const span=document.createElement('span');span.textContent='Replace contents with '+pack.items.length+' selected items from Share items';label.appendChild(span);card.appendChild(label);}
- communityMessage(card,'Up to 20 items / 2 MB per pack. PNG icons only, up to 512 KB each. Publish only artwork you have permission to share; no adult imagery. Custom 3D models must be supplied by a required mod.');
- const label=el('label','tick');const agree=document.createElement('input');agree.type='checkbox';label.appendChild(agree);const consent=document.createElement('span');consent.textContent='I agree to make this pack public and allow people to import it into their ZoneBench projects.';label.appendChild(consent);card.appendChild(label);
- communityButton(card,listing?'Save update':'Publish selected items',async()=>{
-  if(!agree.checked)throw new Error('Confirm public sharing first.');if(!listing&&!pack.items.length)throw new Error('Select items to publish.');
-  const data={name:name.value,author:author.value,version:version.value,description:description.value,dependencies:dependencies.value};
+const COMMUNITY_DRAFTS=new Map();
+function drawCommunityPublish(P,listing=null,sessionChecked=false){
+ const card=el('section','card share-publish');P.appendChild(card);card.appendChild(el('h2',null,listing?'Update your add-on':'2. Add-on details'));
+ if(!Community.enabled){communityMessage(card,'Community publishing is currently available through the preview link. File sharing is available below.');return;}
+ if(!Community.user){
+  communityMessage(card,'Sign in to publish. You can choose and inspect your items first.');
+  communityButton(card,'Sign in to publish',async()=>{TAB='account';render();},true);
+  if(!sessionChecked)Community.refresh().then(user=>{if(user&&card.isConnected){const mount=document.createElement('div');card.replaceWith(mount);drawCommunityPublish(mount,listing,true);}}).catch(e=>{if(card.isConnected)communityMessage(card,e.message,'warn');});
+  return;
+ }
+ const draftKey=listing?.id||'new';
+ if(!COMMUNITY_DRAFTS.has(draftKey))COMMUNITY_DRAFTS.set(draftKey,{name:listing?.name||'',author:listing?.author||Community.user.name||'',version:listing?.version||'1.0',description:listing?.description||'',dependencies:listing?.dependencies||'',replace:false,agree:false});
+ const draft=COMMUNITY_DRAFTS.get(draftKey);
+ communityMessage(card,listing?'Changes update this listing instead of creating another version in the list.':'Give your add-on a name and explain what it adds. Your draft stays here while you change the selected items.');
+ const fields=el('div','share-publish-fields');card.appendChild(fields);
+ for(const [key,label,max,type] of [['name','Add-on name',100,'text'],['author','Author display name',60,'text'],['version','Version',32,'text'],['description','Description',2000,'textarea'],['dependencies','Required mods (optional)',500,'text']]){
+  const input=communityField(fields,label,draft[key],type);input.maxLength=max;input.oninput=()=>{draft[key]=input.value;};
+ }
+ let replace=null;
+ if(listing){const label=el('label','tick');replace=document.createElement('input');replace.type='checkbox';replace.disabled=!Community.packSelection().items.length;replace.checked=draft.replace&&!replace.disabled;replace.onchange=()=>{draft.replace=replace.checked;};label.appendChild(replace);const span=document.createElement('span');span.textContent='Replace contents with the items selected in Share items';label.appendChild(span);card.appendChild(label);}
+ const review=el('div','share-publish-review');card.appendChild(review);review.appendChild(el('h2',null,listing?'Review and save':'3. Preview and publish'));
+ const n=Community.packSelection().items.length;
+ communityMessage(review,listing?'Preview the version you are about to save.':n+' selected item'+(n===1?'':'s')+'. The first four provide the listing preview.');
+ const preview=communityButton(review,'Preview add-on',async()=>{
+  const pack=listing&&!replace.checked?(await Community.request('pack',{id:listing.id})).pack:Community.packSelection();
+  if(!pack.items.length)throw new Error('Select at least one item above.');
+  AddonPreview.openPack({listing:{...draft,name:draft.name||'Your add-on'},pack},null);
+ });preview.disabled=!listing&&!n;
+ const label=el('label','tick');const agree=document.createElement('input');agree.type='checkbox';agree.checked=draft.agree;agree.onchange=()=>{draft.agree=agree.checked;};label.appendChild(agree);const consent=document.createElement('span');consent.textContent='I have permission to share these items and images, and agree to make them public for others to import.';label.appendChild(consent);review.appendChild(label);
+ communityMessage(review,'Publishing makes the add-on visible immediately. Up to 20 items / 2 MB; PNG icons up to 512 KB each. No adult imagery. Required custom models must be supplied separately.');
+ const publish=communityButton(review,listing?'Save update':'Publish add-on',async()=>{
+  if(!draft.agree)throw new Error('Confirm public sharing first.');
+  const pack=Community.packSelection();if(!listing&&!pack.items.length)throw new Error('Select items to publish.');
+  const data={name:draft.name,author:draft.author,version:draft.version,description:draft.description,dependencies:draft.dependencies};
   if(listing){data.id=listing.id;data.expectedRevision=listing.revision;if(replace.checked)data.pack=pack;}else data.pack=pack;
-  await Community.request(listing?'update':'publish',data);COMMUNITY_EDIT=null;COMMUNITY_MODE='mine';COMMUNITY_OFFSET=0;TAB='catalog';render();
- },true);
- if(listing)communityButton(card,'Cancel editing',async()=>{COMMUNITY_EDIT=null;renderPane();});
+  await Community.request(listing?'update':'publish',data);COMMUNITY_DRAFTS.delete(draftKey);COMMUNITY_EDIT=null;COMMUNITY_MODE='mine';COMMUNITY_OFFSET=0;TAB='catalog';render();
+ },true);publish.disabled=!listing&&(!n||n>20);
+ if(listing)communityButton(review,'Cancel editing',async()=>{COMMUNITY_EDIT=null;renderPane();});
+ else communityButton(review,'Manage my published add-ons',async()=>{COMMUNITY_MODE='mine';TAB='catalog';render();});
 }

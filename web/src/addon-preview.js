@@ -72,7 +72,7 @@ function openPack(result,onImport){
  body.appendChild(node('h2',null,result.listing.name||'Add-on contents'));body.appendChild(node('p','hint',`${pack.items.length} ${pack.items.length===1?'item':'items'} · ${result.listing.version||''}`));if(result.listing.description)body.appendChild(node('p','addon-description',result.listing.description));
  body.appendChild(node('p','hint','Click an item to inspect its texture, layout and settings. Your project stays unchanged until you confirm an import.'));
  const tiles=node('div','addon-tiles');for(const entry of pack.items){const tile=button('',()=>openItem(entry,pack));tile.className='addon-tile';tile.appendChild(picture(entry));tile.appendChild(node('strong',null,entry.item.name||entry.item.id));tile.appendChild(node('span','hint',labels[entry.kind]||entry.kind));tiles.appendChild(tile);}body.appendChild(tiles);
- const go=button('Choose items to import',()=>{d.close();onImport(result);});go.classList.add('primary');body.appendChild(go);d.showModal();
+ if(onImport){const go=button('Choose items to import',()=>{d.close();onImport(result);});go.classList.add('primary');body.appendChild(go);}d.showModal();
 }
 // Limit concurrent full-pack downloads. A pack is loaded once per visible catalog render.
 let active=0;const queue=[];
