@@ -1,0 +1,5 @@
+reference/
+initial-review.txt
+node_modules/
+artifacts/
+*.log

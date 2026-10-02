@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="The Squared Away item workbench. Build rigs, boxes, pouches and your own add-ons."><title>ZoneBench · Squared Away</title><link rel="stylesheet" href="styles.css"><link rel="icon" href="favicon.svg"></head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand">ZONEBENCH<small>squared away</small></div>
+    
+    <div class="spacer"></div>
+    <span id="dirty"></span>
+    <button hidden class="tool" id="btnMod" title="Teach the tool a newer Squared Away">Update the mod</button>
+    <button class="tool" id="btnLoad">Open project</button>
+    <input type="file" id="modIn" accept=".zip,application/zip" hidden>
+    <input type="file" id="shareIn" accept=".json,application/json" hidden>
+    <button class="tool primary" id="btnSave">Save project</button>
+    <input type="file" id="fileIn" accept=".json,application/json" hidden>
+    <input type="file" id="imgIn" accept="image/*" hidden>
+  </header>
+  <nav id="nav" aria-label="Editor sections"></nav>
+  <main>
+    <div id="list"></div>
+    <div id="pane"></div>
+  </main>
+</div>
+
+<noscript>ZoneBench needs JavaScript to edit and export items. Your project stays in your browser.</noscript>
+<script defer src="src/emit.js"></script>
+<script defer src="src/archive.js"></script>
+<script defer src="data/baseline.js"></script>
+<script defer src="src/compatibility.js"></script>
+<script defer src="src/editor.js"></script>
+<script defer src="src/catalog.js"></script>
+</body></html>
