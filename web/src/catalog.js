@@ -15,6 +15,7 @@ function drawModel(P,it){
 }
 let CATALOG=null;
 async function drawCatalog(P){
+ if(Community.enabled)return drawCommunityCatalog(P);
  P.appendChild(el('h1',null,'Public add-ons'));
  P.appendChild(el('p','hint','Discover curated item packs and bring selected items into your project. Nothing is installed until you export.'));
  const status=el('p','hint','Loading catalog…');P.appendChild(status);

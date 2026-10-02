@@ -3,3 +3,9 @@ initial-review.txt
 node_modules/
 artifacts/
 *.log
+
+.secrets/
+.env
+.env.*
+*.key
+

@@ -288,3 +288,5 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {o
 .model-card select {min-width:220px;}
 @media(max-width:900px){header{height:auto;min-height:72px;flex-wrap:wrap;padding:12px;gap:8px;}#dirty{display:none;}#pane{padding:20px 16px 64px;}#list{width:190px;}#nav{padding:8px;}}
 @media(max-width:580px){#list{width:140px;}.tool{padding:6px 9px;}.brand{font-size:14px;}#pane{min-width:320px;}main{overflow-x:auto;}}
+
+.community-actions{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}.community-field{display:flex;flex-direction:column;gap:6px;margin:12px 0;max-width:620px}.community-field input,.community-field textarea{padding:10px;border:1px solid var(--line);background:var(--bg);border-radius:5px}.community-field textarea{min-height:100px}.catalog-grid .tool,.model-card .tool{margin:4px}.community-field+button{margin-top:8px}

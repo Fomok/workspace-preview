@@ -82,3 +82,7 @@ Generate the pack with **Share items**. Previewing a catalog entry opens the exi
 Automated tests cover native slots, preservation of stock section definitions, pouch grants, import rejection, DDS channels and ZIP structure. Browser checks cover page startup and actual ZIP export. Lua checks use a mocked runtime interface; exported custom items still need in-game testing against the target mod/engine combination.
 
 This repository does not grant a new license to third-party game or mod assets. Attribution and existing permissions remain applicable.
+
+## Community library integration (pending activation)
+
+Account and community publishing code is prepared for Appwrite. See [setup instructions](docs/community-setup.md). The feature flag remains off until the backend is provisioned and live authentication and access checks pass. Creators can publish immediately, update one listing and unpublish their own packs. Maintainers can remove listings, block publishing and save exact versions privately for the next mod release. Bug reporting remains excluded.

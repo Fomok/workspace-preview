@@ -520,7 +520,7 @@ const TABS = [["rigs","Rigs"],["pouches","Pouches"],["boxes","Containers"],
               ["packs","Backpacks"],
               
               ["drops","Drops"],["check","Check"],["notes","Project notes"],
-              ["catalog","Public add-ons"], ["share","Share items"], ["build","Export mod"],
+              ["catalog","Public add-ons"], ["account","Account"], ["share","Share items"], ["build","Export mod"],
               ["help","How this works"]];
 function render(){
   const nav=$("#nav"); nav.innerHTML="";
@@ -602,6 +602,7 @@ function fmt(n){ return String(n==null?0:n).replace(/\B(?=(\d{3})+(?!\d))/g,",")
 function renderPane(){
   const P=$("#pane"); P.innerHTML="";
   TITLE_NODE = IDCHIP_NODE = null; IDECHO = []; ICOPAINT = [];
+  if(TAB==="account") return drawCommunityAccount(P);
   if(TAB==="catalog") return drawCatalog(P);
   if(TAB==="drops") return drawDrops(P);
   if(TAB==="check") return drawCheck(P);
@@ -4177,6 +4178,8 @@ function drawShare(P) {
   }
   P.appendChild(c);
 
+  drawCommunityPublish(P);
+
   // ---------------- receiving ----------------
   P.appendChild(el("div", "sect", "Receive"));
   const c2 = el("div", "card");
@@ -4288,6 +4291,7 @@ function takeIncoming() {
     // by your build, so it counts as new here however it was marked
     // where it came from.
     it.new = true;
+    if(INCOMING.community)it.communitySource={...INCOMING.community,originalId:entry.originalId||entry.item.id};
     if (entry.kind === "boxes" && takeRule(it)) rules++;
     const at = arr.findIndex(x => x.id === it.id);
     if (at < 0) { arr.push(it); added++; return; }
