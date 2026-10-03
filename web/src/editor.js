@@ -535,7 +535,7 @@ function render(){
   }
   const brand = document.querySelector(".brand small");
   if(brand) brand.textContent = DB.modVersion
-    ? "squared away " + DB.modVersion : "squared away";
+    ? "squared away " + (DB.modVersion === "3.49.2" ? "2.0" : DB.modVersion) : "squared away";
   const listy = ["rigs","pouches","boxes","packs"].includes(TAB);
   document.body.classList.toggle("wide", !listy);
   if(listy) renderList(); else $("#list").innerHTML="";

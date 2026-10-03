@@ -22,21 +22,22 @@ function shell(){
 }
 function heading(parent,kicker,title,copy){parent.appendChild(n('p','eyebrow',kicker));parent.appendChild(n('h1',null,title));if(copy)parent.appendChild(n('p','page-lead',copy));}
 function size(bytes){return bytes?Math.round(bytes/1024/1024)+' MB':'';}
-function upcoming(parent,items){if(items.some(x=>x.mod.name.includes('3.49.2')))return;const card=n('section','upcoming-release');card.appendChild(n('p','eyebrow','NEXT RELEASE'));card.appendChild(n('h2',null,'The native rebuild is on its way.'));card.appendChild(n('p','hint','Squared Away 3.49.2 is being prepared for release. Its download will appear here when it is published. The older public version is listed below.'));parent.appendChild(card);}
+function currentRelease(release){return release.mod.name.includes('3.49.2') || /^Squared[-_]?Away[_-](?:FOMOD[-_])?2[._-]0(?:[._-]|\.zip$)/i.test(release.mod.name);}
+function upcoming(parent,items){if(items.some(currentRelease))return;const card=n('section','upcoming-release');card.appendChild(n('p','eyebrow','NEXT RELEASE'));card.appendChild(n('h2',null,'The 2.0 Update is on its way.'));card.appendChild(n('p','hint','Squared Away 2.0 is being prepared for release. Its download will appear here when it is published. The older public version is listed below.'));parent.appendChild(card);}
 function releaseBlock(parent,release,compact=false){
  const panel=n('section','release-panel'+(compact?' compact':''));parent.appendChild(panel);
  const about=n('div','release-about');about.appendChild(n('p','eyebrow',release.preview?'CURRENT PREVIEW':'LATEST STABLE RELEASE'));about.appendChild(n('h2',null,release.name));if(release.date)about.appendChild(n('p','hint','Published '+new Date(release.date).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'})));panel.appendChild(about);
  const buttons=n('div','site-actions');buttons.appendChild(link('Download mod'+(compact?'':' · '+size(release.mod.size)),release.mod.browser_download_url,true));buttons.appendChild(link('Required engine'+(compact?'':' · '+size(release.engine.size)),release.engine.browser_download_url));buttons.appendChild(action('Installation guide', 'help'));panel.appendChild(buttons);
- if(release.preview)panel.appendChild(n('p','release-note','Preview release · Start a new game when moving from the old Squared Away. Install both the mod and its matching engine.'));
- if(!release.mod.name.includes('3.49.2'))panel.appendChild(n('p','release-note','The editor targets Squared Away 3.49.2 / Preview 40. Check compatibility before using editor exports with another release.'));
+ if(release.preview)panel.appendChild(n('p','release-note','Preview release · Start a new game when upgrading from the previous Squared Away release. Install both the mod and its matching engine.'));
+ if(!currentRelease(release))panel.appendChild(n('p','release-note','The editor targets the Squared Away 2.0 Update. Its exports are not intended for the older release shown here.'));
  if(!compact){const details=n('details','release-notes');details.appendChild(n('summary',null,'Release notes'));details.appendChild(n('div','release-notes-text',release.notes||'No release notes supplied.'));panel.appendChild(details);}
  return panel;
 }
 async function home(P){
  P.classList.add('site-content');
  const hero=n('section','armory-hero');const copy=n('div','hero-copy');hero.appendChild(copy);
- copy.appendChild(n('p','eyebrow','INVENTORY MOD FOR S.T.A.L.K.E.R. ANOMALY'));copy.appendChild(n('h1',null,'SQUARED AWAY'));copy.appendChild(n('h2',null,'Make room for the Zone.'));copy.appendChild(n('p','hero-description','A grid inventory. Rigs that carry your essentials. Containers that keep your gear together.'));
- const actions=n('div','site-actions');actions.appendChild(action('↓  Download Squared Away','downloads',true));actions.appendChild(action('Explore the mechanics  →','introduction'));copy.appendChild(actions);copy.appendChild(n('p','hero-footnote','YOUR GEAR. YOUR LAYOUT.'));const shot=n('figure','hero-gameplay');const img=n('img');img.src='assets/gameplay/inventory.png';img.alt='Squared Away in-game inventory with equipment, an equipped rig and backpack storage';img.width=1207;img.height=1079;shot.appendChild(img);shot.appendChild(n('figcaption',null,'IN-GAME CAPTURE / SQUARED AWAY'));hero.appendChild(shot);P.appendChild(hero);
+ const gameLabel=n('p','eyebrow hero-game-label');gameLabel.append(n('span','game-label-prefix','INVENTORY MOD FOR'),document.createTextNode(' '),n('span','game-label-stalker','STALKER'),document.createTextNode(' '),n('span','game-label-gamma','G.A.M.M.A.'));copy.appendChild(gameLabel);copy.appendChild(n('h1',null,'SQUARED AWAY'));copy.appendChild(n('h2',null,'Ultimate inventory cancer is HERE.'));copy.appendChild(n('p','hero-description','A grid inventory. Rigs that carry your essentials. Containers that save you some space.'));
+ const actions=n('div','site-actions');actions.appendChild(action('↓  Download Squared Away','downloads',true));actions.appendChild(action('Explore the mechanics  →','introduction'));copy.appendChild(actions);const shot=n('figure','hero-gameplay');const img=n('img');img.src='assets/gameplay/inventory.png';img.alt='Squared Away in-game inventory with equipment, an equipped rig and backpack storage';img.width=1207;img.height=1079;shot.appendChild(img);shot.appendChild(n('figcaption',null,'IN-GAME CAPTURE / SQUARED AWAY'));hero.appendChild(shot);P.appendChild(hero);
  const content=n('div','home-sections');P.appendChild(content);
  const release=n('div');release.appendChild(n('p','hint','Checking the latest release…'));content.appendChild(release);
  Releases.load().then(result=>{if(!release.isConnected)return;release.replaceChildren();upcoming(release,result.items);if(result.items[0])releaseBlock(release,result.items[0],true);else release.appendChild(n('p','hint','A complete release package has not been published yet.'));if(result.cached)release.appendChild(n('p','hint','Showing the last verified release. Live release lookup is unavailable.'));}).catch(e=>{if(release.isConnected)release.textContent=e.message;});
@@ -65,8 +66,77 @@ async function downloads(P){
 }
 function help(P){
  heading(P,'FIELD GUIDE','Get squared away.','Installation, compatibility and the ZoneBench editor.');
- const blocks=[["Current editor baseline", "ZoneBench targets Squared Away 3.49.2 / Preview 40 (Grid Refresh). Its item definitions, recipes, trader templates and shared world models have been checked against that package. The older public 3.48.0 download is not the target for these exports. The new mod release remains unpublished until final approval."], ["Install the mod", "Use Anomaly 1.5.3 or your GAMMA installation. Install the full Squared Away FOMOD ZIP with MO2. Replace an older Squared Away installation rather than merging it, and disable previous preview or hotfix copies. Preserve your chosen optional patches."], ["Install the required engine", "Preview 40 uses custom engine commit 75cbdbc8436d1f5d0fe4ee774ae3913b910f3373 and its matching DB0. With the game closed, back up your existing files and extract the engine ZIP into the Anomaly game folder: executables and PDBs go under bin, and the DB0 under db/mods. The engine package is installed in the game folder, not as a normal MO2 mod. Stock Anomaly or upstream Monolith executables are not supported for this native rebuild."], ["Saves and upgrades", "Start a new game when moving from the old public mod to the native rebuild. Preview 40 itself does not require a new game or different EXEs/DB0 when upgrading from Preview 39. Back up saves before changing item configurations and test custom exports on a disposable save."], ["SOTA UI and HD Icons", "SOTA UI is optional. Check SOTA UI compatibility only when SOTA and its requirements are installed. With SOTA, use the SOTA-patched HD Inventory Icons Framework; without SOTA, use the non-SOTA variant. Never enable both variants. Squared Away must win the relevant UI conflicts: put it below those mods in the MO2 left pane. Both UI choices use Field Kit artwork and support the two inventory layouts in MCM."], ["Wearable Devices support", "Select this FOMOD option only with the separately installed Wearable Devices pack. It adds device controls below the backpack and keeps equipped devices out of the bag grid."], ["Tarkov-like corpse looting", "Select this FOMOD option only with Looting Takes Time Redux by Priler. Turn OFF its \"Pre-sort items on grid\" MCM option. The patch changes corpse looting; stashes and living NPCs keep their usual behavior."], ["Magazine support", "The baseline is Mags Reloaded Fork by Priler UPDATE 6. Install it separately for magazine support and the three stock expansion pouches. GAMMA recipes and trader integrations require the corresponding GAMMA content; a plain Anomaly setup does not supply those dependencies automatically. Use the direct download message below."], ["Create and install an add-on", "Save a project backup, edit your items, then open Check and resolve errors. Use Export mod to create the ZIP and install it as a separate MO2 mod below Squared Away and all its patches. Enable only one ZoneBench export; combine desired community items in one project before exporting. Existing browser customizations are preserved when the baseline updates. Exports include item configuration and selected assets, not the inventory runtime or engine."], ["Settings and context menus", "Squared Away settings are grouped in MCM, including layout, appearance, controls, rig rules and drops. Saved MCM choices override exported drop and condition defaults. Box and rig context-menu support is included for vanilla Anomaly and GAMMA; no additional context-menu FOMOD patch is needed."], ["Browse and publish", "Community previews show item textures, layouts and properties before import. Signed-in creators can publish, update and unpublish their own add-ons. Administrator removal has been tested. Community access is currently available through the preview link."], ["Keep your work", "Editing and exports happen in your browser. Save project downloads a portable backup. Reset item customizations clears local edits, not your account or published add-ons. Email sign-in and community listings use Appwrite. No analytics or bug-report uploads are included."]];
- for(const [title,copy] of blocks){const c=n('section','card help-card');c.appendChild(n('h2',null,title));c.appendChild(n('p',null,copy));if(title==='Magazine support'){const a=link('Download Mags Reloaded Fork by Priler UPDATE 6','https://discord.com/channels/912320241713958912/1322655858240262304/1524208180135989459',true);a.target='_blank';a.rel='noopener noreferrer';c.appendChild(a);}P.appendChild(c);}P.appendChild(action('Go to downloads','downloads',true));
+ const blocks=[
+  [
+    "Squared Away 2.0 Update",
+    "ZoneBench is ready for the 2.0 Update. Home introduces the mod, Introduction explains its mechanics, and Patch Notes covers what changed. The 2.0 mod download is still being prepared; Downloads only lists published packages. An older download is not the version this editor targets."
+  ],
+  [
+    "Install the mod",
+    "Use Anomaly 1.5.3 or your GAMMA installation. Install the full Squared Away ZIP through Mod Organizer 2 (MO2). Its FOMOD installer lets you choose optional patches. Replace an older Squared Away installation instead of merging files, and disable old copies and hotfixes. Select only patches for mods you actually have."
+  ],
+  [
+    "Install the matching engine",
+    "The 2.0 Update requires the Squared Away custom engine and its matching DB0 file. Close the game and back up your existing engine files, then extract the engine ZIP into your Anomaly game folder. The bin folder contains the executables and PDB files; db/mods contains the DB0. Preserve that folder structure. Install this package in Anomaly itself, not as an MO2 mod. Stock Anomaly and unmodified Monolith executables are not supported."
+  ],
+  [
+    "Engine choices and developer files",
+    "The all-DX engine package is configured to include DX8, DX9, DX10 and DX11 executables, each with AVX and non-AVX versions. Choose a renderer supported by your setup, and use AVX only if your CPU supports it. The separate For Developers ZIP is for engine authors merging changes; players do not need it. Always use the engine paired with your mod release in Downloads."
+  ],
+  [
+    "Start a new game",
+    "Upgrading from the previous public Squared Away release to 2.0 requires a new game. Do not continue an old playthrough with the rewrite. Back up saves before changing custom item configurations, and test add-ons on a separate save."
+  ],
+  [
+    "SOTA UI and HD Inventory Icons",
+    "SOTA UI is optional. Select SOTA UI compatibility in the installer only if SOTA and its usual requirements are installed. If you use HD Inventory Icons Framework, choose its SOTA-patched version with SOTA, or its non-SOTA version without it. Never enable both. Place Squared Away below those UI mods in the MO2 left pane so its files win conflicts. Both UI choices use the Field Kit artwork and support the Tarkov-like and Anomaly default layouts."
+  ],
+  [
+    "Wearable Devices support",
+    "Select Wearable Devices support in the installer only with the separate Wearable Devices pack installed. It adds device controls below the backpack, keeps worn devices out of the bag grid, and adds the relevant settings to Squared Away in MCM."
+  ],
+  [
+    "Tarkov-like corpse looting",
+    "This installer option requires Looting Takes Time Redux by Priler. In that mod’s MCM settings, turn OFF Pre-sort items on grid so it does not compete with Squared Away for item placement. The patch changes corpse looting; stashes and living NPCs keep their normal behavior."
+  ],
+  [
+    "Magazine support",
+    "The baseline is Mags Reloaded Fork by Priler UPDATE 6. Install it separately for magazine support and the three stock expansion pouches. The direct download message is linked below. GAMMA recipes and trader integrations also need their corresponding GAMMA content; plain Anomaly does not include those dependencies automatically."
+  ],
+  [
+    "Inventory, rigs and containers",
+    "Drag and rotate items to fit the grid. Equipped rigs provide accessible storage above the backpack; spare rigs and boxes keep their contents inside when dropped or stored. Expansion pouches attach below the equipped rig, and amber borders mark the extra storage they provide. See Introduction for the illustrated guide."
+  ],
+  [
+    "Reloading, quick use and crafting",
+    "By default, keep magazines in the equipped rig to reload, medicine there for quick use, and loose ammunition there for weapons that reload without magazines. Medicine and loose-ammo restrictions can be adjusted in MCM. Crafting and NPC item hand-ins can use items inside carried containers without unpacking them first. A non-empty rig cannot be disassembled."
+  ],
+  [
+    "Appearance and controls",
+    "Open Squared Away in MCM to choose your inventory layout, adjust background opacity, and configure controls, rig rules and drops. The backpack and rig equipment slots scroll with the inventory. White key prompts show available actions. The Swap toggle is beside the weight display. Box and rig context-menu actions are included for Anomaly and GAMMA; they do not need a separate installer patch."
+  ],
+  [
+    "Create and install your own add-on",
+    "In Editor, choose Rigs, Containers, Pouches, Backpacks or Drops and make your changes. Save project downloads a backup. Open Check and resolve errors, then use Export mod to create your ZIP. Install that ZIP as a separate MO2 mod below Squared Away and its optional patches. Keep only one ZoneBench export enabled: combine everything you want in one project before exporting. Exports contain item configuration and selected assets, not the inventory scripts or engine. Saved MCM settings take priority over exported drop and condition defaults."
+  ],
+  [
+    "Browse Community add-ons",
+    "Community lets you browse optional player-made add-ons. Open View items to inspect their icons, storage layouts, descriptions, prices and crafting details before importing. Choose what to bring into your project, then export the combined result. Imports do not install anything into your game, and creator updates do not automatically overwrite your project."
+  ],
+  [
+    "Publish and update your add-ons",
+    "Sign in through Account using a code sent to your email. Your email is not shown on listings. Use Share items in Editor to select customizations and publish an add-on. In My add-ons, use Edit / update to revise the same listing instead of publishing duplicate versions, or Unpublish to remove it from public browsing. Other users keep items they already imported. Community accounts currently use the preview link below."
+  ],
+  [
+    "Keep your work",
+    "Item editing and exports happen in your browser. Use Save project regularly and Open project to restore a downloaded backup. Account → Reset item customizations clears local item edits and imported items only. It does not delete your account, sign you out, or remove published add-ons or installed game files."
+  ],
+  [
+    "Administrator controls",
+    "Your admin account has Manage public add-ons for removing unwanted listings and blocking abusive publishers. Next mod update keeps selected add-ons for later review. Account → Edit site text lets you change website wording: navigate to a page, select Refresh list, choose text, and Save for everyone. Identical phrases share the edit. Restore original returns to the current built-in wording. These controls are restricted to the administrator; website text edits do not change item configurations."
+  ]
+];
+ for(const [title,copy] of blocks){const c=n('section','card help-card');c.appendChild(n('h2',null,title));c.appendChild(n('p',null,copy));if(title==='Magazine support'){const a=link('Download Mags Reloaded Fork by Priler UPDATE 6','https://discord.com/channels/912320241713958912/1322655858240262304/1524208180135989459',true);a.target='_blank';a.rel='noopener noreferrer';c.appendChild(a);}P.appendChild(c);}const communityURL=new URL(location.href);communityURL.searchParams.set('community-preview','1');communityURL.hash='community';P.appendChild(link('Open Community preview',communityURL.href));P.appendChild(action('Go to downloads','downloads',true));
 }
 root.Site={shell,go,tabFromHash,home,downloads,help};
 window.addEventListener('popstate',()=>{TAB=tabFromHash();render();});

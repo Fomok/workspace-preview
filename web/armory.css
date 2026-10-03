@@ -58,3 +58,5 @@ body{font-size:14px}button,a,input,textarea,select{transition:background-color .
 .site-copy-list{max-height:28vh;overflow:auto;display:grid;gap:6px}.site-copy-list button{text-align:left;white-space:normal;overflow-wrap:anywhere;font-size:12px;line-height:1.45}.site-copy-changed{border-left:3px solid #cca65b!important}.site-copy-original{font-size:12px;color:#bbc5c7;max-height:130px;overflow:auto;white-space:pre-wrap}.site-copy-form label{font-size:13px}
 .site-copy-panel button:focus-visible,.site-copy-panel input:focus-visible,.site-copy-panel textarea:focus-visible{outline:2px solid #ddba76;outline-offset:2px}
 @media(min-width:1000px){body.site-copy-active #app{margin-right:470px}}
+
+.hero-game-label .game-label-prefix{color:#f2f1ec}.hero-game-label .game-label-stalker{color:#d4ae63}.hero-game-label .game-label-gamma{color:#9cba80}

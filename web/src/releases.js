@@ -3,8 +3,8 @@
 const repo='Fomok/xray-monolith-inventory-edits';
 function pick(release){
  if(!release||release.draft||!Array.isArray(release.assets))return null;
- const mod=release.assets.filter(a=>/^Squared[-_]?Away[_-](?:\d|FOMOD)/i.test(a.name)&&/\.zip$/i.test(a.name)&&!/engine|source|model[-_]test/i.test(a.name));
- const engine=release.assets.filter(a=>/\.zip$/i.test(a.name)&&(/Squared[-_]?Away.*DX11.*AVX/i.test(a.name)||/STALKER-Anomaly-modded-exes.*SquaredAway/i.test(a.name)));
+ const mod=release.assets.filter(a=>/^Squared[-_]?Away[_-](?:\d|FOMOD)/i.test(a.name)&&/\.zip$/i.test(a.name)&&!/engine|source|model[-_]test|for[-_]developers|all[-_]dx|dx(?:8|9|10|11)/i.test(a.name));
+ const engine=release.assets.filter(a=>/\.zip$/i.test(a.name)&&(/Squared[-_]?Away.*(?:DX11.*AVX|All[-_]DX)/i.test(a.name)||/STALKER-Anomaly-modded-exes.*SquaredAway/i.test(a.name)));
  if(mod.length!==1||engine.length!==1)return null;
  const safe=a=>{try{const u=new URL(a.browser_download_url);return u.protocol==='https:'&&u.hostname==='github.com'&&u.pathname.startsWith('/'+repo+'/releases/download/');}catch{return false;}};
  if(!safe(mod[0])||!safe(engine[0]))return null;

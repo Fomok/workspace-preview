@@ -8,3 +8,5 @@ test('downloads never combine incomplete releases or choose among ambiguous asse
 test('drafts and untrusted download hosts are rejected',()=>{const r=structuredClone(releases[0]);r.draft=true;assert.equal(c.Releases.pick(r),null);r.draft=false;r.assets.find(x=>x.name==='SquaredAway_3.49.2.zip').browser_download_url='https://untrusted.example/mod.zip';assert.equal(c.Releases.pick(r),null);});
 
 test('website fallback never includes draft releases',()=>{const rows=JSON.parse(fs.readFileSync('web/data/releases.json','utf8'));assert(rows.every(x=>!x.draft));});
+
+test('2.0 all-DX package is paired with the mod and excludes developer sources',()=>{const r=fixture('v2.0',false,'Squared-Away-2.0.zip','Squared-Away-2.0-All-DX.zip');r.assets.push({name:'Squared-Away-2.0-For-Developers.zip',browser_download_url:base+'v2.0/Squared-Away-2.0-For-Developers.zip'});const picked=c.Releases.pick(r);assert.equal(picked.mod.name,'Squared-Away-2.0.zip');assert.equal(picked.engine.name,'Squared-Away-2.0-All-DX.zip');r.draft=true;assert.equal(c.Releases.pick(r),null);});
