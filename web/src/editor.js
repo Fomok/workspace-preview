@@ -604,7 +604,7 @@ function renderList(){
 function fmt(n){ return String(n==null?0:n).replace(/\B(?=(\d{3})+(?!\d))/g,","); }
 
 function renderPane(){
-  const P=$("#pane"); P.innerHTML="";
+  const P=$("#pane"); if(P._previewPaint){P.removeEventListener("input",P._previewPaint);P.removeEventListener("change",P._previewPaint);P._previewPaint=null;} P.innerHTML="";
   if(window.Introduction)Introduction.cleanup();
   P.classList.remove("site-content","item-editor","patch-notes-page");
   if(TAB==="patchnotes")return PatchNotes.render(P);
@@ -642,7 +642,7 @@ function renderPane(){
 
 /* small field builders --------------------------------------------- */
 function field(parent, label, hint, node){
-  const l=el("label","f");
+  const l=el("label","f"); l.dataset.fieldLabel=label;
   l.appendChild(el("span",null, esc(label)+(hint?' <em>'+esc(hint)+'</em>':"")));
   l.appendChild(node); parent.appendChild(l); return node;
 }
@@ -884,6 +884,7 @@ function adoptNote(P, it, one){
    question - and the little block of squares under them is what makes
    "2 by 3" mean something without going and looking. */
 function bagSize(parent, it){
+  const footprint=el("div","bag-size-settings");parent.appendChild(footprint);parent=footprint;
   const g=el("div","grid2");
   field(g,"Cells wide","in the bag",stepper(it,"cellw",{min:1,max:8,redraw:true}));
   field(g,"Cells tall","in the bag",stepper(it,"cellh",{min:1,max:8,redraw:true}));
@@ -1133,7 +1134,7 @@ function drawRig(P,it){
   c1.appendChild(f); top.appendChild(c1);
 
   const derived=tierOf(it.slots);
-  const c2=el("div","card"); c2.style.maxWidth="270px";
+  const c2=el("div","card"); c2.dataset.settingsGroup="economy"; c2.style.maxWidth="270px";
   const w=worthOf(it.slots);
   const advice=el("div","hint");
   const sayPrice=()=>{
@@ -2544,7 +2545,7 @@ function drawBox(P,it){
   c1.appendChild(f); cards.appendChild(c1);
 
   if(!it.borrowed && !it.adopt){
-    const c2=el("div","card"); c2.style.maxWidth="270px";
+    const c2=el("div","card"); c2.dataset.settingsGroup="economy"; c2.style.maxWidth="270px";
     const g=el("div","grid2");
     field(g,"Weight","kg, empty",num(it,"weight",{min:0,step:0.1}));
     field(g,"Price","RU",num(it,"cost",{min:0,step:100,int:true,live:true}));
@@ -3659,106 +3660,39 @@ function beyondTheBench(){
 }
 
 function drawBuild(P){
-  P.appendChild(el("h1",null,"Export mod"));
-  P.appendChild(el("div","hint",
-    "Export your project as a ZIP. Install it as a separate MO2 mod after "
-    + "Squared Away and its patches. Enable only one ZoneBench export at a time. "
-    + "The base mod and matching custom engine are required."));
-
-  // WHAT IS WRONG COMES FIRST. A build from a bench with a broken
-  // section in it is a build that will not load, and offering the
-  // button anyway is the unkind thing to do.
-  const stop = checkFindings().bad;
-  try { ZB.validate(DB); } catch(error) { stop.push(esc(error.message)); }
-  if(stop.length){
-    const c=el("div","card");
-    c.appendChild(el("div","sect","Not yet"));
-    stop.forEach(m=>c.appendChild(el("div","warn",m)));
-    c.appendChild(el("div","hint","The Check page has these too. Fix them and come back."));
-    P.appendChild(c);
-    return;
-  }
-
-  const beyond = beyondTheBench();
-  if(beyond.length){
-    const c=el("div","card");
-    c.appendChild(el("div","sect","What the build will leave out"));
-    beyond.forEach(b=>{
-      const n=el("div","note");
-      n.innerHTML = "<b>" + esc(b.what) + "</b>"
-        + (b.who.length ? " &mdash; " + b.who.map(esc).join(", ") : "")
-        + "<br>" + esc(b.why);
-      c.appendChild(n);
-    });
-    c.appendChild(el("div","hint",
-      "Everything else still builds. Send me the save when you want these too "
-      + "&mdash; the zip and the save are the same set of changes, so nothing "
-      + "is lost by doing both."));
-    P.appendChild(c);
-  }
-
-  /* THE CHANGED FILES, AND A COUNT OF THE REST. Every file in the zip
-     listed flat is forty-one rows of which two are the answer, and a
-     page that makes you find the two is a page nobody reads. */
-  P.appendChild(el("div","sect","What it will write"));
-  const list=el("div","card");
-  const man = manifest();
-  const changed = man.filter(f=>f.why), rest = man.filter(f=>!f.why && !f.stop);
-  /* A FILE THAT CANNOT BE WRITTEN IS NOT AN UNCHANGED FILE. Listing it
-     among the ones that go in the zip untouched would be the one
-     sentence a build needs to say, said wrong. */
-  man.filter(f=>f.stop).forEach(f=>{
-    list.appendChild(el("div","warn", "<b>" + esc(f.name)
-      + "</b> cannot be written yet &mdash; " + esc(f.stop) + "."));
-  });
-  if(changed.length){
-    const tbl=el("table");
-    tbl.innerHTML="<thead><tr><th>File</th><th>What changed</th></tr></thead>";
-    const tb=el("tbody");
-    changed.forEach(f=>{
-      tb.innerHTML += "<tr><td class='mono'>" + esc(f.name) + "</td><td>"
-        + esc(f.why) + "</td></tr>";
-    });
-    tbl.appendChild(tb); list.appendChild(tbl);
-  } else {
-    list.appendChild(el("div",null,
-      "Nothing differs yet &mdash; what comes out would be the mod you "
-      + "already have. Change something and it will be listed here."));
-  }
-  if(rest.length){
-    const more=el("div","hint");
-    const a=el("a",null, rest.length + " more file"
-      + (rest.length===1?"":"s") + " go in the zip unchanged");
-    a.style.cssText="color:var(--dim);cursor:pointer;text-decoration:underline";
-    const ul=el("div","mono"); ul.hidden=true;
-    ul.style.cssText="margin-top:8px;color:var(--faint);line-height:1.9";
-    ul.innerHTML=rest.map(f=>esc(f.name)).join("<br>");
-    a.onclick=()=>{ ul.hidden=!ul.hidden; };
-    more.appendChild(a); more.appendChild(ul);
-    list.appendChild(more);
-  }
-  P.appendChild(list);
-
-  const go=el("div"); go.style.marginTop="20px";
-  const btn=el("button","tool primary");
-  btn.textContent="Write the files";
-  btn.style.padding="11px 22px";
-  const say=el("div","hint"); say.style.marginTop="10px";
-  btn.onclick=()=>{
-    btn.disabled=true; btn.textContent="Working...";
-    say.className="hint"; say.textContent="Laying out the icon sheets...";
-    Promise.resolve().then(()=>doBuild(m=>{ say.textContent=m; })).then(res=>{
-      btn.disabled=false; btn.textContent="Write the files";
-      say.className="hint";
-      say.innerHTML="Wrote <b>" + res.count + "</b> files, "
-        + (res.size/1048576).toFixed(1) + " MB. Install this ZIP as a separate MO2 mod after Squared Away and its patches.";
-    }).catch(e=>{
-      btn.disabled=false; btn.textContent="Write the files";
-      say.className="warn"; say.textContent="It did not finish: " + e.message;
-    });
+  P.appendChild(el('h1',null,'Export your add-on'));
+  P.appendChild(el('p','hint','Review your project, check for issues, then download one ZIP for Mod Organizer 2.'));
+  const findings=checkFindings();try{ZB.validate(DB);}catch(error){findings.bad.push(esc(error.message));}
+  const beyond=beyondTheBench(),man=manifest();
+  const nav=el('nav','export-steps');nav.setAttribute('aria-label','Export steps');P.appendChild(nav);
+  const panels=['Review','Fix issues','Download'].map((name,i)=>{const section=el('section','card export-step');section.setAttribute('aria-label',name);P.appendChild(section);return section;});
+  const buttons=[];function show(index){panels.forEach((p,i)=>p.hidden=i!==index);buttons.forEach((b,i)=>{if(i===index)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');});}
+  ['Review','Fix issues','Download'].forEach((name,i)=>{const b=el('button','tool',(i+1)+'. '+name);b.type='button';b.onclick=()=>show(i);nav.appendChild(b);buttons.push(b);});
+  const review=panels[0];review.appendChild(el('h2',null,'1. Review your project'));
+  const counts=el('div','export-summary');for(const [key,label] of [['rigs','Rigs'],['boxes','Containers'],['pouches','Pouches'],['packs','Backpacks']])counts.appendChild(el('div',null,'<strong>'+((DB[key]||[]).length)+'</strong><span>'+label+'</span>'));review.appendChild(counts);
+  review.appendChild(el('p','hint','The ZIP contains configuration and selected assets. It requires Squared Away 2.0 and its matching custom engine.'));
+  const files=el('details','export-files');files.appendChild(el('summary',null,'File review ('+man.length+')'));
+  const table=el('table');table.innerHTML='<thead><tr><th>File</th><th>Contents</th></tr></thead>';const body=el('tbody');
+  for(const f of man){const row=el('tr');row.appendChild(el('td','mono',esc(f.name)));row.appendChild(el('td',null,esc(f.stop||f.why||'Included unchanged')));body.appendChild(row);}table.appendChild(body);files.appendChild(table);review.appendChild(files);
+  const next=el('button','tool primary','Check project →');next.onclick=()=>show(1);review.appendChild(next);
+  const checks=panels[1];checks.appendChild(el('h2',null,'2. Check for issues'));
+  checks.appendChild(el('p',findings.bad.length?'warn':'ok',findings.bad.length?findings.bad.length+' issue(s) must be fixed before downloading.':'No blocking issues. Your project can be exported.'));
+  for(const m of findings.bad)checks.appendChild(el('div','warn',m));
+  if(findings.soft.length){const warnings=el('details');warnings.appendChild(el('summary',null,findings.soft.length+' recommendation(s) — export is still allowed'));for(const m of findings.soft)warnings.appendChild(el('div','note',m));checks.appendChild(warnings);}
+  if(beyond.length){const omitted=el('details');omitted.open=true;omitted.appendChild(el('summary',null,'Changes that will not be exported'));for(const b of beyond)omitted.appendChild(el('p','note','<b>'+esc(b.what)+'</b> '+b.who.map(esc).join(', ')+'<br>'+esc(b.why)));checks.appendChild(omitted);}
+  const edit=el('button','tool','Return to Editor');edit.onclick=()=>Site.go('rigs');checks.appendChild(edit);
+  const ready=el('button','tool primary','Continue to download →');ready.disabled=!!findings.bad.length;ready.onclick=()=>show(2);checks.appendChild(ready);
+  const download=panels[2];download.appendChild(el('h2',null,'3. Download and install'));
+  download.appendChild(el('p',null,'Install the exported ZIP as a separate MO2 mod below Squared Away and its optional patches. Enable only one ZoneBench export at a time.'));
+  if(findings.bad.length)download.appendChild(el('p','warn','Fix the blocking issues in step 2 before downloading.'));
+  const button=el('button','tool primary','Download add-on ZIP');button.disabled=!!findings.bad.length;download.appendChild(button);
+  const status=el('p','hint');status.setAttribute('role','status');download.appendChild(status);
+  button.onclick=async()=>{button.disabled=true;button.textContent='Preparing ZIP…';status.className='hint';
+    try{ZB.validate(DB);if(checkFindings().bad.length)throw new Error('Your project has blocking issues. Return to step 2.');const result=await doBuild(message=>{status.textContent=message;});status.textContent='Downloaded '+result.count+' files ('+(result.size/1048576).toFixed(1)+' MB). Install this ZIP using the instructions above.';}
+    catch(error){status.className='warn';status.textContent='Download could not finish: '+error.message;}
+    finally{button.disabled=false;button.textContent='Download add-on ZIP';}
   };
-  go.appendChild(btn); go.appendChild(say);
-  P.appendChild(go);
+  show(0);
 }
 
 /* Which files this build would touch, and why - worked out by running

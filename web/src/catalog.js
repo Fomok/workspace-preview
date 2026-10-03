@@ -27,19 +27,15 @@ async function drawCatalog(P){
    const url=new URL(location.href);url.searchParams.set('community-preview','1');url.hash='community';
    const link=document.createElement('a');link.className='tool primary';link.href=url.href;link.textContent='Open community preview';card.appendChild(link);P.appendChild(card);return;
   }
-  const grid=el('div','catalog-grid');P.appendChild(grid);
-  for(const entry of CATALOG.addons){
-   const row=el('article','card addon-listing');const card=el('div','addon-listing-content');row.appendChild(card);card.appendChild(el('h2',null,esc(entry.name)));card.appendChild(el('p','hint',esc(entry.author)+' · '+esc(entry.version)));card.appendChild(el('p',null,esc(entry.description)));
-   grid.appendChild(row);
-   const show=AddonPreview.card(card,entry,async()=>{
+  const records=CATALOG.addons.map(entry=>({listing:entry,load:CatalogBrowser.once(async()=>{
     if(!/^[a-z0-9_-]+\.json$/.test(entry.file))throw new Error('Invalid catalog file.');
     const response=await fetch('catalog/'+entry.file);if(!response.ok)throw new Error('Could not download this pack.');
     return {listing:entry,pack:ZB.validateAddon(await response.json())};
-   },({pack})=>{
-    INCOMING={from:pack.from,families:pack.families||{},items:pack.items.map(x=>({kind:x.kind,item:x.item,take:true,how:'rename'}))};
-    TAB='share';render();
-   });
+  })}));
+  CatalogBrowser.mount(P,records,(record,grid)=>{
+   const entry=record.listing,row=el('article','card addon-listing'),card=el('div','addon-listing-content');row.appendChild(card);card.appendChild(el('h2',null,esc(entry.name)));card.appendChild(el('p','hint',esc(entry.author)+' · '+esc(entry.version)));card.appendChild(el('p',null,esc(entry.description)));grid.appendChild(row);
+   const show=AddonPreview.card(card,entry,record.load,({pack})=>{INCOMING={from:pack.from,families:pack.families||{},items:pack.items.map(x=>({kind:x.kind,item:x.item,take:true,how:'rename'}))};TAB='share';render();});
    const button=el('button','tool primary','View items');button.onclick=show;card.appendChild(button);
-  }
+  });
  }catch(error){status.textContent=error.message+' Your project is still available. Reopen this tab to retry.';CATALOG=null;}
 }

@@ -51,18 +51,21 @@ async function drawCommunityCatalog(P){
   if(!user&&COMMUNITY_MODE!=='public')COMMUNITY_MODE='public';
   if(COMMUNITY_EDIT&&user){status.remove();drawCommunityPublish(P,COMMUNITY_EDIT);return;}
   const selected=COMMUNITY_MODE==='selections';
-  const result=await Community.request(selected?'selections':'list',{mode:COMMUNITY_MODE,offset:COMMUNITY_OFFSET});if(!P.contains(status))return;status.remove();
+  const result=await Community.request(selected?'selections':'list',{mode:COMMUNITY_MODE,offset:COMMUNITY_MODE==='public'?0:COMMUNITY_OFFSET});if(!P.contains(status))return;
+  // Metadata is small. Search the whole public library, not only its first page.
+  if(COMMUNITY_MODE==='public'){let offset=result.items.length;while(offset<result.total){status.textContent='Loading add-ons: '+offset+' of '+result.total+'…';const page=await Community.request('list',{mode:'public',offset});if(!P.contains(status))return;if(!page.items.length)break;result.items.push(...page.items);offset+=page.items.length;}}
+  status.remove();
   if(COMMUNITY_MODE==='mine')communityButton(P,'Publish a new add-on',async()=>{TAB='share';render();},true);
-  if(!result.items.length)communityMessage(P,selected?'No versions selected for the next mod update.':'No add-ons here yet. Create items in the editor, then publish them from Share items.');
-  const grid=el('div','catalog-grid');P.appendChild(grid);
-  for(const listing of result.items){
+  if(!result.items.length&&COMMUNITY_MODE!=='public')communityMessage(P,selected?'No versions selected for the next mod update.':'No add-ons here yet. Create items in the editor, then publish them from Share items.');
+  const records=[...new Map(result.items.map(listing=>[listing.id,listing])).values()].map(listing=>({listing,load:CatalogBrowser.once(()=>Community.request(selected?'selectedPack':'pack',{id:listing.id}))}));
+  function renderListing(record,grid){const listing=record.listing;
    const row=el('article','card addon-listing');grid.appendChild(row);const card=el('div','addon-listing-content');row.appendChild(card);const title=el('h2');title.textContent=listing.name;card.appendChild(title);
    communityMessage(card,listing.author+' · '+listing.version+(listing.status&&listing.status!=='published'?' · '+listing.status:''));
    if(listing.description)communityMessage(card,listing.description);
    if(listing.dependencies)communityMessage(card,'Requires: '+listing.dependencies);
    const imports=['rigs','boxes','pouches','packs','items'].flatMap(k=>DB[k]||[]).filter(x=>x.communitySource?.id===listing.id);
    if(imports.length)communityMessage(card,imports.some(x=>x.communitySource.revision<listing.revision)?'Update available — your imported version stays unchanged until you choose to import.':'Items from this version are in your project.');
-   const show=AddonPreview.card(card,listing,()=>Community.request(selected?'selectedPack':'pack',{id:listing.id}),result=>Community.preview(result));
+   const show=AddonPreview.card(card,listing,record.load,result=>Community.preview(result));
    communityButton(card,'View items',show,true);
    if(listing.canEdit){
     communityButton(card,'Edit / update',async()=>{COMMUNITY_EDIT=listing;renderPane();});
@@ -81,6 +84,8 @@ async function drawCommunityCatalog(P){
     }
    }
   }
+  if(COMMUNITY_MODE==='public'){CatalogBrowser.mount(P,records,renderListing);return;}
+  const grid=el('div','catalog-grid');P.appendChild(grid);for(const record of records)renderListing(record,grid);
   const pages=el('div','community-actions');P.appendChild(pages);
   if(COMMUNITY_OFFSET>0)communityButton(pages,'Previous page',async()=>{COMMUNITY_OFFSET=Math.max(0,COMMUNITY_OFFSET-24);renderPane();});
   if(COMMUNITY_OFFSET+24<result.total)communityButton(pages,'Next page',async()=>{COMMUNITY_OFFSET+=24;renderPane();});

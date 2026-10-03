@@ -118,7 +118,7 @@ function help(P){
   ],
   [
     "Create and install your own add-on",
-    "In Editor, choose Rigs, Containers, Pouches, Backpacks or Drops and make your changes. Save project downloads a backup. Open Check and resolve errors, then use Export mod to create your ZIP. Install that ZIP as a separate MO2 mod below Squared Away and its optional patches. Keep only one ZoneBench export enabled: combine everything you want in one project before exporting. Exports contain item configuration and selected assets, not the inventory scripts or engine. Saved MCM settings take priority over exported drop and condition defaults."
+    "In Editor, choose Rigs, Containers, Pouches, Backpacks or Drops and make your changes. Save project downloads a backup. Export mod guides you through Review, Fix issues and Download. Resolve blocking errors before downloading your ZIP. Install that ZIP as a separate MO2 mod below Squared Away and its optional patches. Keep only one ZoneBench export enabled: combine everything you want in one project before exporting. Exports contain item configuration and selected assets, not the inventory scripts or engine. Saved MCM settings take priority over exported drop and condition defaults."
   ],
   [
     "Browse Community add-ons",
@@ -137,7 +137,21 @@ function help(P){
     "Your admin account has Manage public add-ons for removing unwanted listings and blocking abusive publishers. Next mod update keeps selected add-ons for later review. Account → Edit site text lets you change website wording: navigate to a page, select Refresh list, choose text, and Save for everyone. Identical phrases share the edit. Restore original returns to the current built-in wording. These controls are restricted to the administrator; website text edits do not change item configurations."
   ]
 ];
- for(const [title,copy] of blocks){const c=n('section','card help-card');c.appendChild(n('h2',null,title));c.appendChild(n('p',null,copy));if(title==='Magazine support'){const a=link('Download Mags Reloaded Fork by Priler UPDATE 6','https://discord.com/channels/912320241713958912/1322655858240262304/1524208180135989459',true);a.target='_blank';a.rel='noopener noreferrer';c.appendChild(a);}P.appendChild(c);}const communityURL=new URL(location.href);communityURL.searchParams.set('community-preview','1');communityURL.hash='community';P.appendChild(link('Open Community preview',communityURL.href));P.appendChild(action('Go to downloads','downloads',true));
+ const tools=n('div','help-tools');const search=n('input');search.type='search';search.placeholder='Search installation, controls, exporting…';search.setAttribute('aria-label','Search Help');tools.appendChild(search);P.appendChild(tools);
+ const categories=[['Install & setup',[0,1,2,3,4]],['Compatibility',[5,6,7,8]],['Playing the mod',[9,10,11]],['Editor & add-ons',[12,13,14]],['Account & administration',[15,16]]];
+ const nav=n('nav','help-topics');nav.setAttribute('aria-label','Help topics');tools.appendChild(nav);const entries=[],sections=[];
+ for(const [name,indices] of categories){const section=n('section','help-group');section.appendChild(n('h2',null,name));P.appendChild(section);sections.push(section);
+  const jump=n('button','tool',name);jump.onclick=()=>{search.value='';filter();section.scrollIntoView({block:'start',behavior:'smooth'});};nav.appendChild(jump);
+  for(const index of indices){const [title,copy]=blocks[index],c=n('details','help-topic');c.open=title==='Install the mod';const summary=n('summary',null,title);c.appendChild(summary);c.appendChild(n('p',null,copy));
+   if(title==='Magazine support'){const a=link('Download Mags Reloaded Fork by Priler UPDATE 6','https://discord.com/channels/912320241713958912/1322655858240262304/1524208180135989459',true);a.target='_blank';a.rel='noopener noreferrer';c.appendChild(a);}
+   section.appendChild(c);entries.push({node:c,text:(title+' '+copy).toLowerCase(),initial:c.open});
+  }
+ }
+ const empty=n('p','hint','No matching help topics. Try a different word.');empty.hidden=true;P.appendChild(empty);
+ function filter(){const q=search.value.trim().toLowerCase();for(const e of entries){e.node.hidden=!!q&&!e.text.includes(q);e.node.open=q?!e.node.hidden:e.initial;}for(const section of sections)section.hidden=![...section.querySelectorAll('details')].some(x=>!x.hidden);empty.hidden=entries.some(e=>!e.node.hidden);}
+ search.oninput=filter;
+ const actions=n('div','site-actions');const communityURL=new URL(location.href);communityURL.searchParams.set('community-preview','1');communityURL.hash='community';actions.appendChild(link('Open Community preview',communityURL.href));actions.appendChild(action('Go to downloads','downloads',true));P.appendChild(actions);
+
 }
 root.Site={shell,go,tabFromHash,home,downloads,help};
 window.addEventListener('popstate',()=>{TAB=tabFromHash();render();});

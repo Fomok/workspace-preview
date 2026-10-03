@@ -87,5 +87,5 @@ function card(parent,listing,load,onImport){
  const observer=new IntersectionObserver(entries=>{if(!cover.isConnected){observer.disconnect();return;}if(entries.some(x=>x.isIntersecting)){observer.disconnect();paint();}},{rootMargin:'150px'});observer.observe(cover);
  return show;
 }
-root.AddonPreview={coverItems,geometry,picture,openItem,openPack,card};
+root.AddonPreview={coverItems,geometry,picture,layoutView,openItem,openPack,card};
 })(globalThis);

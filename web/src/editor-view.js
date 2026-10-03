@@ -1,32 +1,58 @@
 /* Presentation only: move existing controls without replacing their handlers. */
 (function(root){
 const selected=new Map(),queries=new Map();
-const groups=[['overview','Overview'],['layout','Storage layout'],['craft','Craft & repair'],['availability','Availability'],['advanced','Advanced']];
+const groups=[['appearance','Appearance'],['storage','Storage'],['economy','Economy'],['craft','Crafting & repair']];
 function group(text){
- if(/pockets|fits inside|compartments|will fit|fitting it adds|room it gives|rule$/i.test(text))return 'layout';
+ if(/pockets|fits inside|compartments|will fit|fitting it adds|room it gives|rule$/i.test(text))return 'storage';
  if(/mended|made of|breaks down|costs to build/i.test(text))return 'craft';
- if(/turns up|sells it|state it is in/i.test(text))return 'availability';
- if(/take.*over/i.test(text))return 'advanced';
- return 'overview';
+ if(/turns up|sells it|state it is in|worth/i.test(text))return 'economy';
+ if(/take.*over|nobody has listed|whole kind/i.test(text))return 'advanced';
+ return 'appearance';
 }
 function organize(P,it){
- const nodes=[...P.children],panels=new Map();let current='overview',started=false;const prefix=TAB+'-'+it.id;
+ const nodes=[...P.children],panels=new Map();let current='appearance',started=false;const prefix=TAB+'-'+it.id;
  const bar=document.createElement('div');bar.className='item-sections';bar.setAttribute('role','tablist');bar.setAttribute('aria-label','Item settings');
  const container=document.createElement('div');container.className='item-settings';
- function panel(key){if(!panels.has(key)){const p=document.createElement('section');p.className='item-settings-panel';p.id=prefix+'-'+key;p.setAttribute('role','tabpanel');panels.set(key,p);}return panels.get(key);}
+ function panel(key){if(!panels.has(key)){const p=document.createElement('section');p.className='item-settings-panel';p.id=prefix+'-'+key;panels.set(key,p);}return panels.get(key);}
  for(const node of nodes){
   if(node.classList.contains('sect')){current=group(node.textContent);started=true;}
   if(!started)continue;
-  let target=node.classList.contains('danger')?'advanced':node.classList.contains('model-card')?'overview':current;
+  const target=node.classList.contains('danger')?'advanced':node.classList.contains('model-card')?'appearance':current;
   panel(target).appendChild(node);
  }
  if(!panels.size)return;
- P.appendChild(bar);P.appendChild(container);P.classList.add('item-editor');
+ // Move live controls rather than cloning them: their input handlers keep the same data.
+ for(const footprint of [...panels.values()].flatMap(section=>[...section.querySelectorAll('.bag-size-settings')])){const card=document.createElement('div');card.className='card';const h=document.createElement('h2');h.textContent='Size in inventory';card.append(h,footprint);panel('storage').prepend(card);}
+ for(const section of [...panels.values()])for(const card of [...section.querySelectorAll('[data-settings-group]')])panel(card.dataset.settingsGroup).appendChild(card);
+ const priceCard=document.createElement('div');priceCard.className='card editor-economy-fields';
+ const technical=document.createElement('div');technical.className='card';
+ for(const section of panels.values())for(const field of [...section.querySelectorAll('label.f')]){
+  const label=field.dataset.fieldLabel;
+  if(['Price','Weight','Stash tier'].includes(label))priceCard.appendChild(field);
+  else if(['Section id','Section','Built from'].includes(label))technical.appendChild(field);
+ }
+ if(priceCard.children.length)panel('economy').prepend(priceCard);
+ if(technical.children.length)panel('advanced').prepend(technical);
+ const workspace=document.createElement('div');workspace.className='editor-workspace';
+ const controls=document.createElement('div');controls.className='editor-controls';controls.append(bar,container);workspace.appendChild(controls);
+ const aside=document.createElement('aside');aside.className='editor-preview card';aside.setAttribute('aria-label','Item preview');aside.setAttribute('data-no-site-copy','');workspace.appendChild(aside);
+ function paint(){
+  aside.replaceChildren();const title=document.createElement('h2');title.textContent=it.name||it.id;aside.appendChild(title);
+  const label=document.createElement('p');label.className='eyebrow';label.textContent='INVENTORY PREVIEW';aside.appendChild(label);
+  aside.appendChild(fitPreview(it,220,190));
+  const footprint=document.createElement('p');footprint.className='hint';footprint.textContent=(it.cellw||2)+' × '+(it.cellh||2)+' cells in inventory';aside.appendChild(footprint);
+  if(['rigs','boxes','pouches'].includes(TAB))aside.appendChild(AddonPreview.layoutView({kind:TAB,item:it}));
+  if(TAB==='packs'){const shape=EMIT.packSize(it.size)||EMIT.packSize(DB.packDefault);if(shape)aside.appendChild(packPreview(shape));}
+ }
+ if(P._previewPaint){P.removeEventListener('input',P._previewPaint);P.removeEventListener('change',P._previewPaint);}P._previewPaint=paint;
+ paint();ICOPAINT.push(paint);P.addEventListener('input',paint);P.addEventListener('change',paint);
+ P.appendChild(workspace);P.classList.add('item-editor');
  const buttons=new Map();
- function activate(key,focus=false){selected.set(prefix,key);for(const [id,p] of panels){p.hidden=id!==key;const b=buttons.get(id);b.setAttribute('aria-selected',String(id===key));b.tabIndex=id===key?0:-1;}if(focus)buttons.get(key).focus();}
- for(const [key,label] of groups){if(!panels.has(key))continue;const b=document.createElement('button');b.textContent=label;b.type='button';b.setAttribute('role','tab');b.id=prefix+'-tab-'+key;b.setAttribute('aria-controls',panels.get(key).id);panels.get(key).setAttribute('aria-labelledby',b.id);b.onclick=()=>activate(key);buttons.set(key,b);bar.appendChild(b);container.appendChild(panels.get(key));}
+ function activate(key,focus=false){selected.set(prefix,key);for(const [id,b] of buttons){panels.get(id).hidden=id!==key;b.setAttribute('aria-selected',String(id===key));b.tabIndex=id===key?0:-1;}if(focus)buttons.get(key).focus();}
+ for(const [key,label] of groups){if(!panels.has(key))continue;const b=document.createElement('button');b.textContent=label;b.type='button';b.setAttribute('role','tab');b.id=prefix+'-tab-'+key;b.setAttribute('aria-controls',panels.get(key).id);panels.get(key).setAttribute('role','tabpanel');panels.get(key).setAttribute('aria-labelledby',b.id);b.onclick=()=>activate(key);buttons.set(key,b);bar.appendChild(b);container.appendChild(panels.get(key));}
+ if(panels.has('advanced')){const more=document.createElement('details');more.className='editor-advanced';const summary=document.createElement('summary');summary.textContent='Advanced settings';more.append(summary,panels.get('advanced'));controls.appendChild(more);}
  bar.onkeydown=e=>{const keys=[...buttons.keys()];const at=keys.indexOf(selected.get(prefix));let next;if(e.key==='ArrowRight')next=keys[(at+1)%keys.length];if(e.key==='ArrowLeft')next=keys[(at+keys.length-1)%keys.length];if(e.key==='Home')next=keys[0];if(e.key==='End')next=keys.at(-1);if(next){e.preventDefault();activate(next,true);}};
- activate(panels.has(selected.get(prefix))?selected.get(prefix):'overview');
+ activate(buttons.has(selected.get(prefix))?selected.get(prefix):buttons.keys().next().value);
 }
 function list(L){
  const toolbar=document.createElement('div');toolbar.className='item-library-tools';
