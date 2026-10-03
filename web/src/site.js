@@ -2,7 +2,7 @@
 (function(root){
 'use strict';
 const editing=['rigs','boxes','pouches','packs','drops','check','share','build'];
-const routes={home:'home',introduction:'introduction',catalog:'community',downloads:'downloads',help:'help',account:'account'};
+const routes={patchnotes:'patch-notes',home:'home',introduction:'introduction',catalog:'community',downloads:'downloads',help:'help',account:'account'};
 const n=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e;};
 function route(tab){return '#'+(routes[tab]||'editor/'+tab);}
 function tabFromHash(){const value=location.hash.slice(1);return Object.keys(routes).find(k=>routes[k]===value)||(value.startsWith('editor/')&&editing.includes(value.slice(7))?value.slice(7):'home');}
@@ -13,8 +13,8 @@ function shell(){
  const isEditor=editing.includes(TAB);document.body.classList.toggle('site-page',!isEditor);document.body.classList.toggle('home-page',TAB==='home');document.body.classList.toggle('introduction-page',TAB==='introduction');
  document.querySelector('#nav').hidden=!isEditor;document.querySelector('#project-tools').hidden=!isEditor;
  const top=document.querySelector('#site-nav');top.replaceChildren();
- for(const [tab,label] of [['home','Home'],['introduction','Introduction'],['rigs','Editor'],['catalog','Community'],['downloads','Downloads'],['help','Help'],['account','Account']]){
-  const a=n('a',(tab==='rigs'?isEditor:TAB===tab)?'active':'',label);a.href=route(tab);if(a.className)a.setAttribute('aria-current','page');a.onclick=e=>{if(e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;e.preventDefault();go(tab);};top.appendChild(a);
+ for(const [tab,label] of [['patchnotes','Patch Notes'],['home','Home'],['introduction','Introduction'],['rigs','Editor'],['catalog','Community'],['downloads','Downloads'],['help','Help'],['account','Account']]){
+  const a=n('a',(tab==='rigs'?isEditor:TAB===tab)?'active':'',label);a.href=route(tab);if(tab==='patchnotes')PatchNotes.decorate(a);if(a.classList.contains('active'))a.setAttribute('aria-current','page');a.onclick=e=>{if(e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;e.preventDefault();go(tab);};top.appendChild(a);
  }
  document.querySelector('.brand').onclick=()=>go('home');
  if(location.hash!==route(TAB))history.replaceState({},'',route(TAB));

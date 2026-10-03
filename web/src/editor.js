@@ -606,7 +606,8 @@ function fmt(n){ return String(n==null?0:n).replace(/\B(?=(\d{3})+(?!\d))/g,",")
 function renderPane(){
   const P=$("#pane"); P.innerHTML="";
   if(window.Introduction)Introduction.cleanup();
-  P.classList.remove("site-content","item-editor");
+  P.classList.remove("site-content","item-editor","patch-notes-page");
+  if(TAB==="patchnotes")return PatchNotes.render(P);
   if(TAB==="home")return Site.home(P);
   if(TAB==="introduction")return Introduction.render(P);
   if(TAB==="downloads")return Site.downloads(P);

@@ -98,3 +98,7 @@ The editor baseline is now Preview 40, verified against all 47 embedded configur
 The matching custom engine is `75cbdbc8436d1f5d0fe4ee774ae3913b910f3373`, with its matching DB0. The draft mod release remains hidden and its assets still need refreshing before publication; updating the editor does not publish or update the mod download.
 
 See [installation guide](docs/installation.md) for the current setup and FOMOD choices. Home and Introduction use actual gameplay screenshots, with region outlines explaining the mechanics.
+
+## Publishing patch notes
+
+Player-facing notes live in `web/src/patch-notes.js`. Add the next entry at the beginning of `entries` with a new unique `id`; keep old entries below it. The newest ID controls the amber New badge. Opening Patch Notes marks that ID read locally, including direct links. Minor spelling edits can keep the ID; a new patch must use a new ID. This preference is per browser and does not require an account. If browser storage is unavailable, it lasts only until reload. Notes do not publish the mod release.
