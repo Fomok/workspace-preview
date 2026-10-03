@@ -15,6 +15,9 @@ function play(title){
  for(const part of [before,letter,after])part.setAttribute('aria-hidden','true');
  title.replaceChildren(before,letter,after);
  const flight=document.createElement('div');flight.className='cursor-opening';flight.setAttribute('aria-hidden','true');flight.setAttribute('data-no-site-copy','');
+ const header=document.querySelector('.site-header');
+ function clipToContent(){const bottom=Math.max(0,header?.getBoundingClientRect().bottom||0);flight.style.clipPath=`inset(${bottom}px 0 0 0)`;}
+ clipToContent();
  const glyph=document.createElement('span');glyph.textContent='W';glyph.className='intro-dragged-letter';
  const cursor=document.createElement('span');cursor.className='intro-anomaly-cursor';flight.append(glyph,cursor);document.body.appendChild(flight);
  const s=getComputedStyle(title);for(const prop of ['fontFamily','fontSize','fontWeight','fontStretch','fontStyle','letterSpacing','lineHeight','color'])glyph.style[prop]=s[prop];
@@ -38,6 +41,7 @@ function play(title){
  const timeout=setTimeout(finish,4500);
  function draw(now){
   if(closed)return;if(!title.isConnected){finish();return;}
+  clipToContent();
   if(start===null)start=now;const t=(now-start)/1000,q=ease((t-.20)/2.15);
   // Track the slot through wheel, touch, scrollbar and keyboard scrolling.
   const current=letter.getBoundingClientRect(),cx=current.x+current.width/2,cy=current.y+current.height/2;
