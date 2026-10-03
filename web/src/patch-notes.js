@@ -3,15 +3,14 @@
 'use strict';
 const entries=[{
  id:'squared-away-preview40-rebuild-v1',
- title:'Squared Away: the inventory rebuild',
- version:'3.49.2 / Preview 40',
- status:'Preview • Mod download not yet published',
- summary:'The same pack-your-own inventory, rebuilt around a dedicated game engine, with a cleaner interface and fewer awkward workarounds.',
+ title:'Squared Away — 2.0 Update',
+ version:'2.0 Update',
+ status:'Coming soon • Mod download not yet published',
+ summary:'Your inventory, rebuilt. The 2.0 Update brings smarter packing, a cleaner interface and easier customization.',
  sections:[
   {title:'Before you install',items:[
-   'This rebuild requires the matching custom engine and DB0. Start a new game when moving from the old public version.',
-   'Already testing Preview 39? Preview 40 uses the same engine and does not require another new game.',
-   'These notes compare the original mod with the rebuild. They leave out temporary problems introduced and fixed during development.'
+   'Start a new game when upgrading to 2.0. Saves from the previous public version are not supported.',
+   'Install the matching custom engine package, including its DB0 game-data file, alongside the mod. See the installation guide for setup and optional patches.'
   ]},
   {title:'Packing and carrying',items:[
    'The engine now handles inventory space, item placement and saved layouts. Your chosen positions and rotations stay with your inventory.',
@@ -35,7 +34,7 @@ const entries=[{
   {title:'Installation and customization',items:[
    'The installer offers optional SOTA UI, Wearable Devices and Looting Takes Time Redux patches. Enable only the patches for mods you use.',
    'Box and rig context-menu actions work in plain Anomaly as well as GAMMA. Magazine content and other gameplay dependencies still need to be installed separately.',
-   'ZoneBench is now a website: edit items, preview layouts and export your own add-on. Its bundled data matches Preview 40.',
+   'ZoneBench is now a website: edit items, preview layouts and export your own add-on. Its bundled data is ready for the 2.0 Update.',
    'Browse community add-ons with real item previews. Creators can update or remove their listings, and unwanted listings can be moderated.'
   ]},
   {title:'Still Squared Away',items:[
