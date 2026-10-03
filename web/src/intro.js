@@ -18,7 +18,7 @@ function play(title){
  const glyph=document.createElement('span');glyph.textContent='W';glyph.className='intro-dragged-letter';
  const cursor=document.createElement('span');cursor.className='intro-anomaly-cursor';flight.append(glyph,cursor);document.body.appendChild(flight);
  const s=getComputedStyle(title);for(const prop of ['fontFamily','fontSize','fontWeight','fontStretch','fontStyle','letterSpacing','lineHeight','color'])glyph.style[prop]=s[prop];
- const r=letter.getBoundingClientRect(),cx=r.x+r.width/2,cy=r.y+r.height/2;
+ const r=letter.getBoundingClientRect();
  const scale=Math.min(1,parseFloat(s.fontSize)/74.24);
  glyph.style.width=r.width+'px';glyph.style.height=r.height+'px';
  let frame=0,closed=false,start=null;
@@ -28,16 +28,19 @@ function play(title){
   if(title.textContent===text)title.textContent=text;
   title.removeAttribute('data-no-site-copy');title.removeAttribute('aria-label');
   for(const event of ['resize','pagehide','blur'])window.removeEventListener(event,finish);
-  document.removeEventListener('scroll',finish,true);document.removeEventListener('pointerdown',finish,true);document.removeEventListener('keydown',finish,true);
+  document.removeEventListener('keydown',onKey,true);
   cancelActive=()=>{};
  }
+ function onKey(event){if(event.key==='Escape')finish();}
  cancelActive=finish;
  for(const event of ['resize','pagehide','blur'])window.addEventListener(event,finish,{once:true});
- document.addEventListener('scroll',finish,{capture:true,passive:true});document.addEventListener('pointerdown',finish,true);document.addEventListener('keydown',finish,true);
+ document.addEventListener('keydown',onKey,true);
  const timeout=setTimeout(finish,4500);
  function draw(now){
   if(closed)return;if(!title.isConnected){finish();return;}
   if(start===null)start=now;const t=(now-start)/1000,q=ease((t-.20)/2.15);
+  // Track the slot through wheel, touch, scrollbar and keyboard scrolling.
+  const current=letter.getBoundingClientRect(),cx=current.x+current.width/2,cy=current.y+current.height/2;
   const x=(1-q)**3*(-70)+3*(1-q)**2*q*Math.min(120,cx*.4)+3*(1-q)*q*q*(cx-38*scale)+q**3*cx;
   const y=(1-q)**3*(cy-100*scale)+3*(1-q)**2*q*(cy-135*scale)+3*(1-q)*q*q*(cy-65*scale)+q**3*cy;
   const angle=180-90*ease((t-.75)/.22)-90*ease((t-1.78)/.23);
