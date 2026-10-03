@@ -603,8 +603,10 @@ function fmt(n){ return String(n==null?0:n).replace(/\B(?=(\d{3})+(?!\d))/g,",")
 
 function renderPane(){
   const P=$("#pane"); P.innerHTML="";
+  if(window.Introduction)Introduction.cleanup();
   P.classList.remove("site-content","item-editor");
   if(TAB==="home")return Site.home(P);
+  if(TAB==="introduction")return Introduction.render(P);
   if(TAB==="downloads")return Site.downloads(P);
   TITLE_NODE = IDCHIP_NODE = null; IDECHO = []; ICOPAINT = [];
   if(TAB==="account") return drawCommunityAccount(P);

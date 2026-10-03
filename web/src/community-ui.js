@@ -18,6 +18,11 @@ async function drawCommunityAccount(P){
   const name=communityField(card,'Public display name',user.name);name.maxLength=60;
   communityButton(card,'Save display name',async()=>{if(name.value.trim().length<2)throw new Error('Enter at least two characters.');await Community.name(name.value.trim());communityMessage(card,'Display name saved.');});
   communityButton(card,'My add-ons',async()=>{COMMUNITY_MODE='mine';COMMUNITY_OFFSET=0;TAB='catalog';render();});
+  if(user.moderator){
+   communityMessage(card,'Admin controls: remove unwanted add-ons, block publishing by abusive creators, or save an add-on for a future mod update.');
+   communityButton(card,'Manage public add-ons',async()=>{COMMUNITY_MODE='moderation';COMMUNITY_OFFSET=0;Site.go('catalog');},true);
+   communityButton(card,'Next mod update',async()=>{COMMUNITY_MODE='selections';COMMUNITY_OFFSET=0;Site.go('catalog');});
+  }
   communityButton(card,'Sign out',async()=>{await Community.signOut();renderPane();});
   const details=document.createElement('details');const summary=document.createElement('summary');summary.textContent='Account details';details.appendChild(summary);communityMessage(details,'Account ID: '+user.id);card.appendChild(details);
   return;

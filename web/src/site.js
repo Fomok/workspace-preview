@@ -2,7 +2,7 @@
 (function(root){
 'use strict';
 const editing=['rigs','boxes','pouches','packs','drops','check','share','build'];
-const routes={home:'home',catalog:'community',downloads:'downloads',help:'help',account:'account'};
+const routes={home:'home',introduction:'introduction',catalog:'community',downloads:'downloads',help:'help',account:'account'};
 const n=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e;};
 function route(tab){return '#'+(routes[tab]||'editor/'+tab);}
 function tabFromHash(){const value=location.hash.slice(1);return Object.keys(routes).find(k=>routes[k]===value)||(value.startsWith('editor/')&&editing.includes(value.slice(7))?value.slice(7):'home');}
@@ -10,10 +10,10 @@ function go(tab){if(TAB!==tab)history.pushState({},'',route(tab));TAB=tab;render
 function action(text,tab,primary=false){const b=n('button','tool'+(primary?' primary':''),text);b.onclick=()=>go(tab);return b;}
 function link(text,url,primary=false){const a=n('a','tool'+(primary?' primary':''),text);a.href=url;return a;}
 function shell(){
- const isEditor=editing.includes(TAB);document.body.classList.toggle('site-page',!isEditor);document.body.classList.toggle('home-page',TAB==='home');
+ const isEditor=editing.includes(TAB);document.body.classList.toggle('site-page',!isEditor);document.body.classList.toggle('home-page',TAB==='home');document.body.classList.toggle('introduction-page',TAB==='introduction');
  document.querySelector('#nav').hidden=!isEditor;document.querySelector('#project-tools').hidden=!isEditor;
  const top=document.querySelector('#site-nav');top.replaceChildren();
- for(const [tab,label] of [['home','Home'],['rigs','Editor'],['catalog','Community'],['downloads','Downloads'],['help','Help'],['account','Account']]){
+ for(const [tab,label] of [['home','Home'],['introduction','Introduction'],['rigs','Editor'],['catalog','Community'],['downloads','Downloads'],['help','Help'],['account','Account']]){
   const a=n('a',(tab==='rigs'?isEditor:TAB===tab)?'active':'',label);a.href=route(tab);if(a.className)a.setAttribute('aria-current','page');a.onclick=e=>{if(e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;e.preventDefault();go(tab);};top.appendChild(a);
  }
  document.querySelector('.brand').onclick=()=>go('home');
@@ -36,7 +36,7 @@ async function home(P){
  P.classList.add('site-content');
  const hero=n('section','armory-hero');const copy=n('div','hero-copy');hero.appendChild(copy);
  copy.appendChild(n('p','eyebrow','INVENTORY MOD FOR S.T.A.L.K.E.R. ANOMALY'));copy.appendChild(n('h1',null,'SQUARED AWAY'));copy.appendChild(n('h2',null,'Make room for the Zone.'));copy.appendChild(n('p','hero-description','A grid inventory. Rigs that carry your essentials. Containers that keep your gear together.'));
- const actions=n('div','site-actions');actions.appendChild(action('↓  Download Squared Away','downloads',true));actions.appendChild(action('Open editor  →','rigs'));copy.appendChild(actions);copy.appendChild(n('p','hero-footnote','YOUR GEAR. YOUR LAYOUT.'));P.appendChild(hero);
+ const actions=n('div','site-actions');actions.appendChild(action('↓  Download Squared Away','downloads',true));actions.appendChild(action('Explore the mechanics  →','introduction'));copy.appendChild(actions);copy.appendChild(n('p','hero-footnote','YOUR GEAR. YOUR LAYOUT.'));const shot=n('figure','hero-gameplay');const img=n('img');img.src='assets/gameplay/inventory.png';img.alt='Squared Away in-game inventory with equipment, an equipped rig and backpack storage';img.width=1207;img.height=1079;shot.appendChild(img);shot.appendChild(n('figcaption',null,'IN-GAME CAPTURE / SQUARED AWAY'));hero.appendChild(shot);P.appendChild(hero);
  const content=n('div','home-sections');P.appendChild(content);
  const release=n('div');release.appendChild(n('p','hint','Checking the latest release…'));content.appendChild(release);
  Releases.load().then(result=>{if(!release.isConnected)return;release.replaceChildren();upcoming(release,result.items);if(result.items[0])releaseBlock(release,result.items[0],true);else release.appendChild(n('p','hint','A complete release package has not been published yet.'));if(result.cached)release.appendChild(n('p','hint','Showing the last verified release. Live release lookup is unavailable.'));}).catch(e=>{if(release.isConnected)release.textContent=e.message;});
