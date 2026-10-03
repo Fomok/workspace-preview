@@ -144,11 +144,12 @@ function help(P){
   const jump=n('button','tool',name);jump.onclick=()=>{search.value='';filter();section.scrollIntoView({block:'start',behavior:'smooth'});};nav.appendChild(jump);
   for(const index of indices){const [title,copy]=blocks[index],c=n('details','help-topic');c.open=title==='Install the mod';const summary=n('summary',null,title);c.appendChild(summary);c.appendChild(n('p',null,copy));
    if(title==='Magazine support'){const a=link('Download Mags Reloaded Fork by Priler UPDATE 6','https://discord.com/channels/912320241713958912/1322655858240262304/1524208180135989459',true);a.target='_blank';a.rel='noopener noreferrer';c.appendChild(a);}
-   section.appendChild(c);entries.push({node:c,text:(title+' '+copy).toLowerCase(),initial:c.open});
+   section.appendChild(c);entries.push({node:c,text:(title+' '+copy).toLowerCase()});
   }
  }
  const empty=n('p','hint','No matching help topics. Try a different word.');empty.hidden=true;P.appendChild(empty);
- function filter(){const q=search.value.trim().toLowerCase();for(const e of entries){e.node.hidden=!!q&&!e.text.includes(q);e.node.open=q?!e.node.hidden:e.initial;}for(const section of sections)section.hidden=![...section.querySelectorAll('details')].some(x=>!x.hidden);empty.hidden=entries.some(e=>!e.node.hidden);}
+ let searching=false;
+ function filter(){const q=search.value.trim().toLowerCase();for(const e of entries){if(q&&!searching)e.beforeSearch=e.node.open;e.node.hidden=!!q&&!e.text.includes(q);if(q)e.node.open=!e.node.hidden;else if(searching)e.node.open=e.beforeSearch;}searching=!!q;for(const section of sections)section.hidden=![...section.querySelectorAll('details')].some(x=>!x.hidden);empty.hidden=entries.some(e=>!e.node.hidden);}
  search.oninput=filter;
  const actions=n('div','site-actions');const communityURL=new URL(location.href);communityURL.searchParams.set('community-preview','1');communityURL.hash='community';actions.appendChild(link('Open Community preview',communityURL.href));actions.appendChild(action('Go to downloads','downloads',true));P.appendChild(actions);
 
