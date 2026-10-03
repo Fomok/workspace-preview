@@ -30,3 +30,12 @@ test('DDS writer preserves distinct color channels',()=>{
 });
 test('ZIP writer creates a standard archive',async()=>{const blob=await BUILD.zip([{name:'gamedata/test.ltx',bytes:new TextEncoder().encode('[test]\nvalue = 1')}]);const b=new Uint8Array(await blob.arrayBuffer());assert.deepEqual(Array.from(b.slice(0,4)),[80,75,3,4]);});
 test('site has no whole-runtime export path',()=>{const source=fs.readFileSync(path.join(root,'src/editor.js'),'utf8');assert(!source.includes('EMIT.scriptLists'));assert(!source.includes('put(SCRIPT_PATH'));});
+
+// Audited source hashes catch stale templates or model files in a future baseline update.
+test('Preview40 baseline matches audited templates and shared model assets',()=>{
+ const crypto=require('node:crypto');const manifest=JSON.parse(fs.readFileSync(path.join(root,'data/baseline-manifest.json'),'utf8'));const db=seed();
+ assert.equal(db.baseline,'native-grid-preview-40');assert.equal(db.baseline,manifest.baseline);assert.equal(db.engineCommit,manifest.engineCommit);
+ assert.deepEqual(Object.keys(db.files).sort(),Object.keys(manifest.templates).sort());
+ for(const [name,hash] of Object.entries(manifest.templates))assert.equal(crypto.createHash('sha256').update(db.files[name]).digest('hex'),hash,name);
+ for(const [name,hash] of Object.entries(manifest.models))assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'assets/models',name))).digest('hex'),hash,name);
+});

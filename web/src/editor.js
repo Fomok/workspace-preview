@@ -302,6 +302,8 @@ function adoptSave(d, say){
     DB.files = JSON.parse(JSON.stringify(SEED.files));
     DB.craftOrder = SEED.craftOrder;
     DB.modVersion = mine;
+    DB.baseline = SEED.baseline;
+    DB.engineCommit = SEED.engineCommit;
     DB.filesFromZip = false;
   }
 
@@ -4273,7 +4275,7 @@ function takeRule(it) {
    HELP
    ========================================================== */
 function drawHelp(P){
- P.innerHTML = `<h1>Make it yours.</h1><div class="card"><h2>Start with Squared Away</h2><p>This editor targets Squared Away 3.49.2 / native grid preview 28 and its matching custom engine. The magazine mod is still required for its three stock pouches.</p><p>Edit rigs, containers, pouches, backpack sizes, recipes and trader supplies. Item projects stay in this browser. Use <b>Save project</b> for a portable backup.</p><h2>Export and install</h2><p>Open <b>Check</b>, resolve errors, then choose <b>Export mod</b>. Install the ZIP as a separate MO2 mod after Squared Away and its patches. Keep only one ZoneBench export enabled; combine add-ons in a single project.</p><p>The export contains configuration, changed icon sheets, selected world models and a small drop-registration script. It never replaces the inventory runtime or engine. Test custom exports on a disposable new game first.</p><h2>Public add-ons</h2><p>Browse curated item packs, preview their contents and choose which items to import. Name conflicts are reviewed before applying. The catalog starts empty; community uploads and bug reporting are not enabled.</p><h2>Dimensions and models</h2><p>Legacy pocket names are height × width: 2x1 is a vertical two-cell pocket. Pockets accept any item that fits. Each rig or box has a dropped-model selector below its properties. Custom models must already be installed in your game.</p><h2>Privacy</h2><p>No accounts, analytics, bug reports or upload server. Project files and images are processed locally. Opening the website and catalog still makes normal requests to GitHub Pages.</p></div>`;
+ return Site.help(P);
 }
 
 /* ==========================================================

@@ -18,7 +18,7 @@ Editing and ZIP generation happen in the browser. GitHub Pages hosts the site; t
 
 ## Compatibility and installation
 
-The bundled baseline is **Squared Away 3.49.2, native-grid preview 28**, with its matching custom engine. The magazine mod supplies the three stock expansion pouches. GAMMA-specific recipes and trader integrations still need their respective mods.
+The bundled baseline is **Squared Away 3.49.2, native-grid Preview 40**, with its matching custom engine. The magazine mod supplies the three stock expansion pouches. GAMMA-specific recipes and trader integrations still need their respective mods.
 
 1. Make changes and inspect **Check**.
 2. Choose **Export mod** → **Write the files**.
@@ -83,9 +83,9 @@ Automated tests cover native slots, preservation of stock section definitions, p
 
 This repository does not grant a new license to third-party game or mod assets. Attribution and existing permissions remain applicable.
 
-## Community library integration (pending activation)
+## Community library preview
 
-Account and community publishing code is prepared for Appwrite. See [setup instructions](docs/community-setup.md). The feature flag remains off until the backend is provisioned and live authentication and access checks pass. Creators can publish immediately, update one listing and unpublish their own packs. Maintainers can remove listings, block publishing and save exact versions privately for the next mod release. Bug reporting remains excluded.
+Account and community publishing use Appwrite; creator publishing and administrator removal have been tested. See [setup instructions](docs/community-setup.md). The feature flag remains off until the backend is provisioned and live authentication and access checks pass. Creators can publish immediately, update one listing and unpublish their own packs. Maintainers can remove listings, block publishing and save exact versions privately for the next mod release. Bug reporting remains excluded.
 
 ## Clean Armory site and releases
 
@@ -93,6 +93,8 @@ The default page is Home. Main navigation separates Editor, Community, Downloads
 
 The Downloads page reads public releases from `Fomok/xray-monolith-inventory-edits`. It only offers complete mod/engine pairs from the same release, excludes drafts, labels previews explicitly, and keeps older releases available. Publish an updated version to that repository to update the site automatically. New asset names must match the conventions in `web/src/releases.js`; ambiguous or incomplete pairs are not offered. `web/data/releases.json` is a last-verified fallback for GitHub API outages/rate limits, clearly labelled when used; update it alongside a new release.
 
-Prepared draft release (kept private until website completion): `v3.49.2-native-preview`, engine `75cbdbc8436d1f5d0fe4ee774ae3913b910f3373`. Mod archive combines unchanged Preview28 gameplay and the accepted rig v4 / box v1 model patches. New game required when migrating from the old public release.
+The editor baseline is now Preview 40, verified against all 47 embedded configuration templates and all four shared model assets. Item configs are unchanged from Preview 28; later previews add runtime/UI changes that exports deliberately do not replace. Source identity and content hashes are recorded in `web/data/baseline-manifest.json`.
 
-Hero artwork: `web/assets/site/clean-armory-hero.png`, generated using the built-in image-generation tool from the approved Clean Armory mockup. Prompt: recreate only the cinematic hero background with worn black chest rig, olive hard case and utility pouch on a wooden workbench inside an abandoned industrial workshop; gear on the right, dark negative space on the left, warm side lighting, no words or UI. This is atmospheric artwork, not an in-game screenshot.
+The matching custom engine is `75cbdbc8436d1f5d0fe4ee774ae3913b910f3373`, with its matching DB0. The draft mod release remains hidden and its assets still need refreshing before publication; updating the editor does not publish or update the mod download.
+
+See [installation guide](docs/installation.md) for the current setup and FOMOD choices. Home and Introduction use actual gameplay screenshots, with region outlines explaining the mechanics.
