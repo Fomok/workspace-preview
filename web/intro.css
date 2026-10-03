@@ -1,8 +1,5 @@
-/* Opening title: dark canvas, warm-white grid blocks. */
-.opening-intro{position:fixed;inset:0;z-index:100000;background:#080a0b;display:grid;place-items:center;opacity:1;transition:opacity .65s ease;isolation:isolate}
-.opening-intro.is-leaving{opacity:0;pointer-events:none}
-.opening-intro canvas{display:block;width:100%;height:100%}
-.opening-intro button{position:absolute;bottom:max(28px,env(safe-area-inset-bottom));right:32px;background:none;border:0;color:#9a9c98;font:11px system-ui,sans-serif;letter-spacing:.16em;text-transform:uppercase;padding:12px;cursor:pointer}
-.opening-intro button:focus-visible{outline:1px solid #d4ae63;outline-offset:3px}
-.opening-intro .intro-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
-@media(prefers-reduced-motion:reduce){.opening-intro{transition:none}}
+.intro-letter-gap{visibility:hidden}
+.cursor-opening{position:fixed;inset:0;z-index:10000;pointer-events:none;overflow:hidden}
+.intro-dragged-letter{position:absolute;left:0;top:0;display:block;white-space:pre;overflow:visible;transform-origin:center;filter:drop-shadow(4px 6px 3px #0006);will-change:transform}
+.intro-anomaly-cursor{position:absolute;left:0;top:0;width:64px;height:64px;background:url('assets/intro/anomaly-cursor.png') no-repeat 0 0;will-change:transform;opacity:0}
+@media(prefers-reduced-motion:reduce){.cursor-opening{display:none}.intro-letter-gap{visibility:visible}}

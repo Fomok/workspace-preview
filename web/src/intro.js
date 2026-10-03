@@ -1,78 +1,56 @@
-/* Session-only opening. No project data, network requests or loading percentages. */
-(function(){
+/* Decorative Home intro. It never blocks navigation or touches project data. */
+(function(root){
 'use strict';
-const key='zonebench-opening-seen';
-try{if(sessionStorage.getItem(key))return;sessionStorage.setItem(key,'1');}catch(_){}
-const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const overlay=document.createElement('div');overlay.className='opening-intro';
-overlay.setAttribute('aria-label','Squared Away introduction');
-const label=document.createElement('span');label.className='intro-label';label.textContent='SQUARED AWAY';
-const canvas=document.createElement('canvas');canvas.setAttribute('aria-hidden','true');
-const skip=document.createElement('button');skip.type='button';skip.textContent='Skip intro';
-overlay.append(canvas,label,skip);document.body.appendChild(overlay);
-let frame=0,closed=false,app=null,ready=document.readyState!=='loading';
-const start=performance.now();
-function remove(){overlay.remove();}
-function finish(){
- if(closed)return;closed=true;cancelAnimationFrame(frame);clearTimeout(failsafe);
- document.removeEventListener('keydown',escape);window.removeEventListener('resize',resize);
- if(app)app.inert=false;
- if(overlay.contains(document.activeElement))document.querySelector('.brand')?.focus({preventScroll:true});
- overlay.classList.add('is-leaving');setTimeout(remove,reduced?0:680);
-}
-function escape(e){if(e.key==='Escape'){e.preventDefault();finish();}}
-skip.onclick=finish;document.addEventListener('keydown',escape);
-// A stalled resource or script must never trap the visitor behind the title.
-const failsafe=setTimeout(finish,5500);
-function loaded(){ready=true;app=document.getElementById('app');if(app&&!closed)app.inert=true;}
-if(ready)loaded();else document.addEventListener('DOMContentLoaded',loaded,{once:true});
-const ctx=canvas.getContext('2d');if(!ctx){finish();return;}
-const glyphs={
- S:['11111','10000','10000','11111','00001','00001','11111'],
- Q:['01110','11011','10001','10001','10101','11010','01101'],
- U:['10001','10001','10001','10001','10001','10001','01110'],
- A:['01110','11011','10001','11111','10001','10001','10001'],
- R:['11110','10001','10001','11110','10100','10010','10001'],
- E:['11111','10000','10000','11110','10000','10000','11111'],
- D:['11110','10001','10001','10001','10001','10001','11110'],
- W:['10001','10001','10001','10101','10101','11011','10001'],
- Y:['10001','10001','01010','00100','00100','00100','00100']
-};
-const cells=[];let column=0;
-for(const char of 'SQUARED AWAY'){
- if(char===' '){column+=3;continue;}
- glyphs[char].forEach((row,y)=>[...row].forEach((v,x)=>{if(v==='1')cells.push({x:column+x,y,index:cells.length});}));column+=6;
-}
-const cols=column-1;let width=0,height=0,unit=0,left=0,top=0;
-function resize(){
- width=innerWidth;height=innerHeight;const dpr=Math.min(devicePixelRatio||1,2);
- canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);
- unit=Math.min(14,(width-48)/cols);left=(width-cols*unit)/2;top=(height-7*unit)/2;
-}
-resize();window.addEventListener('resize',resize);
-const ease=t=>1-Math.pow(1-t,3);
-function draw(now){
- if(closed)return;
- const elapsed=now-start;ctx.clearRect(0,0,width,height);
- // Every piece travels along grid axes, then locks into the letter grid.
- for(const c of cells){
-  const seed=(c.index*37+11)%101;
-  const delay=100+seed*5;
-  const t=reduced?1:Math.min(1,Math.max(0,(elapsed-delay)/900));
-  if(t===0)continue;
-  const dx=((c.index%2)?1:-1)*(3+seed%9)*unit;
-  const dy=((c.index%3)?1:-1)*(3+seed%6)*unit;
-  const x=left+c.x*unit+dx*(1-ease(Math.min(1,t*2)));
-  const y=top+c.y*unit+dy*(1-ease(Math.max(0,t*2-1)));
-  ctx.globalAlpha=Math.min(1,t*4);
-  ctx.fillStyle=t<.9?'#b6a27b':'#e9e7de';
-  const gap=Math.max(.7,unit*.085);
-  ctx.fillRect(x+gap/2,y+gap/2,unit-gap,unit-gap);
+const key='zonebench-cursor-opening-seen';
+let available=!location.hash||location.hash==='#home',cancelActive=()=>{};
+try{if(sessionStorage.getItem(key))available=false;}catch(_){}
+if(matchMedia('(prefers-reduced-motion: reduce)').matches)available=false;
+const ease=v=>{v=Math.max(0,Math.min(1,v));return v*v*(3-2*v);};
+function play(title){
+ if(!available||!title.isConnected||title.textContent!=='SQUARED AWAY')return;
+ available=false;try{sessionStorage.setItem(key,'1');}catch(_){}
+ const text=title.textContent,letter=document.createElement('span');letter.textContent='W';letter.className='intro-letter-gap';
+ title.setAttribute('data-no-site-copy','');title.setAttribute('aria-label',text);
+ const before=document.createElement('span'),after=document.createElement('span');before.textContent='SQUARED A';after.textContent='AY';
+ for(const part of [before,letter,after])part.setAttribute('aria-hidden','true');
+ title.replaceChildren(before,letter,after);
+ const flight=document.createElement('div');flight.className='cursor-opening';flight.setAttribute('aria-hidden','true');flight.setAttribute('data-no-site-copy','');
+ const glyph=document.createElement('span');glyph.textContent='W';glyph.className='intro-dragged-letter';
+ const cursor=document.createElement('span');cursor.className='intro-anomaly-cursor';flight.append(glyph,cursor);document.body.appendChild(flight);
+ const s=getComputedStyle(title);for(const prop of ['fontFamily','fontSize','fontWeight','fontStretch','fontStyle','letterSpacing','lineHeight','color'])glyph.style[prop]=s[prop];
+ const r=letter.getBoundingClientRect(),cx=r.x+r.width/2,cy=r.y+r.height/2;
+ const scale=Math.min(1,parseFloat(s.fontSize)/74.24);
+ glyph.style.width=r.width+'px';glyph.style.height=r.height+'px';
+ let frame=0,closed=false,start=null;
+ function finish(){
+  if(closed)return;closed=true;cancelAnimationFrame(frame);clearTimeout(timeout);flight.remove();
+  letter.classList.remove('intro-letter-gap');
+  if(title.textContent===text)title.textContent=text;
+  title.removeAttribute('data-no-site-copy');title.removeAttribute('aria-label');
+  for(const event of ['resize','pagehide','blur'])window.removeEventListener(event,finish);
+  document.removeEventListener('scroll',finish,true);document.removeEventListener('pointerdown',finish,true);document.removeEventListener('keydown',finish,true);
+  cancelActive=()=>{};
  }
- ctx.globalAlpha=1;
- if(ready&&elapsed>=(reduced?150:2100)){finish();return;}
+ cancelActive=finish;
+ for(const event of ['resize','pagehide','blur'])window.addEventListener(event,finish,{once:true});
+ document.addEventListener('scroll',finish,{capture:true,passive:true});document.addEventListener('pointerdown',finish,true);document.addEventListener('keydown',finish,true);
+ const timeout=setTimeout(finish,4500);
+ function draw(now){
+  if(closed)return;if(!title.isConnected){finish();return;}
+  if(start===null)start=now;const t=(now-start)/1000,q=ease((t-.20)/2.15);
+  const x=(1-q)**3*(-70)+3*(1-q)**2*q*Math.min(120,cx*.4)+3*(1-q)*q*q*(cx-38*scale)+q**3*cx;
+  const y=(1-q)**3*(cy-100*scale)+3*(1-q)**2*q*(cy-135*scale)+3*(1-q)*q*q*(cy-65*scale)+q**3*cy;
+  const angle=180-90*ease((t-.75)/.22)-90*ease((t-1.78)/.23);
+  glyph.style.transform=`translate(${x-r.width/2}px,${y-r.height/2}px) rotate(${-angle}deg)`;
+  if(t>=2.35){glyph.style.visibility='hidden';letter.classList.remove('intro-letter-gap');}
+  let px=x+6*scale,py=y+10*scale;
+  if(t>2.45){const exit=ease((t-2.45)/.70);px=cx+6*scale+99*scale*exit;py=cy+10*scale+100*scale*exit;}
+  cursor.style.transform=`translate(${px}px,${py}px)`;
+  cursor.style.backgroundPosition=`${-(Math.floor(t*12)%8)*64}px 0`;
+  cursor.style.opacity=t<.20?'0':String(1-ease((t-2.82)/.33));
+  if(t>=3.15){finish();return;}frame=requestAnimationFrame(draw);
+ }
  frame=requestAnimationFrame(draw);
 }
-frame=requestAnimationFrame(draw);
-window.addEventListener('pagehide',()=>{finish();remove();},{once:true});
-})();
+root.OpeningIntro={play,cancel:()=>cancelActive()};
+})(window);

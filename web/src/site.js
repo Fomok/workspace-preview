@@ -10,6 +10,7 @@ function go(tab){if(TAB!==tab)history.pushState({},'',route(tab));TAB=tab;render
 function action(text,tab,primary=false){const b=n('button','tool'+(primary?' primary':''),text);b.onclick=()=>go(tab);return b;}
 function link(text,url,primary=false){const a=n('a','tool'+(primary?' primary':''),text);a.href=url;return a;}
 function shell(){
+ root.OpeningIntro?.cancel();
  const isEditor=editing.includes(TAB);document.body.classList.toggle('site-page',!isEditor);document.body.classList.toggle('home-page',TAB==='home');document.body.classList.toggle('introduction-page',TAB==='introduction');
  document.querySelector('#nav').hidden=!isEditor;document.querySelector('#project-tools').hidden=!isEditor;
  const top=document.querySelector('#site-nav');top.replaceChildren();
@@ -37,7 +38,7 @@ async function home(P){
  P.classList.add('site-content');
  const hero=n('section','armory-hero');const copy=n('div','hero-copy');hero.appendChild(copy);
  const gameLabel=n('p','eyebrow hero-game-label');gameLabel.append(n('span','game-label-prefix','INVENTORY MOD FOR'),document.createTextNode(' '),n('span','game-label-stalker','STALKER'),document.createTextNode(' '),n('span','game-label-gamma','G.A.M.M.A.'));copy.appendChild(gameLabel);copy.appendChild(n('h1',null,'SQUARED AWAY'));copy.appendChild(n('h2',null,'Ultimate inventory cancer is HERE.'));copy.appendChild(n('p','hero-description','A grid inventory. Rigs that carry your essentials. Containers that save you some space.'));
- const actions=n('div','site-actions');actions.appendChild(action('↓  Download Squared Away','downloads',true));actions.appendChild(action('Explore the mechanics  →','introduction'));copy.appendChild(actions);const shot=n('figure','hero-gameplay');const img=n('img');img.src='assets/gameplay/inventory.png';img.alt='Squared Away in-game inventory with equipment, an equipped rig and backpack storage';img.width=1207;img.height=1079;shot.appendChild(img);shot.appendChild(n('figcaption',null,'IN-GAME CAPTURE / SQUARED AWAY'));hero.appendChild(shot);P.appendChild(hero);
+ const actions=n('div','site-actions');actions.appendChild(action('↓  Download Squared Away','downloads',true));actions.appendChild(action('Explore the mechanics  →','introduction'));copy.appendChild(actions);const shot=n('figure','hero-gameplay');const img=n('img');img.src='assets/gameplay/inventory.png';img.alt='Squared Away in-game inventory with equipment, an equipped rig and backpack storage';img.width=1207;img.height=1079;shot.appendChild(img);shot.appendChild(n('figcaption',null,'IN-GAME CAPTURE / SQUARED AWAY'));hero.appendChild(shot);P.appendChild(hero);root.OpeningIntro?.play(copy.querySelector('h1'));
  const content=n('div','home-sections');P.appendChild(content);
  const release=n('div');release.appendChild(n('p','hint','Checking the latest release…'));content.appendChild(release);
  Releases.load().then(result=>{if(!release.isConnected)return;release.replaceChildren();upcoming(release,result.items);if(result.items[0])releaseBlock(release,result.items[0],true);else release.appendChild(n('p','hint','A complete release package has not been published yet.'));if(result.cached)release.appendChild(n('p','hint','Showing the last verified release. Live release lookup is unavailable.'));}).catch(e=>{if(release.isConnected)release.textContent=e.message;});
