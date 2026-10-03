@@ -58,6 +58,28 @@ export function createService(repo,{adminIds=[],now=()=>Date.now(),uuid=()=>rand
  return async function handle(input,user=null){
   if(!input||typeof input!=='object')fail(400,'Invalid request.');const admin=isAdmin(user);
   switch(input.action){
+   case 'siteText':{
+    const rows=[];
+    for(let offset=0;offset<1000;offset+=100){const page=await repo.list('sitecopy',{}, {limit:100,offset});rows.push(...page.rows);if(rows.length>=page.total)break;}
+    return {entries:rows.map(r=>({source:r.source,value:r.value,revision:r.revision}))};
+   }
+   case 'saveSiteText':case 'resetSiteText':{
+    requireAdmin(user);
+    const source=text(input.source,6000,'original text',1).replace(/\s+/g,' ');
+    const key=createHash('sha256').update(source).digest('hex').slice(0,32);
+    if(!Number.isInteger(input.expectedRevision)||input.expectedRevision<0)fail(400,'Invalid text revision.');
+    const value=input.action==='saveSiteText'?text(input.value,6000,'replacement text',1):null;
+    return lock('site-copy-edit',async()=>{
+     const previous=await repo.optional('sitecopy',key);
+     if(previous && previous.source!==source)fail(409,'Text identity conflict.');
+     if(input.expectedRevision!==(previous?.revision||0))fail(409,'This text changed in another session. Close and reopen the text editor before saving.');
+     if(value===null){if(previous)await repo.remove('sitecopy',key);return {entry:{source,value:source,revision:0}};}
+     if(!previous && (await repo.list('sitecopy',{}, {limit:1})).total>=1000)fail(400,'The site supports 1,000 text overrides. Restore an unused override first.');
+     const data={source,value,revision:(previous?.revision||0)+1};
+     if(previous)await repo.update('sitecopy',key,data);else await repo.create('sitecopy',key,data);
+     return {entry:data};
+    });
+   }
    case 'me':return {user:user?{id:user.$id,name:user.name||'',moderator:admin,blocked:!!(await repo.optional('profiles',user.$id))?.blocked}:null};
    case 'list':{
     const mode=input.mode||'public';if(!['public','mine','moderation'].includes(mode))fail(400,'Invalid list.');if(mode==='mine')requireUser(user);if(mode==='moderation')requireAdmin(user);

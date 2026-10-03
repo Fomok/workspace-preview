@@ -49,3 +49,12 @@ body{font-size:14px}button,a,input,textarea,select{transition:background-color .
 .patch-new{font-size:9px;line-height:1;padding:4px 5px;background:#d4b574;color:#181914;border-radius:3px;font-weight:700;letter-spacing:.04em}.patch-new[hidden]{display:none}
 .patch-notes-page{padding:40px 6% 60px!important}.patch-notes-page>h1{font-size:42px;margin:12px 0 30px}.patch-entry{max-width:960px}.patch-entry>h2{font-size:30px;margin:10px 0 16px}.patch-version{color:var(--hot2);letter-spacing:.1em;font-size:12px}.patch-status{display:inline-block;padding:8px 12px;border:1px solid #655235;border-radius:4px;color:#dbc28f;font-size:12px}.patch-group{margin:28px 0;padding:22px 26px;border:1px solid var(--line);border-radius:7px;background:#151819}.patch-group h3{font-size:19px;margin:0 0 14px}.patch-group ul{padding-left:21px;margin:0;color:var(--dim)}.patch-group li{line-height:1.75;margin:10px 0}.patch-group li::marker{color:var(--hot)}
 @media(max-width:760px){.patch-notes-page{padding:25px 18px!important}.patch-group{padding:18px}.patch-entry>h2{font-size:25px}}
+
+/* Maintainer copy editor: separate from the item workbench. */
+.site-copy-panel{position:fixed;right:16px;bottom:16px;top:90px;width:min(440px,calc(100vw - 32px));z-index:10000;background:#151c1f;border:1px solid #9a8050;border-radius:10px;padding:20px;box-shadow:0 15px 60px #000b;overflow:auto;color:#e9ecec}
+.site-copy-panel h2{margin:0;font-size:21px}.site-copy-panel .hint{font-size:12px;line-height:1.55}
+.site-copy-panel input,.site-copy-panel textarea,.site-copy-panel select{box-sizing:border-box;width:100%;background:#0e1417;color:#f0f1ed;border:1px solid #526066;border-radius:5px;padding:10px;font:inherit}
+.site-copy-panel textarea{display:block;resize:vertical;margin-top:8px}.site-copy-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:10px 0}.site-copy-actions h2{flex:1}.site-copy-actions select{width:auto;flex:1}
+.site-copy-list{max-height:28vh;overflow:auto;display:grid;gap:6px}.site-copy-list button{text-align:left;white-space:normal;overflow-wrap:anywhere;font-size:12px;line-height:1.45}.site-copy-changed{border-left:3px solid #cca65b!important}.site-copy-original{font-size:12px;color:#bbc5c7;max-height:130px;overflow:auto;white-space:pre-wrap}.site-copy-form label{font-size:13px}
+.site-copy-panel button:focus-visible,.site-copy-panel input:focus-visible,.site-copy-panel textarea:focus-visible{outline:2px solid #ddba76;outline-offset:2px}
+@media(min-width:1000px){body.site-copy-active #app{margin-right:470px}}

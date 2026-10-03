@@ -1,0 +1,12 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/armory.css"></head><body>
+<div id="app"><h1>Copy editing test</h1><p id="copy">Make room for the Zone.</p><p><strong>Keep</strong> links <a href="#target">working</a>.</p><select id="data"><option>original_value</option></select><p data-no-site-copy>Private item name</p><button id="open">Open copy editor</button><button id="guest">Switch to guest</button><button id="rerender">Rerender copy</button><div id="result"></div></div>
+<script>
+let admin=true, entries=[];
+const Community={refresh:async()=>({moderator:admin}),request:async(action,data)=>{
+ if(action==='siteText')return {entries:structuredClone(entries)};
+ if(!admin)throw Error('Admin access required.');
+ const old=entries.find(x=>x.source===data.source);if((old?.revision||0)!==data.expectedRevision)throw Error('Stale revision');
+ entries=entries.filter(x=>x.source!==data.source);const entry={source:data.source,value:action==='resetSiteText'?data.source:data.value,revision:action==='resetSiteText'?0:(old?.revision||0)+1};if(entry.revision)entries.push(entry);return {entry};
+}};
+window.addEventListener('DOMContentLoaded',()=>{document.querySelector('#open').onclick=()=>SiteCopy.open().catch(e=>document.querySelector('#result').textContent=e.message);document.querySelector('#guest').onclick=()=>{admin=false;SiteCopy.close();};document.querySelector('#rerender').onclick=()=>{document.querySelector('#copy').textContent='Make room for the Zone.';document.querySelector('#result').textContent='Option value: '+document.querySelector('#data').value;};});
+</script><script src="/src/site-copy.js"></script></body></html>

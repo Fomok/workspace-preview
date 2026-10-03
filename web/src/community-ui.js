@@ -21,9 +21,10 @@ async function drawCommunityAccount(P){
   if(user.moderator){
    communityMessage(card,'Admin controls: remove unwanted add-ons, block publishing by abusive creators, or save an add-on for a future mod update.');
    communityButton(card,'Manage public add-ons',async()=>{COMMUNITY_MODE='moderation';COMMUNITY_OFFSET=0;Site.go('catalog');},true);
+   communityButton(card,'Edit site text',async()=>SiteCopy.open(),true);
    communityButton(card,'Next mod update',async()=>{COMMUNITY_MODE='selections';COMMUNITY_OFFSET=0;Site.go('catalog');});
   }
-  communityButton(card,'Sign out',async()=>{await Community.signOut();renderPane();});
+  communityButton(card,'Sign out',async()=>{await Community.signOut();SiteCopy.close();renderPane();});
   const details=document.createElement('details');const summary=document.createElement('summary');summary.textContent='Account details';details.appendChild(summary);communityMessage(details,'Account ID: '+user.id);card.appendChild(details);
   return;
  }

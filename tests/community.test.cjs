@@ -28,3 +28,23 @@ test('next-update selection keeps an exact private snapshot after creator update
 test('rejects stale revision instead of overwriting a newer update',async()=>{const f=await fixture(),{listing}=await f.publish();await f.service({action:'unpublish',id:listing.id,expectedRevision:1},f.user);await assert.rejects(f.service({action:'republish',id:listing.id,expectedRevision:1},f.user),e=>e.status===409);});
 test('rejects unsafe pictures and duplicate items before writing',async()=>{const {cleanPack}=await mod;const bad=pack();bad.items[0].item.icon='data:image/svg+xml;base64,AAAA';assert.throws(()=>cleanPack(bad));const duplicate=pack();duplicate.items.push(structuredClone(duplicate.items[0]));assert.throws(()=>cleanPack(duplicate));});
 test('shared browser/server validation stays identical',()=>assert.equal(fs.readFileSync('web/src/compatibility.js','utf8'),fs.readFileSync('backend/community/shared/compatibility.cjs','utf8')));
+
+test('site text requires verified admin; guests can read published copy',async()=>{
+ const f=await fixture();const input={action:'saveSiteText',source:'Home',value:'Welcome',expectedRevision:0};
+ await assert.rejects(f.service(input),e=>e.status===401);
+ await assert.rejects(f.service(input,f.user),e=>e.status===403);
+ await assert.rejects(f.service(input,{...f.admin,emailVerification:false}),e=>e.status===401);
+ assert.deepEqual((await f.service({action:'siteText'})).entries,[]);
+ assert.equal((await f.service(input,f.admin)).entry.revision,1);
+ assert.equal((await f.service({action:'siteText'})).entries[0].value,'Welcome');
+ await assert.rejects(f.service({...input,value:'Stale'},f.admin),e=>e.status===409);
+ await assert.rejects(f.service({...input,action:'resetSiteText',expectedRevision:1},f.user),e=>e.status===403);
+ await f.service({...input,action:'resetSiteText',expectedRevision:1},f.admin);
+ assert.deepEqual((await f.service({action:'siteText'})).entries,[]);
+});
+test('site copy validates text and canonicalizes whitespace without changing addon data',async()=>{
+ const f=await fixture();for(const value of ['', 'x'.repeat(6001), '\x00bad'])await assert.rejects(f.service({action:'saveSiteText',source:'Hello',value,expectedRevision:0},f.admin),e=>e.status===400);
+ await f.service({action:'saveSiteText',source:'Hello   world',value:'<img src=x onerror=alert(1)>',expectedRevision:0},f.admin);
+ assert.equal((await f.service({action:'siteText'})).entries[0].source,'Hello world');
+ assert.equal((await f.service({action:'list'})).total,0);
+});

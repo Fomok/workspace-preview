@@ -9,6 +9,7 @@ export const schema={
  addons:[...strings({owner:36,name:100,description:2000,version:32,dependencies:500,author:60,status:16,fileId:36}),{type:'integer',key:'revision',required:true,min:1},{type:'integer',key:'itemCount',required:true,min:1,max:20}],
  profiles:[{type:'boolean',key:'blocked',required:true},{type:'datetime',key:'lastWrite',required:true}],
  locks:[{type:'datetime',key:'stamp',required:true}],
+ sitecopy:[...strings({source:6000,value:6000}),{type:'integer',key:'revision',required:true,min:1}],
  selections:[...strings({name:100,version:32,fileId:36,author:60,dependencies:500,selectedBy:36}),{type:'integer',key:'revision',required:true,min:1}]
 };
 const scopes=['rows.read','rows.write','files.read','files.write'];
