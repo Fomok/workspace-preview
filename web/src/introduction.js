@@ -16,12 +16,12 @@ function cleanup(){if(observer){observer.disconnect();observer=null;}}
 const pictures={inventory:[1205,1079],rotation:[172,137],container:[429,174],'rig-pouches':[595,245]};
 // Regions use original screenshot pixels, so outlines follow the image at every size.
 const pointers=[
- [['Equipped rig',[[507,161,100,153]]],['Backpack storage',[[611,422,363,467]]]],
- [['Rotate to fit',[[50,69,105,48]]],['Green: valid placement',[[54,60,105,53]]]],
- [['Open container',[[109,5,312,31]]],['Storage inside',[[117,46,292,112]]]],
- [['Equipped rig',[[2,15,102,153]]],['Rig pockets',[[113,20,369,154]]]],
- [['Medicine for quick use',[[270,20,104,50]]],['Magazines for reloading',[[218,72,156,102],[113,20,101,102],[378,20,104,102]]]],
- [['Expansion pouch slots',[[2,172,102,52]]],['Added storage',[[486,20,102,205]]]]
+ [['Equipped rig',[[507,161,100,153]],'left',499],['Backpack storage',[[611,422,363,467]],'right']],
+ [['Rotate into a valid space',[[54,60,105,53]],'right']],
+ [['Open container',[[109,5,312,31]],'top'],['Storage inside',[[117,46,292,112]],'bottom']],
+ [['Equipped rig',[[2,15,102,153]],'left'],['Rig pockets',[[113,20,369,154]],'bottom']],
+ [['Medicine for quick use',[[270,20,104,50]],'top'],['Magazines for reloading',[[218,72,156,102],[113,20,101,102],[378,20,104,102]],'bottom']],
+ [['Expansion pouch slots',[[2,172,102,52]],'left'],['Added storage',[[486,20,102,205]],'right']]
 ];
 function render(P){
  cleanup();const shell=el('div','intro-shell');P.appendChild(shell);
@@ -41,13 +41,20 @@ function render(P){
   const c=chapters[index],dims=pictures[c.image],h=880*dims[1]/dims[0];
   if(shownImage!==c.image){shownImage=c.image;shot.setAttribute('href','assets/gameplay/'+c.image+'.png');shot.setAttribute('height',h);art.setAttribute('viewBox','0 0 1000 '+(h+200));enlarge.href='assets/gameplay/'+c.image+'.png';}
   title.textContent=c.alt+'. '+pointers[index].map(p=>p[0]).join('. ');marks.replaceChildren();
-  pointers[index].forEach(([label,regions],i)=>{
+  pointers[index].forEach(([label,regions,side,corridor],i)=>{
    const scale=880/dims[0],bw=410,bx=i===0?30:560,by=i===0?12:h+132;
    const [rx,ry,rw,rh]=regions[0];
-   const edgeX=60+(i===0?rx:rx+rw)*scale,edgeY=100+(ry+rh/2)*scale;
-   // Route through the outer gutter and meet the outline, never a point inside it.
-   const laneY=i===0?82:h+118,gutterX=i===0?40:960;
-   marks.appendChild(svgEl('path',{d:`M ${bx+bw/2} ${i===0?by+52:by} V ${laneY} H ${gutterX} V ${edgeY} H ${edgeX}`,class:'intro-pointer-line'}));
+   const laneY=i===0?82:h+118,start=`M ${bx+bw/2} ${i===0?by+52:by} V ${laneY}`;
+   let path;
+   if(side==='top'||side==='bottom'){
+    const edgeX=60+(rx+rw/2)*scale,edgeY=100+(side==='top'?ry:ry+rh)*scale;
+    path=`${start} H ${edgeX} V ${edgeY}`;
+   }else{
+    const edgeX=60+(side==='left'?rx:rx+rw)*scale,edgeY=100+(ry+rh/2)*scale;
+    const gutterX=corridor===undefined?(side==='left'?40:960):60+corridor*scale;
+    path=`${start} H ${gutterX} V ${edgeY} H ${edgeX}`;
+   }
+   marks.appendChild(svgEl('path',{d:path,class:'intro-pointer-line'}));
    regions.forEach(([x,y,w,height])=>marks.appendChild(svgEl('rect',{x:60+x*scale,y:100+y*scale,width:w*scale,height:height*scale,class:'intro-region-outline'})));
    marks.appendChild(svgEl('rect',{x:bx,y:by,width:bw,height:52,rx:3,class:'intro-pointer-box'}));
    const t=svgEl('text',{x:bx+bw/2,y:by+33,'text-anchor':'middle',class:'intro-pointer-label'});t.textContent=label;marks.appendChild(t);
