@@ -2,7 +2,7 @@
 
 ## Current editor baseline
 
-ZoneBench targets Squared Away 3.49.2 / Preview 40 (Grid Refresh). Its item definitions, recipes, trader templates and shared world models have been checked against that package. The older public 3.48.0 download is not the target for these exports. The new mod release remains unpublished until final approval.
+ZoneBench targets Squared Away 2.0. Item definitions, recipes, trader templates and shared world models match the tested current mod. The older public 3.48.0 download is not compatible with these exports. The 2.0 release remains hidden until publication.
 
 ## Install the mod
 
@@ -10,11 +10,11 @@ Use Anomaly 1.5.3 or your GAMMA installation. Install the full Squared Away FOMO
 
 ## Install the required engine
 
-Preview 40 uses custom engine commit 75cbdbc8436d1f5d0fe4ee774ae3913b910f3373 and its matching DB0. With the game closed, back up your existing files and extract the engine ZIP into the Anomaly game folder: executables and PDBs go under bin, and the DB0 under db/mods. The engine package is installed in the game folder, not as a normal MO2 mod. Stock Anomaly or upstream Monolith executables are not supported for this native rebuild.
+Squared Away 2.0 uses custom engine commit 10379de91577b0cd3a513547a6ef5473d43a3b37 and its matching DB0. With the game closed, back up your existing files and extract the engine ZIP into the Anomaly game folder: executables and PDBs go under bin, and the DB0 under db/mods. The engine package is installed in the game folder, not as a normal MO2 mod. Stock Anomaly or upstream Monolith executables are not supported for this native rebuild.
 
 ## Saves and upgrades
 
-Start a new game when moving from the old public mod to the native rebuild. Preview 40 itself does not require a new game or different EXEs/DB0 when upgrading from Preview 39. Back up saves before changing item configurations and test custom exports on a disposable save.
+Start a new game when moving from the old public mod to the native rebuild. Back up saves before changing item configurations and test custom exports on a disposable save.
 
 ## SOTA UI and HD Icons
 
@@ -42,7 +42,7 @@ Squared Away settings are grouped in MCM, including layout, appearance, controls
 
 ## Browse and publish
 
-Community previews show item textures, layouts and properties before import. Signed-in creators can publish, update and unpublish their own add-ons. Administrator removal has been tested. Community access is currently available through the preview link.
+Community previews show item textures, layouts and properties before import. Signed-in creators can publish, update and unpublish their own add-ons. Administrator removal has been tested. Community access is available through the website.
 
 ## Keep your work
 

@@ -1,8 +1,8 @@
 {
-  "baseline": "native-grid-preview-40",
-  "modVersion": "3.49.2",
-  "engineCommit": "75cbdbc8436d1f5d0fe4ee774ae3913b910f3373",
-  "sourceArchive": "Squared-Away-FOMOD-Preview-40-Grid-Refresh.zip",
+  "baseline": "squared-away-2.0",
+  "modVersion": "2.0",
+  "engineCommit": "10379de91577b0cd3a513547a6ef5473d43a3b37",
+  "sourceArchive": "Squared Away - 2.0 Update.zip",
   "templates": {
     "configs/mod_system_amp_rigs.ltx": "e2385fc9b64d42dc5b9453f324c0e35f23ab7e960f71b3e0d43b286ea23de6b9",
     "configs/mod_system_amp_boxes.ltx": "b7d8002f333bd05b49490d4a6e5658a4a44c3b0a9780d3b149d840067b144d93",

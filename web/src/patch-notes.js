@@ -2,7 +2,7 @@
 (function(root){
 'use strict';
 const entries=[{
- id:'squared-away-preview40-rebuild-v1',
+ id:'squared-away-2-0-release-v2',
  title:'Squared Away — 2.0 Update',
  version:'2.0 Update',
  status:'Coming soon • Mod download not yet published',
@@ -17,6 +17,11 @@ const entries=[{
    'Picked-up items can turn automatically to fit an available gap when auto-rotation is enabled.',
    'Crafting and NPC item hand-ins can use items inside carried boxes and spare rigs. You do not have to unpack them first.',
    'Rigs use a dedicated equipment slot. Equipped rig items use normal inventory icons, including supported dynamic icons and magazine ammo counters.'
+  ]},
+  {title:'Move gear directly',items:[
+   'Equip gear straight from rigs, boxes and stashes, or put equipped gear directly into storage without clearing backpack space first.',
+   'Swap equipped weapons with stored ones, and move items between boxes, rigs and stashes without unpacking them into your bag.',
+   'Rotate and arrange items inside opened rigs and boxes. Placement highlights help you see where your gear will fit.'
   ]},
   {title:'Less inventory frustration',items:[
    'Carrying items inside a spare rig no longer makes unrelated items drop when there is still room in your inventory.',

@@ -10,3 +10,11 @@ test('drafts and untrusted download hosts are rejected',()=>{const r=structuredC
 test('website fallback never includes draft releases',()=>{const rows=JSON.parse(fs.readFileSync('web/data/releases.json','utf8'));assert(rows.every(x=>!x.draft));});
 
 test('2.0 all-DX package is paired with the mod and excludes developer sources',()=>{const r=fixture('v2.0',false,'Squared-Away-2.0.zip','Squared-Away-2.0-All-DX.zip');r.assets.push({name:'Squared-Away-2.0-For-Developers.zip',browser_download_url:base+'v2.0/Squared-Away-2.0-For-Developers.zip'});const picked=c.Releases.pick(r);assert.equal(picked.mod.name,'Squared-Away-2.0.zip');assert.equal(picked.engine.name,'Squared-Away-2.0-All-DX.zip');r.draft=true;assert.equal(c.Releases.pick(r),null);});
+
+test('clean 2.0 filenames pair correctly and never leak draft downloads',()=>{
+ for(const separator of [' ','.']){
+  const names=['Squared Away - 2.0 Update.zip','Squared Away - 2.0 Engine - All DX.zip','Squared Away - 2.0 For Developers.zip'].map(x=>x.replaceAll(' ',separator));
+  const r=fixture('v2.0',false,names[0],names[1]);r.assets.push({name:names[2],browser_download_url:base+'v2.0/'+names[2]});
+  const picked=c.Releases.pick(r);assert.equal(picked.mod.name,names[0]);assert.equal(picked.engine.name,names[1]);r.draft=true;assert.equal(c.Releases.pick(r),null);
+ }
+});

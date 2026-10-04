@@ -24,7 +24,7 @@ function shell(){
 }
 function heading(parent,kicker,title,copy){parent.appendChild(n('p','eyebrow',kicker));parent.appendChild(n('h1',null,title));if(copy)parent.appendChild(n('p','page-lead',copy));}
 function size(bytes){return bytes?Math.round(bytes/1024/1024)+' MB':'';}
-function currentRelease(release){return release.mod.name.includes('3.49.2') || /^Squared[-_]?Away[_-](?:FOMOD[-_])?2[._-]0(?:[._-]|\.zip$)/i.test(release.mod.name);}
+function currentRelease(release){return release.mod.name.includes('3.49.2') || /^Squared[-_ .]*Away[-_ .]+(?:FOMOD[-_ .]+)?2[._-]0(?:[-_ .]|$)/i.test(release.mod.name);}
 function upcoming(parent,items){if(items.some(currentRelease))return;const card=n('section','upcoming-release');card.appendChild(n('p','eyebrow','NEXT RELEASE'));card.appendChild(n('h2',null,'The 2.0 Update is on its way.'));card.appendChild(n('p','hint','Squared Away 2.0 is being prepared for release. Its download will appear here when it is published. The older public version is listed below.'));parent.appendChild(card);}
 function releaseBlock(parent,release,compact=false){
  const panel=n('section','release-panel'+(compact?' compact':''));parent.appendChild(panel);
@@ -73,7 +73,7 @@ function help(P){
  const blocks=[
   [
     "Squared Away 2.0 Update",
-    "ZoneBench is ready for the 2.0 Update. Home introduces the mod, Introduction explains its mechanics, and Patch Notes covers what changed. The 2.0 mod download is still being prepared; Downloads only lists published packages. An older download is not the version this editor targets."
+    "ZoneBench is ready for the 2.0 Update. Home introduces the mod, Introduction explains its mechanics, and Patch Notes covers what changed. The 2.0 package is ready for release; its download stays hidden until publication. Downloads only lists published packages. An older download is not the version this editor targets."
   ],
   [
     "Install the mod",
@@ -85,7 +85,7 @@ function help(P){
   ],
   [
     "Engine choices and developer files",
-    "The all-DX engine package is configured to include DX8, DX9, DX10 and DX11 executables, each with AVX and non-AVX versions. Choose a renderer supported by your setup, and use AVX only if your CPU supports it. The separate For Developers ZIP is for engine authors merging changes; players do not need it. Always use the engine paired with your mod release in Downloads."
+    "The all-DX engine package includes DX8, DX9, DX10 and DX11 executables, each with AVX and non-AVX versions. Choose a renderer supported by your setup, and use AVX only if your CPU supports it. The separate For Developers ZIP is for engine authors merging changes; players do not need it. Always use the engine paired with your mod release in Downloads."
   ],
   [
     "Start a new game",

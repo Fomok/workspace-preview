@@ -74,7 +74,7 @@ function compatibilityFiles(db){
  const pouches=db.pouches.filter(x=>!stock.includes(x.id)&&(!x.adopt||root.EMIT.owns(x,'drops'))).map(x=>x.id);
  const drops={};for(const rank of ranks)if(db.drops?.[rank])drops[rank]=[...db.drops[rank].tier,...db.drops[rank].pouch];
  const data={rigs,pouches,removed,drops,condition:db.cond||{}};
- const script=`-- ZoneBench registration only. Requires Squared Away 3.49.2 native-grid build.
+ const script=`-- ZoneBench registration only. Requires Squared Away 2.0.
 local settings = ${lua(data)}
 function on_game_start()
  local mod = zzz_armor_mag_pouches
@@ -136,5 +136,5 @@ async function modelFiles(db){
  }
  return Promise.all([...paths].map(async path=>{const response=await fetch('assets/models/'+path);if(!response.ok)throw new Error('Could not load model '+path+'. Retry when connected.');return {name:'gamedata/'+path,bytes:new Uint8Array(await response.arrayBuffer())};}));
 }
-root.ZB={validate,validateAddon,compatibilityFiles,modelFiles,models,installNotes:`ZONEBENCH EXPORT\nRequires Squared Away 3.49.2 native-grid Preview 40 or a compatible later build, its custom engine, and the selected item dependencies.\nInstall this ZIP as a separate MO2 mod after Squared Away and its patches. Enable only one ZoneBench export; combine item packs in one project.\nDeleted stock items are removed from distribution, but their definitions remain to keep existing references valid.\nDrop and condition values are MCM defaults; existing saved MCM choices take precedence.\nCustom model paths refer to assets you must install separately.\nBack up saves and test a disposable new game before using a custom add-on in a playthrough.\n`};
+root.ZB={validate,validateAddon,compatibilityFiles,modelFiles,models,installNotes:`ZONEBENCH EXPORT\nRequires Squared Away 2.0 or a compatible later build, its custom engine, and the selected item dependencies.\nInstall this ZIP as a separate MO2 mod after Squared Away and its patches. Enable only one ZoneBench export; combine item packs in one project.\nDeleted stock items are removed from distribution, but their definitions remain to keep existing references valid.\nDrop and condition values are MCM defaults; existing saved MCM choices take precedence.\nCustom model paths refer to assets you must install separately.\nBack up saves and test a disposable new game before using a custom add-on in a playthrough.\n`};
 })(globalThis);
