@@ -34,7 +34,7 @@ function releaseBlock(parent,release,compact=false){
   else buttons.appendChild(link(label+(compact?'':' Â· '+size(asset.size)),asset.browser_download_url,primary));
  }
  buttons.appendChild(action('Installation guide','help'));panel.appendChild(buttons);
- if(release.bodycam){const optional=n('div','card');optional.appendChild(n('h3',null,'Optional Bodycam engine'));optional.appendChild(n('p','hint','For Bodycam users · DX11-AVX only. Use this package instead of the standard engine, with both bin and db/mods from the ZIP. Requires the Squared Away 2.0.2 mod.'));optional.appendChild(link('Download Bodycam engine'+(compact?'':' · '+size(release.bodycam.size)),release.bodycam.browser_download_url));panel.appendChild(optional);}
+ if(release.bodycam){const optional=n('div','card');optional.appendChild(n('h3',null,'Optional Bodycam engine'));optional.appendChild(n('p','hint','For Bodycam users Â· DX11-AVX only. Use this package instead of the standard engine, with both bin and db/mods from the ZIP. Requires the Squared Away 2.0.2 mod.'));optional.appendChild(link('Download Bodycam engine'+(compact?'':' Â· '+size(release.bodycam.size)),release.bodycam.browser_download_url));panel.appendChild(optional);}
  if(release.unavailable)panel.appendChild(n('p','release-note','Downloads coming soon. Read the 2.0 patch notes while we finish preparing the release.'));
 
  if(release.tag==='v2.0.2')panel.appendChild(n('p','release-note','2.0.2 requires both the updated mod and matching engine. Existing 2.0 and 2.0.1 saves are supported.'));
