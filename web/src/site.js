@@ -28,8 +28,15 @@ function currentRelease(release){return release.mod.name.includes('3.49.2') || /
 function upcoming(parent,items){if(items.some(currentRelease))return;const card=n('section','upcoming-release');card.appendChild(n('p','eyebrow','NEXT RELEASE'));card.appendChild(n('h2',null,'The 2.0 Update is on its way.'));card.appendChild(n('p','hint','Squared Away 2.0 is being prepared for release. Its download will appear here when it is published. The older public version is listed below.'));parent.appendChild(card);}
 function releaseBlock(parent,release,compact=false){
  const panel=n('section','release-panel'+(compact?' compact':''));parent.appendChild(panel);
- const about=n('div','release-about');about.appendChild(n('p','eyebrow',release.preview?'CURRENT PREVIEW':'LATEST STABLE RELEASE'));about.appendChild(n('h2',null,release.name));if(release.date)about.appendChild(n('p','hint','Published '+new Date(release.date).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'})));panel.appendChild(about);
- const buttons=n('div','site-actions');buttons.appendChild(link('Download mod'+(compact?'':' · '+size(release.mod.size)),release.mod.browser_download_url,true));buttons.appendChild(link('Required engine'+(compact?'':' · '+size(release.engine.size)),release.engine.browser_download_url));buttons.appendChild(action('Installation guide', 'help'));panel.appendChild(buttons);
+ const about=n('div','release-about');about.appendChild(n('p','eyebrow',release.unavailable?'COMING SOON':release.preview?'CURRENT PREVIEW':'LATEST STABLE RELEASE'));about.appendChild(n('h2',null,release.name));if(release.date)about.appendChild(n('p','hint','Published '+new Date(release.date).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'})));panel.appendChild(about);
+ const buttons=n('div','site-actions');
+ for(const [label,asset,primary] of [['Download mod',release.mod,true],['Required engine',release.engine,false]]){
+  if(release.unavailable){const button=n('button','tool'+(primary?' primary':''),label);button.disabled=true;button.title='Downloads are not available yet';buttons.appendChild(button);}
+  else buttons.appendChild(link(label+(compact?'':' · '+size(asset.size)),asset.browser_download_url,primary));
+ }
+ buttons.appendChild(action('Installation guide','help'));panel.appendChild(buttons);
+ if(release.unavailable)panel.appendChild(n('p','release-note','Downloads coming soon. Read the 2.0 patch notes while we finish preparing the release.'));
+
  if(release.preview)panel.appendChild(n('p','release-note','Preview release · Start a new game when upgrading from the previous Squared Away release. Install both the mod and its matching engine.'));
  if(!currentRelease(release))panel.appendChild(n('p','release-note','The editor targets the Squared Away 2.0 Update. Its exports are not intended for the older release shown here.'));
  if(!compact){const details=n('details','release-notes');details.appendChild(n('summary',null,'Release notes'));details.appendChild(n('div','release-notes-text',release.notes||'No release notes supplied.'));panel.appendChild(details);}
