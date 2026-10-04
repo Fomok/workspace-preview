@@ -23,6 +23,7 @@
 </div>
 <style>
  :global(#svelte-root){height:100%} :global(#app){grid-template-rows:auto auto auto minmax(0,1fr)}
- .preview-notice{padding:8px 22px;background:#292419;border-bottom:1px solid #685a35;color:#d8cba9;font-size:12px;display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
- .preview-notice a{color:#f0d392}.startup-error{position:fixed;inset:30% 15% auto;background:#211a1a;padding:30px;z-index:1000}
+ .preview-notice{padding:8px 22px;background:var(--panel);border-bottom:1px solid var(--line);color:var(--dim);font-size:12px;display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
+ .preview-notice a{color:var(--hot)}.startup-error{position:fixed;inset:30% 15% auto;background:#211a1a;padding:30px;z-index:1000}
 </style>
+

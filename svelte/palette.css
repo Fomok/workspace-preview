@@ -1,0 +1,46 @@
+/* Preview palette: graphite foundation, tan actions, turquoise details, rose attention. */
+:root {
+ --bg:#2e2e2e; --panel:#353535; --panel2:#3d3d3d; --line:#505050;
+ --ink:#f2eee8; --dim:#c1beb9; --faint:#a7a49f;
+ --hot:#dcb88e; --hot2:#ebcba5; --detail:#4dccbd; --attention:#c96480;
+ --good:#4dccbd; --bad:#e58ca5; --cell:#292929; --cellline:#545454;
+}
+body,body #pane,.home-page .armory-hero {background:var(--bg)}
+body .site-header {background:#292929;border-color:var(--line)}
+body .brand,body .hero-copy h1 {color:var(--ink)}
+body .brand small {color:var(--faint)}
+body #site-nav a {color:var(--dim)}
+body #site-nav a.active,body #site-nav a:hover {color:var(--hot)}
+body #site-nav a.active {border-bottom-color:var(--detail)}
+body #site-nav a.has-update {background:#c9648012;border-color:#c9648070;color:#f0bccb;box-shadow:none;animation:none}
+body .patch-new {background:var(--attention);color:#fff;margin-left:7px}
+body .preview-notice {background:#333333;border-color:var(--line);color:var(--dim)}
+body .preview-notice a {color:var(--hot)}
+body .tool {background:#373737;border-color:#5b5854;color:var(--ink)}
+body .tool:hover {background:#43413e;border-color:var(--hot)}
+body .tool.primary {background:var(--hot);border-color:var(--hot);color:#28231e;box-shadow:none}
+body .tool.primary:hover {background:var(--hot2);border-color:var(--hot2)}
+body a:focus-visible,body button:focus-visible,body input:focus-visible,body textarea:focus-visible,body select:focus-visible {outline:2px solid var(--detail);outline-offset:3px}
+body .card,body .release-panel,body .patch-group {background:var(--panel);border-color:var(--line)}
+body .release-panel {border-top:2px solid var(--hot)}
+body .release-note {color:var(--dim);border-color:var(--line)}
+body .eyebrow,body .patch-version,body .section-heading .eyebrow {color:var(--hot)}
+body .hero-game-label .game-label-prefix {color:var(--dim)}
+body .hero-game-label .game-label-stalker {color:var(--hot)}
+body .hero-game-label .game-label-gamma {color:var(--detail)}
+body .hero-description,body .home-features p,body .page-lead {color:var(--dim)}
+body .home-features h3::before {content:'';display:inline-block;width:5px;height:5px;background:var(--detail);margin:0 10px 3px 0}
+body .project-toolbar,body #nav,body #list,body .item-library-tools {background:#292929;border-color:var(--line)}
+body .row.on,body #nav button.on,body .item-sections button[aria-selected=true] {background:#dcb88e16;color:var(--hot);border-color:#dcb88e66}
+body .row .sub {color:var(--dim)}
+body input,body textarea,body select,body .community-field input,body .community-field textarea,body .item-library-tools input,
+body .item-settings-panel input[type=text],body .item-settings-panel input[type=number],body .item-settings-panel select,body .item-settings-panel textarea {background:#262626;border-color:var(--line);color:var(--ink)}
+body input::placeholder,body textarea::placeholder {color:var(--faint);opacity:1}
+body .warn,body .danger {background:#c9648012;border-color:#c9648080;color:#f0bccb}
+body .danger:hover {background:#c964802a;color:#ffcfdb}
+body .patch-status {border-color:#dcb88e77;color:var(--hot)}
+body .intro-pointer-line,body .intro-region-outline,body .intro-pointer-box {stroke:var(--hot)}
+body .intro-pointer-box {fill:#303030}
+body .intro-pointer-label {fill:var(--ink)}
+body .site-copy-changed {border-left-color:var(--detail)!important}
+body ::-webkit-scrollbar-thumb {background:#62605c}
