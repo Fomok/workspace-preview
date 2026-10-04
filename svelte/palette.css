@@ -1,9 +1,9 @@
-/* Preview palette: graphite foundation, tan actions, turquoise details, rose attention. */
+/* Preview palette: graphite foundation, tan actions, GAMMA green details, rose attention. */
 :root {
  --bg:#101112; --panel:#181a1c; --panel2:#222426; --line:#343535;
  --ink:#f2eee8; --dim:#c1beb9; --faint:#a7a49f;
- --hot:#dcb88e; --hot2:#ebcba5; --detail:#4dccbd; --attention:#c96480;
- --good:#4dccbd; --bad:#e58ca5; --cell:#1b1d1f; --cellline:#3a3c3e;
+ --hot:#dcb88e; --hot2:#ebcba5; --detail:#9cba80; --attention:#c96480;
+ --good:#9cba80; --bad:#e58ca5; --cell:#1b1d1f; --cellline:#3a3c3e;
 }
 body,body #pane,.home-page .armory-hero {background:var(--bg)}
 body .site-header {background:#141617;border-color:var(--line)}
@@ -27,7 +27,7 @@ body .release-note {color:var(--dim);border-color:var(--line)}
 body .eyebrow,body .patch-version,body .section-heading .eyebrow {color:var(--hot)}
 body .hero-game-label .game-label-prefix {color:var(--dim)}
 body .hero-game-label .game-label-stalker {color:var(--hot)}
-body .hero-game-label .game-label-gamma {color:#9cba80}
+body .hero-game-label .game-label-gamma {color:var(--detail)}
 body .hero-description,body .home-features p,body .page-lead {color:var(--dim)}
 body .home-features h3::before {content:'';display:inline-block;width:5px;height:5px;background:var(--detail);margin:0 10px 3px 0}
 body .project-toolbar,body #nav,body #list,body .item-library-tools {background:#141617;border-color:var(--line)}
@@ -44,4 +44,5 @@ body .intro-pointer-box {fill:#191c1e}
 body .intro-pointer-label {fill:var(--ink)}
 body .site-copy-changed {border-left-color:var(--detail)!important}
 body ::-webkit-scrollbar-thumb {background:#444642}
+
 
