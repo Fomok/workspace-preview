@@ -101,7 +101,7 @@ function help(P){
   ],
   [
     "SOTA UI and HD Inventory Icons",
-    "SOTA UI is optional. Select SOTA UI compatibility in the installer only if SOTA and its usual requirements are installed. If you use HD Inventory Icons Framework, choose its SOTA-patched version with SOTA, or its non-SOTA version without it. Never enable both. Place Squared Away below those UI mods in the MO2 left pane so its files win conflicts. Both UI choices use the Field Kit artwork and support the Tarkov-like and Anomaly default layouts."
+    "SOTA UI is optional. Select SOTA UI compatibility in the installer only if SOTA and its usual requirements are installed. HD Inventory Icons Framework is required so item icons display correctly in the inventory. Choose its SOTA-patched version with SOTA, or its non-SOTA version without it. Never enable both. Place Squared Away below those UI mods in the MO2 left pane so its files win conflicts. Both UI choices use the Field Kit artwork and support the Tarkov-like and Anomaly default layouts."
   ],
   [
     "Wearable Devices support",

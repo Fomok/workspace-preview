@@ -20,7 +20,7 @@ Start a new game when moving from the old public mod to the native rebuild. Back
 
 ## SOTA UI and HD Icons
 
-SOTA UI is optional. Check SOTA UI compatibility only when SOTA and its requirements are installed. With SOTA, use the SOTA-patched HD Inventory Icons Framework; without SOTA, use the non-SOTA variant. Never enable both variants. Squared Away must win the relevant UI conflicts: put it below those mods in the MO2 left pane. Both UI choices use Field Kit artwork and support the two inventory layouts in MCM.
+HD Inventory Icons Framework is required for item icons to display correctly in the inventory. SOTA UI is optional. Check SOTA UI compatibility only when SOTA and its requirements are installed. With SOTA, use the SOTA-patched HD Inventory Icons Framework; without SOTA, use the non-SOTA variant. Never enable both variants. Squared Away must win the relevant UI conflicts: put it below those mods in the MO2 left pane. Both UI choices use Field Kit artwork and support the two inventory layouts in MCM.
 
 ## Wearable Devices support
 
