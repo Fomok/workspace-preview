@@ -23,9 +23,9 @@ async function drawCatalog(P){
   if(!CATALOG){const r=await fetch('catalog/index.json',{cache:'no-cache'});if(!r.ok)throw new Error('Catalog could not be loaded.');CATALOG=await r.json();}
   if(!P.contains(status))return;status.remove();
   if(!CATALOG.addons.length){
-   const card=el('div','empty-catalog','<h2>The community library is in preview.</h2><p>Browse published add-ons, inspect their items, or sign in to share your own creations.</p>');
-   const url=new URL(location.href);url.searchParams.set('community-preview','1');url.hash='community';
-   const link=document.createElement('a');link.className='tool primary';link.href=url.href;link.textContent='Open community preview';card.appendChild(link);P.appendChild(card);return;
+   const card=el('div','empty-catalog','<h2>Community add-ons</h2><p>Browse published add-ons, inspect their items, or sign in to share your own creations.</p>');
+   const url=new URL(location.href);url.hash='community';
+   const link=document.createElement('a');link.className='tool primary';link.href=url.href;link.textContent='Open Community';card.appendChild(link);P.appendChild(card);return;
   }
   const records=CATALOG.addons.map(entry=>({listing:entry,load:CatalogBrowser.once(async()=>{
     if(!/^[a-z0-9_-]+\.json$/.test(entry.file))throw new Error('Invalid catalog file.');

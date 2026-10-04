@@ -95,7 +95,7 @@ async function drawCommunityCatalog(P){
 const COMMUNITY_DRAFTS=new Map();
 function drawCommunityPublish(P,listing=null,sessionChecked=false){
  const card=el('section','card share-publish');P.appendChild(card);card.appendChild(el('h2',null,listing?'Update your add-on':'2. Add-on details'));
- if(!Community.enabled){communityMessage(card,'Community publishing is currently available through the preview link. File sharing is available below.');return;}
+ if(!Community.enabled){communityMessage(card,'Community publishing is currently unavailable. File sharing is available below.');return;}
  if(!Community.user){
   communityMessage(card,'Sign in to publish. You can choose and inspect your items first.');
   communityButton(card,'Sign in to publish',async()=>{TAB='account';render();},true);

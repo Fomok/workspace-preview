@@ -51,7 +51,7 @@ async function home(P){
   Community.request('list').then(result=>{if(!library.isConnected)return;library.replaceChildren();if(!result.items.length){library.appendChild(n('p','hint','No add-ons published yet. Create something in the editor and share it with the community.'));return;}
    for(const listing of result.items.slice(0,3)){const row=n('article','card addon-listing');const body=n('div','addon-listing-content');row.appendChild(body);body.appendChild(n('h3',null,listing.name));body.appendChild(n('p','hint',listing.author+' · '+listing.version));library.appendChild(row);const show=AddonPreview.card(body,listing,()=>Community.request('pack',{id:listing.id}),r=>Community.preview(r));const b=n('button','tool','View items');b.onclick=show;body.appendChild(b);}
   }).catch(()=>{if(library.isConnected)library.textContent='The community library is temporarily unavailable. Your editor is still available.';});
- }else{const card=n('article','card community-invitation');card.appendChild(n('h3',null,'Explore the community preview'));card.appendChild(n('p','hint','Browse player-made rigs, containers and pouches. Inspect every item before importing it.'));const url=new URL(location.href);url.searchParams.set('community-preview','1');url.hash='community';card.appendChild(link('Open community preview',url.href));library.appendChild(card);}
+ }else{const card=n('article','card community-invitation');card.appendChild(n('h3',null,'Explore community add-ons'));card.appendChild(n('p','hint','Browse player-made rigs, containers and pouches. Inspect every item before importing it.'));const url=new URL(location.href);url.hash='community';card.appendChild(link('Open Community',url.href));library.appendChild(card);}
  const start=n('section','home-workbench');start.appendChild(n('p','eyebrow','THE WORKBENCH'));start.appendChild(n('h2',null,'Your next loadout starts here.'));start.appendChild(n('p','page-lead','Design a rig, give a container more room, or build an entire collection. Preview every change and export an add-on for your game.'));start.appendChild(action('Start creating  →','rigs',true));content.appendChild(start);
  const foot=n('footer','site-footer');foot.appendChild(n('span',null,'ZONEBENCH / SQUARED AWAY'));foot.appendChild(n('span',null,'A community project by Fomok'));content.appendChild(foot);
 }
@@ -129,7 +129,7 @@ function help(P){
   ],
   [
     "Publish and update your add-ons",
-    "Sign in through Account using a code sent to your email. Your email is not shown on listings. Use Share items in Editor to select customizations and publish an add-on. In My add-ons, use Edit / update to revise the same listing instead of publishing duplicate versions, or Unpublish to remove it from public browsing. Other users keep items they already imported. Community accounts currently use the preview link below."
+    "Sign in through Account using a code sent to your email. Your email is not shown on listings. Use Share items in Editor to select customizations and publish an add-on. In My add-ons, use Edit / update to revise the same listing instead of publishing duplicate versions, or Unpublish to remove it from public browsing. Other users keep items they already imported."
   ],
   [
     "Keep your work",
@@ -154,7 +154,7 @@ function help(P){
  let searching=false;
  function filter(){const q=search.value.trim().toLowerCase();for(const e of entries){if(q&&!searching)e.beforeSearch=e.node.open;e.node.hidden=!!q&&!e.text.includes(q);if(q)e.node.open=!e.node.hidden;else if(searching)e.node.open=e.beforeSearch;}searching=!!q;for(const section of sections)section.hidden=![...section.querySelectorAll('details')].some(x=>!x.hidden);empty.hidden=entries.some(e=>!e.node.hidden);}
  search.oninput=filter;
- const actions=n('div','site-actions');const communityURL=new URL(location.href);communityURL.searchParams.set('community-preview','1');communityURL.hash='community';actions.appendChild(link('Open Community preview',communityURL.href));actions.appendChild(action('Go to downloads','downloads',true));P.appendChild(actions);
+ const actions=n('div','site-actions');const communityURL=new URL(location.href);communityURL.hash='community';actions.appendChild(link('Open Community',communityURL.href));actions.appendChild(action('Go to downloads','downloads',true));P.appendChild(actions);
 
 }
 root.Site={shell,go,tabFromHash,home,downloads,help};
