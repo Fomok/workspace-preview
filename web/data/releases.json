@@ -1,5 +1,30 @@
 [
   {
+    "tag_name": "v2.0.2",
+    "name": "Squared Away - 2.0.2",
+    "draft": false,
+    "prerelease": false,
+    "published_at": "2026-10-04T19:54:45Z",
+    "body": "Equip weapons straight from dead bodies, even with a full backpack. Weapon swaps return the replaced weapon to the body. Works without the optional looting patch.\n\nThe optional Tarkov-like looting layout now has Field Kit equipment slots, a Pockets divider and remembered item positions and rotations.\n\n**Install both the 2.0.2 mod and matching engine (including DB0). Existing 2.0 / 2.0.1 saves work; no new game needed.**\n\n- **2.0.2.zip** \u2014 full mod with installer.\n- **Engine - All DX.zip** \u2014 required engine, all eight DX/AVX variants.\n- **For Developers.zip** \u2014 merge files and full engine diff; not needed to play.\n\nUpgrading from a version before 2.0 requires a new game.\n\n[Installation guide, editor and patch notes](https://fomok.github.io/zonebench/)\n",
+    "assets": [
+      {
+        "name": "Squared.Away.-.2.0.2.Engine.-.All.DX.zip",
+        "size": 537568322,
+        "browser_download_url": "https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/v2.0.2/Squared.Away.-.2.0.2.Engine.-.All.DX.zip"
+      },
+      {
+        "name": "Squared.Away.-.2.0.2.For.Developers.zip",
+        "size": 7021737,
+        "browser_download_url": "https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/v2.0.2/Squared.Away.-.2.0.2.For.Developers.zip"
+      },
+      {
+        "name": "Squared.Away.-.2.0.2.zip",
+        "size": 15307023,
+        "browser_download_url": "https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/v2.0.2/Squared.Away.-.2.0.2.zip"
+      }
+    ]
+  },
+  {
     "tag_name": "v2.0-update",
     "name": "Squared Away - 2.0 Update (Hotfix 2.0.1)",
     "draft": false,

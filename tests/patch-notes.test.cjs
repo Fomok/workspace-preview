@@ -5,7 +5,7 @@ test('notes remain new until opened, stay read after reload, and re-arm for a ne
  const values=new Map();const store={getItem:k=>values.get(k)||null,setItem:(k,v)=>values.set(k,v)};
  const first=load(store);assert.equal(first.unread(),true);assert.equal(load(store).unread(),true);
  first.markRead();assert.equal(first.unread(),false);assert.equal(load(store).unread(),false);
- const next=load(store,source.replace('squared-away-2-0-1-localization','squared-away-next-update-v1'));assert.equal(next.unread(),true);next.markRead();assert.equal(next.unread(),false);
+ const next=load(store,source.replace('squared-away-2-0-2-looting','squared-away-next-update-v1'));assert.equal(next.unread(),true);next.markRead();assert.equal(next.unread(),false);
 });
 test('blocked browser storage does not prevent opening notes or clearing the current badge',()=>{
  const notes=load({getItem(){throw Error('denied');},setItem(){throw Error('denied');}});assert.equal(notes.unread(),true);notes.markRead();assert.equal(notes.unread(),false);
@@ -17,3 +17,5 @@ test('localization hotfix retains the original public 2.0 notes',()=>{
  assert(source.indexOf("id:'squared-away-2-0-1-localization'")<source.indexOf("id:'squared-away-2-0-published'"));
  assert(source.includes('Your inventory, rebuilt.'));
 });
+
+test('2.0.2 is latest and preserves both previous updates',()=>{assert(source.indexOf("id:'squared-away-2-0-2-looting'")<source.indexOf("id:'squared-away-2-0-1-localization'"));assert(source.includes('Update both the mod and engine'));});

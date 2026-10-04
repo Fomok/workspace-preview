@@ -12,7 +12,7 @@ function steps(s){return [
  ...(s.devices?[['devices','Select Wearable Devices support in the FOMOD, with the separate Wearable Devices pack installed.']]:[]),
  ...(s.looting?[['looting','Select Tarkov-like corpse looting only with Looting Takes Time Redux by Priler. Turn OFF its “Pre-sort items on grid” setting.']]:[]),
  ['order','MO2 left pane, higher to lower: required mods and chosen UI mods → Squared Away with its selected patches → your optional ZoneBench export. Enable only one ZoneBench export.'],
- ['newgame','Start a new game when upgrading from the previous public release to Squared Away 2.0. Test custom add-ons on a separate save.']
+ ['newgame','Updating from 2.0 or 2.0.1 to 2.0.2 keeps your saves, but requires the new mod and engine. Start a new game when upgrading from a pre-2.0 version. Test custom add-ons on a separate save.']
  ];}
 function render(parent){const box=n('details');box.className='installation-checklist';box.appendChild(n('summary','Build your installation checklist'));const body=n('div');box.appendChild(body);body.appendChild(n('p','hint'));body.lastChild.textContent='Choose your setup. This checklist guides installation; it does not detect installed mods.';
  const label=n('label','Your game '),select=n('select');select.setAttribute('aria-label','Installation game');for(const [value,text] of [['gamma','GAMMA'],['anomaly','Anomaly 1.5.3']]){const o=n('option',text);o.value=value;select.appendChild(o);}select.value=state.game;label.appendChild(select);body.appendChild(label);

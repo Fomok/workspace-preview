@@ -23,3 +23,9 @@ test('published 2.0 exposes both download links',()=>{
  const release=c.Releases.pick(fixture('v2.0-update',false,'Squared.Away.-.2.0.Update.zip','Squared.Away.-.2.0.Engine.-.All.DX.zip'));
  assert(release.mod.browser_download_url);assert(release.engine.browser_download_url);assert(!release.unavailable);assert(!release.preview);
 });
+
+test('2.0.2 pairs the new mod and engine while excluding its merge kit',()=>{
+ const r=fixture('v2.0.2',false,'Squared.Away.-.2.0.2.zip','Squared.Away.-.2.0.2.Engine.-.All.DX.zip');
+ r.assets.push({name:'Squared.Away.-.2.0.2.For.Developers.zip',browser_download_url:base+'v2.0.2/Squared.Away.-.2.0.2.For.Developers.zip'});
+ const selected=c.Releases.pick(r);assert.equal(selected.tag,'v2.0.2');assert.equal(selected.mod.name,r.assets[0].name);assert.equal(selected.engine.name,r.assets[1].name);
+});

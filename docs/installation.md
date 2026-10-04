@@ -2,7 +2,7 @@
 
 ## Current editor baseline
 
-ZoneBench targets Squared Away 2.0.1 (the localization hotfix). Item definitions, recipes, trader templates and shared world models match the tested current mod. The older public 3.48.0 download is not compatible with these exports. The 2.0 mod and matching engine are available in the website Downloads tab.
+ZoneBench targets Squared Away 2.0.2. Item definitions, recipes, trader templates and shared world models match the tested current mod. The older public 3.48.0 download is not compatible with these exports. The 2.0 mod and matching engine are available in the website Downloads tab.
 
 ## Install the mod
 
@@ -10,11 +10,11 @@ Use Anomaly 1.5.3 or your GAMMA installation. Install the full Squared Away FOMO
 
 ## Install the required engine
 
-Squared Away 2.0 uses custom engine commit 10379de91577b0cd3a513547a6ef5473d43a3b37 and its matching DB0. With the game closed, back up your existing files and extract the engine ZIP into the Anomaly game folder: executables and PDBs go under bin, and the DB0 under db/mods. The engine package is installed in the game folder, not as a normal MO2 mod. Stock Anomaly or upstream Monolith executables are not supported for this native rebuild.
+Squared Away 2.0.2 uses custom engine commit 6312bc321b544cc26980b95a3977d4de965dd770 and its matching DB0. With the game closed, back up your existing files and extract the engine ZIP into the Anomaly game folder: executables and PDBs go under bin, and the DB0 under db/mods. The engine package is installed in the game folder, not as a normal MO2 mod. Stock Anomaly or upstream Monolith executables are not supported for this native rebuild.
 
 ## Saves and upgrades
 
-The 2.0.1 localization hotfix supports existing 2.0 saves and uses the same engine package. Replace the full mod in MO2 and choose the same optional patches.
+The 2.0.2 update supports existing 2.0 and 2.0.1 saves. Install the new matching engine package as well as the mod. Replace the full mod in MO2 and choose the same optional patches.
 
 Start a new game when moving from the old public mod to the native rebuild. Back up saves before changing item configurations and test custom exports on a disposable save.
 
@@ -28,7 +28,7 @@ Select this FOMOD option only with the separately installed Wearable Devices pac
 
 ## Tarkov-like corpse looting
 
-Select this FOMOD option only with Looting Takes Time Redux by Priler. Turn OFF its "Pre-sort items on grid" MCM option. The patch changes corpse looting; stashes and living NPCs keep their usual behavior.
+Select this FOMOD option only with Looting Takes Time Redux by Priler. Turn OFF its "Pre-sort items on grid" MCM option. The patch adds equipment slots above scattered loot, a Pockets divider and remembered positions and rotations; stashes and living NPCs keep their usual behavior. Direct corpse-to-equipment transfers work in the base mod with a full backpack and do not require this optional layout.
 
 ## Magazine support
 

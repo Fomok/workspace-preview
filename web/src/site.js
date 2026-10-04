@@ -36,7 +36,8 @@ function releaseBlock(parent,release,compact=false){
  buttons.appendChild(action('Installation guide','help'));panel.appendChild(buttons);
  if(release.unavailable)panel.appendChild(n('p','release-note','Downloads coming soon. Read the 2.0 patch notes while we finish preparing the release.'));
 
- if(currentRelease(release))panel.appendChild(n('p','release-note','Includes localization hotfix 2.0.1. Already on 2.0? Replace only the mod; keep your engine and saves.'));
+ if(release.tag==='v2.0.2')panel.appendChild(n('p','release-note','2.0.2 requires both the updated mod and matching engine. Existing 2.0 and 2.0.1 saves are supported.'));
+ if(release.tag==='v2.0-update')panel.appendChild(n('p','release-note','Older release with localization hotfix 2.0.1. For the latest corpse looting changes, install 2.0.2 and its matching engine.'));
  if(release.preview)panel.appendChild(n('p','release-note','Preview release · Start a new game when upgrading from the previous Squared Away release. Install both the mod and its matching engine.'));
  if(!currentRelease(release))panel.appendChild(n('p','release-note','The editor targets the Squared Away 2.0 Update. Its exports are not intended for the older release shown here.'));
  if(!compact){const details=n('details','release-notes');details.appendChild(n('summary',null,'Release notes'));details.appendChild(n('div','release-notes-text',release.notes||'No release notes supplied.'));panel.appendChild(details);}
@@ -80,7 +81,7 @@ function help(P){
  const blocks=[
   [
     "Squared Away 2.0 Update",
-    "ZoneBench includes the 2.0.1 localization hotfix. Replace the mod in MO2; existing 2.0 saves and engine files are supported. Home introduces the mod, Introduction explains its mechanics, and Patch Notes covers what changed. The 2.0 Update is available in Downloads. Install both the mod and its matching engine. Downloads only lists published packages. An older download is not the version this editor targets."
+    "ZoneBench targets Squared Away 2.0.2. Update both the mod in MO2 and the matching engine in your Anomaly folder. Existing 2.0 and 2.0.1 saves are supported. Home introduces the mod, Introduction explains its mechanics, and Patch Notes covers what changed. The 2.0 Update is available in Downloads. Install both the mod and its matching engine. Downloads only lists published packages. An older download is not the version this editor targets."
   ],
   [
     "Install the mod",
@@ -95,8 +96,8 @@ function help(P){
     "The all-DX engine package includes DX8, DX9, DX10 and DX11 executables, each with AVX and non-AVX versions. Choose a renderer supported by your setup, and use AVX only if your CPU supports it. The separate For Developers ZIP is for engine authors merging changes; players do not need it. Always use the engine paired with your mod release in Downloads."
   ],
   [
-    "Start a new game",
-    "Updating from 2.0 to the 2.0.1 localization hotfix does not require a new game. Upgrading from the old public version (before 2.0) to 2.0 requires a new game. Do not continue an old playthrough with the rewrite. Back up saves before changing custom item configurations, and test add-ons on a separate save."
+    "Saves and upgrades",
+    "Updating from 2.0 or 2.0.1 to 2.0.2 does not require a new game. Install the updated engine as well as the mod. Upgrading from the old public version (before 2.0) to 2.0 requires a new game. Do not continue an old playthrough with the rewrite. Back up saves before changing custom item configurations, and test add-ons on a separate save."
   ],
   [
     "SOTA UI and HD Inventory Icons",
@@ -108,7 +109,7 @@ function help(P){
   ],
   [
     "Tarkov-like corpse looting",
-    "This installer option requires Looting Takes Time Redux by Priler. In that mod’s MCM settings, turn OFF Pre-sort items on grid so it does not compete with Squared Away for item placement. The patch changes corpse looting; stashes and living NPCs keep their normal behavior."
+    "This installer option requires Looting Takes Time Redux by Priler. In that mod’s MCM settings, turn OFF Pre-sort items on grid so it does not compete with Squared Away for item placement. The patch adds equipment slots above scattered loot, with a Pockets divider and remembered positions and rotations. Stashes and living NPCs keep their normal behavior. Direct equipping from bodies works in the base mod, even with a full backpack; this visual patch is optional."
   ],
   [
     "Magazine support",

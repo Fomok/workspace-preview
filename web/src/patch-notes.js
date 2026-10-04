@@ -2,6 +2,31 @@
 (function(root){
 'use strict';
 const entries=[{
+ id:'squared-away-2-0-2-looting',
+ date:'2026-10-04',
+ title:'Squared Away — 2.0.2',
+ version:'2.0.2',
+ status:'Available now • Update both the mod and engine • Keep your 2.0 saves',
+ summary:'Equip loot straight from bodies, with a refreshed optional corpse inventory.',
+ sections:[
+  {title:'Equip straight from a body',items:[
+   'Drag weapons from a dead body directly into your equipment slots, even when your backpack is full.',
+   'Swap with an equipped weapon directly; the replaced weapon goes back to the body.',
+   'These transfers work with standard corpse looting. The Tarkov-like looting patch is not required.'
+  ]},
+  {title:'Optional Tarkov-like looting',items:[
+   'A Field Kit equipment section now shows helmet, outfit, knife or pistol, and one main weapon slot above the body’s scattered loot.',
+   'A framed Pockets bar separates equipment from loose items. Grid lines follow item shapes.',
+   'Item positions and rotations are remembered, and looted equipment slots stay empty instead of being filled by a spare item.',
+   'Looting Takes Time Redux still controls item discovery. Keep its Pre-sort items on grid option turned off.'
+  ]},
+  {title:'Installing 2.0.2',items:[
+   'Replace the full mod in MO2 and install the matching 2.0.2 engine package into your Anomaly folder, including bin and db/mods.',
+   'Existing 2.0 and 2.0.1 saves are supported. A new game is required only when upgrading from a pre-2.0 version.',
+   'ZoneBench now targets 2.0.2. Your item customizations are preserved.'
+  ]}
+ ]
+},{
  id:'squared-away-2-0-1-localization',
  date:'2026-10-04',
  title:'Squared Away — Localization Hotfix',
