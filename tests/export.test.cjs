@@ -5,7 +5,7 @@ for(const name of ['src/emit.js','src/archive.js','data/baseline.js','src/compat
 const seed=()=>vm.runInContext('JSON.parse(JSON.stringify(SEED))',context);
 const {ZB,EMIT,BUILD}=context;
 test('current baseline validates and has no inventory script or UI templates',()=>{
- const db=seed();ZB.validate(db);assert.equal(db.modVersion,'2.0');assert.equal(Object.keys(db.files).filter(x=>x.startsWith('scripts/')||x.startsWith('configs/ui/')).length,0);
+ const db=seed();ZB.validate(db);assert.equal(db.modVersion,'2.0.1');assert.equal(Object.keys(db.files).filter(x=>x.startsWith('scripts/')||x.startsWith('configs/ui/')).length,0);
 });
 test('new rigs receive the dedicated engine slot without replacing runtime',()=>{
  const db=seed();const r=JSON.parse(JSON.stringify(db.rigs[0]));r.id='amprig_test';r.new=true;db.rigs.push(r);
@@ -34,8 +34,22 @@ test('site has no whole-runtime export path',()=>{const source=fs.readFileSync(p
 // Audited source hashes catch stale templates or model files in a future baseline update.
 test('2.0 baseline matches audited templates and shared model assets',()=>{
  const crypto=require('node:crypto');const manifest=JSON.parse(fs.readFileSync(path.join(root,'data/baseline-manifest.json'),'utf8'));const db=seed();
- assert.equal(db.baseline,'squared-away-2.0');assert.equal(db.baseline,manifest.baseline);assert.equal(db.engineCommit,manifest.engineCommit);
+ assert.equal(db.baseline,'squared-away-2.0.1');assert.equal(db.baseline,manifest.baseline);assert.equal(db.engineCommit,manifest.engineCommit);
  assert.deepEqual(Object.keys(db.files).sort(),Object.keys(manifest.templates).sort());
  for(const [name,hash] of Object.entries(manifest.templates))assert.equal(crypto.createHash('sha256').update(db.files[name]).digest('hex'),hash,name);
  for(const [name,hash] of Object.entries(manifest.models))assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'assets/models',name))).digest('hex'),hash,name);
+});
+
+test('all localized exports preserve game characters and match their XML encoding',()=>{
+ const db=seed();const base=EMIT.baseStrings(db.files['configs/text/eng/zzz_amp_text.xml']);
+ for(const lang of ['eng','rus','spa','ukr']){
+  const text=EMIT.textFile(db,db.files['configs/text/'+lang+'/zzz_amp_text.xml'],base,[]);
+  const bytes=BUILD.stringTable(text,lang);const decoded=BUILD.decodeStringTable(bytes);
+  assert.equal(decoded,text);assert(!decoded.includes('\ufffd'));
+ }
+ for(const [lang,word] of [['rus','Разгрузка'],['ukr','Ємність ґрунт ї'],['spa','Munición pequeña']]){
+  const xml='<?xml version="1.0" encoding="utf-8"?><string_table>'+word+'</string_table>';
+  assert(BUILD.decodeStringTable(BUILD.stringTable(xml,lang)).includes(word));
+ }
+ assert.throws(()=>BUILD.stringTable('<text>😀</text>','rus'),/Unsupported character/);
 });

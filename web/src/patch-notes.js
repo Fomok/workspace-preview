@@ -2,7 +2,30 @@
 (function(root){
 'use strict';
 const entries=[{
+ id:'squared-away-2-0-1-localization',
+ date:'2026-10-04',
+ title:'Squared Away — Localization Hotfix',
+ version:'2.0.1',
+ status:'Available now • Replace the mod ZIP; keep your 2.0 engine',
+ summary:'Clearer settings and item descriptions, with updated translations throughout the mod.',
+ sections:[
+  {title:'Language updates',items:[
+   'Updated English text to match the current rig, pouch and inventory mechanics.',
+   'Completed Russian, Spanish and Ukrainian translations for settings, item descriptions, gameplay messages and optional patches.',
+   'Fixed unreadable Cyrillic text and missing translated settings. Rig messages now describe the current rules instead of the old medicine-pocket system.'
+  ]},
+  {title:'ZoneBench',items:[
+   'The editor now uses the hotfix item text and preserves the correct language encoding in exported files.',
+   'Previous patch notes remain here, below the latest update, so you can catch up whenever you return.'
+  ]},
+  {title:'Installation',items:[
+   'Download the full mod ZIP again and replace your Squared Away installation in MO2, selecting the same optional patches.',
+   'Existing 2.0 saves and the 2.0 engine package are supported. No new game or engine download is needed for this hotfix.'
+  ]}
+ ]
+},{
  id:'squared-away-2-0-published',
+ date:'2026-10-04',
  title:'Squared Away — 2.0 Update',
  version:'2.0 Update',
  status:'Available now • Download the mod and matching engine',
@@ -58,7 +81,7 @@ function render(P){
  P.classList.add('patch-notes-page');
  P.appendChild(el('p','eyebrow','SQUARED AWAY / WHAT CHANGED'));P.appendChild(el('h1',null,'Patch Notes'));
  for(const entry of entries){
-  const article=el('article','patch-entry');article.appendChild(el('p','patch-version',entry.version));article.appendChild(el('h2',null,entry.title));article.appendChild(el('p','patch-status',entry.status));article.appendChild(el('p','page-lead',entry.summary));
+  const article=el('article','patch-entry');article.appendChild(el('p','patch-version',entry.version + (entry.date ? ' • ' + entry.date : '')));article.appendChild(el('h2',null,entry.title));article.appendChild(el('p','patch-status',entry.status));article.appendChild(el('p','page-lead',entry.summary));
   for(const group of entry.sections){const section=el('section','patch-group');section.appendChild(el('h3',null,group.title));const list=el('ul');for(const item of group.items)list.appendChild(el('li',null,item));section.appendChild(list);article.appendChild(section);}
   P.appendChild(article);
  }

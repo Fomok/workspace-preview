@@ -2,7 +2,7 @@
 
 ## Current editor baseline
 
-ZoneBench targets Squared Away 2.0. Item definitions, recipes, trader templates and shared world models match the tested current mod. The older public 3.48.0 download is not compatible with these exports. The 2.0 mod and matching engine are available in the website Downloads tab.
+ZoneBench targets Squared Away 2.0.1 (the localization hotfix). Item definitions, recipes, trader templates and shared world models match the tested current mod. The older public 3.48.0 download is not compatible with these exports. The 2.0 mod and matching engine are available in the website Downloads tab.
 
 ## Install the mod
 
@@ -13,6 +13,8 @@ Use Anomaly 1.5.3 or your GAMMA installation. Install the full Squared Away FOMO
 Squared Away 2.0 uses custom engine commit 10379de91577b0cd3a513547a6ef5473d43a3b37 and its matching DB0. With the game closed, back up your existing files and extract the engine ZIP into the Anomaly game folder: executables and PDBs go under bin, and the DB0 under db/mods. The engine package is installed in the game folder, not as a normal MO2 mod. Stock Anomaly or upstream Monolith executables are not supported for this native rebuild.
 
 ## Saves and upgrades
+
+The 2.0.1 localization hotfix supports existing 2.0 saves and uses the same engine package. Replace the full mod in MO2 and choose the same optional patches.
 
 Start a new game when moving from the old public mod to the native rebuild. Back up saves before changing item configurations and test custom exports on a disposable save.
 

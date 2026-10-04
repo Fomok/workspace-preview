@@ -411,6 +411,27 @@ function cp1251(str) {
   return out;
 }
 function utf8(str) { return new TextEncoder().encode(str); }
+// X-Ray UI strings use single-byte game fonts. Fail clearly instead of losing text.
+function stringTable(text, language) {
+  const encoding = language === "spa" ? "windows-1252" : "windows-1251";
+  text = text.replace(/encoding=["'][^"']+["']/, 'encoding="' + encoding + '"');
+  const decoder = new TextDecoder(encoding), map = new Map();
+  for (let i = 0; i < 256; i++) {
+    const char = decoder.decode(new Uint8Array([i]));
+    if (char !== "\ufffd") map.set(char, i);
+  }
+  const bytes = [];
+  for (const char of text) {
+    if (!map.has(char)) throw new Error("Unsupported character " + JSON.stringify(char) + " in " + language + " item text. Use characters supported by " + encoding + ".");
+    bytes.push(map.get(char));
+  }
+  return new Uint8Array(bytes);
+}
+function decodeStringTable(bytes) {
+  const header = new TextDecoder("ascii").decode(bytes.subarray(0, 160));
+  const match = header.match(/encoding=["']([^"']+)["']/);
+  return new TextDecoder(match ? match[1] : "utf-8").decode(bytes);
+}
 
 /* ------------------------------------------------------------
    THE ZIP
@@ -696,10 +717,10 @@ function readMod(files, sheetImgs) {
     if (/\.(ltx|xml|script)$/.test(n))
       txt[n.slice(G.length)] = new TextDecoder("utf-8").decode(files[n]);
   });
-  // THE RUSSIAN FILE IS windows-1251 and TextDecoder can say so.
-  if (files[G + "configs/text/rus/zzz_amp_text.xml"])
-    txt["configs/text/rus/zzz_amp_text.xml"] = new TextDecoder("windows-1251")
-      .decode(files[G + "configs/text/rus/zzz_amp_text.xml"]);
+  Object.keys(files).forEach(function(n) {
+    if (/configs\/text\/[^/]+\/[^/]+\.xml$/.test(n))
+      txt[n.slice(G.length)] = decodeStringTable(files[n]);
+  });
 
   /* A FILE AN OLDER BUILD DOES NOT HAVE YET falls back to the copy
      this page was built with, rather than to nothing. Each of these is
@@ -924,7 +945,7 @@ root.BUILD = {
   rigSheetPlan: rigSheetPlan, boxSheetPlan: boxSheetPlan,
   pouchSheetPlan: pouchSheetPlan, itemSheetPlan: itemSheetPlan,
   composeSheet: composeSheet, ddsFrom: ddsFrom,
-  cp1251: cp1251, utf8: utf8, crc32: crc32, zip: zip,
+  stringTable: stringTable, decodeStringTable: decodeStringTable, cp1251: cp1251, utf8: utf8, crc32: crc32, zip: zip,
   unzip: unzip, ddsToImageData: ddsToImageData, cutIcon: cutIcon,
   fitRect: fitRect,
   pictureData: pictureData,

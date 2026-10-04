@@ -36,6 +36,7 @@ function releaseBlock(parent,release,compact=false){
  buttons.appendChild(action('Installation guide','help'));panel.appendChild(buttons);
  if(release.unavailable)panel.appendChild(n('p','release-note','Downloads coming soon. Read the 2.0 patch notes while we finish preparing the release.'));
 
+ if(currentRelease(release))panel.appendChild(n('p','release-note','Includes localization hotfix 2.0.1. Already on 2.0? Replace only the mod; keep your engine and saves.'));
  if(release.preview)panel.appendChild(n('p','release-note','Preview release · Start a new game when upgrading from the previous Squared Away release. Install both the mod and its matching engine.'));
  if(!currentRelease(release))panel.appendChild(n('p','release-note','The editor targets the Squared Away 2.0 Update. Its exports are not intended for the older release shown here.'));
  if(!compact){const details=n('details','release-notes');details.appendChild(n('summary',null,'Release notes'));details.appendChild(n('div','release-notes-text',release.notes||'No release notes supplied.'));panel.appendChild(details);}
@@ -79,7 +80,7 @@ function help(P){
  const blocks=[
   [
     "Squared Away 2.0 Update",
-    "ZoneBench is ready for the 2.0 Update. Home introduces the mod, Introduction explains its mechanics, and Patch Notes covers what changed. The 2.0 Update is available in Downloads. Install both the mod and its matching engine. Downloads only lists published packages. An older download is not the version this editor targets."
+    "ZoneBench includes the 2.0.1 localization hotfix. Replace the mod in MO2; existing 2.0 saves and engine files are supported. Home introduces the mod, Introduction explains its mechanics, and Patch Notes covers what changed. The 2.0 Update is available in Downloads. Install both the mod and its matching engine. Downloads only lists published packages. An older download is not the version this editor targets."
   ],
   [
     "Install the mod",
@@ -95,7 +96,7 @@ function help(P){
   ],
   [
     "Start a new game",
-    "Upgrading from the previous public Squared Away release to 2.0 requires a new game. Do not continue an old playthrough with the rewrite. Back up saves before changing custom item configurations, and test add-ons on a separate save."
+    "Updating from 2.0 to the 2.0.1 localization hotfix does not require a new game. Upgrading from the old public version (before 2.0) to 2.0 requires a new game. Do not continue an old playthrough with the rewrite. Back up saves before changing custom item configurations, and test add-ons on a separate save."
   ],
   [
     "SOTA UI and HD Inventory Icons",

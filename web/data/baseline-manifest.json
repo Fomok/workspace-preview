@@ -1,6 +1,6 @@
 {
-  "baseline": "squared-away-2.0",
-  "modVersion": "2.0",
+  "baseline": "squared-away-2.0.1",
+  "modVersion": "2.0.1",
   "engineCommit": "10379de91577b0cd3a513547a6ef5473d43a3b37",
   "sourceArchive": "Squared Away - 2.0 Update.zip",
   "templates": {
@@ -20,10 +20,10 @@
     "configs/items/settings/mod_grok_items_tier_amp.ltx": "3e20068ab15ac5e5ee01be211b4addcd183a99c7f6544a90d80f9eaec35301a9",
     "configs/items/settings/mod_grok_treasure_manager_amp.ltx": "0888724465c779dbc2ec085e0da078c7d1207449a2637d3c1eed0077425657e8",
     "configs/items/settings/mod_death_items_amp.ltx": "19fafc5b700e4eb3cd8aa63566b95288d5d6369b4a56f3ce83baab64b26bde12",
-    "configs/text/eng/zzz_amp_text.xml": "580dc271ad629a16b6a8e71e17b6bc93a12dd86f4be183abb40690df6a3a8252",
-    "configs/text/rus/zzz_amp_text.xml": "b4555708d248ec989bef1d1c2bd0502939960e22b968565b7448438f1979dd42",
-    "configs/text/spa/zzz_amp_text.xml": "e30996d5943785bc3fdb18212dc2bc3a679e01d9ba01e63c1fa7341b90fc84ae",
-    "configs/text/ukr/zzz_amp_text.xml": "735cd58a47c70dadea444b03af11b85d2db65840f8b50854980b5770446256ef",
+    "configs/text/eng/zzz_amp_text.xml": "47f34936bacb80bb3bf39ac64719eeca7d6fa417c115f08046bc0d739b71d0ad",
+    "configs/text/rus/zzz_amp_text.xml": "1b3272af9121da33777dd4643cbf65666cb31040bb4e3602b767c3fe8d42d57b",
+    "configs/text/spa/zzz_amp_text.xml": "1675b6319431f8f484d2e60abda7fc9acffa2004d09bf2d88e47834901ec5966",
+    "configs/text/ukr/zzz_amp_text.xml": "893900b88690ba96bb06f6ab7b0ad465815f202cb771b153baad32e9880d4c74",
     "configs/items/trade/mod_trade_bandit_amp.ltx": "53e40784287e88529cc61ab7245ab495fe7d5ca62e3852445eb95c64657659f8",
     "configs/items/trade/mod_trade_csky_spore_amp.ltx": "4ff9e81676be63e07fddc7c393815f30dab460fab4af7068d20e7e215044ae9d",
     "configs/items/trade/mod_trade_duty_amp.ltx": "efbd68f11f293460896123cb21d6cf8d2d3c7831bddb1384341ac21bcdbcc872",

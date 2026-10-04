@@ -300,6 +300,14 @@ function adoptSave(d, say){
     if(DB.files && DB.filesFromZip && say && theirs !== mine)
       say("this page has Squared Away " + mine + "; the copy it remembered was "
           + theirs + " - the newer one is being used");
+    for (const kind of ["rigs", "boxes", "pouches"]) {
+      for (const item of DB[kind] || []) {
+        const old = SEED.previousItemText?.[kind]?.[item.id];
+        const current = SEED[kind].find(x => x.id === item.id);
+        if (old && current) for (const field of ["name", "descr"])
+          if (item[field] === old[field]) item[field] = current[field];
+      }
+    }
     DB.files = JSON.parse(JSON.stringify(SEED.files));
     DB.craftOrder = SEED.craftOrder;
     DB.modVersion = mine;
@@ -3895,7 +3903,7 @@ function doBuild(say){
   for (const f of ZB.compatibilityFiles(DB)) put(f.name, f.text);
   LANGS.forEach(l=>{
     const path="configs/text/"+l+"/zzz_amp_text.xml";
-    put(path, EMIT.textFile(DB,F[path],base,[]), l==="rus" ? "cp1251" : "utf-8");
+    files.push({name:"gamedata/"+path, bytes:BUILD.stringTable(EMIT.textFile(DB,F[path],base,[]),l)});
   });
   Object.keys(F).filter(k=>k.indexOf("configs/items/trade/")===0).forEach(path=>{
     const shelf=shelfOf(path);
