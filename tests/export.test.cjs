@@ -53,3 +53,19 @@ test('all localized exports preserve game characters and match their XML encodin
  }
  assert.throws(()=>BUILD.stringTable('<text>😀</text>','rus'),/Unsupported character/);
 });
+
+
+test('pouch descriptions with multiplication signs export to a ZIP in every language',async()=>{
+ const description='Attaches to your rig and adds two separate 1\u00d73 storage slots for longer items.';
+ const xml='<?xml version="1.0" encoding="utf-8"?><string_table><string id="st_tall_pouch_descr"><text>'+description+'</text></string></string_table>';
+ const files=[];
+ for(const lang of ['eng','rus','ukr','spa']){
+  const bytes=BUILD.stringTable(xml,lang),decoded=BUILD.decodeStringTable(bytes);
+  assert(decoded.includes(lang==='spa'?description:description.replace('\u00d7','x')));
+  assert(!decoded.includes('\ufffd'));
+  files.push({name:'gamedata/configs/text/'+lang+'/tall_pouch.xml',bytes});
+ }
+ assert(xml.includes('1\u00d73'),'source description must remain unchanged');
+ const zip=await BUILD.zip(files);assert(zip.size>0);
+ assert.throws(()=>BUILD.stringTable('<text>1\u00d73 \ud83d\ude00</text>','eng'),/Unsupported character/);
+});

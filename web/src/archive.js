@@ -421,7 +421,10 @@ function stringTable(text, language) {
     if (char !== "\ufffd") map.set(char, i);
   }
   const bytes = [];
-  for (const char of text) {
+  for (let char of text) {
+    // Copied slot dimensions use a multiplication sign; Cyrillic game fonts
+    // have no such glyph. Normalize only the exported byte, not the project.
+    if (char === "\u00d7" && !map.has(char)) char = "x";
     if (!map.has(char)) throw new Error("Unsupported character " + JSON.stringify(char) + " in " + language + " item text. Use characters supported by " + encoding + ".");
     bytes.push(map.get(char));
   }
