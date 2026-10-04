@@ -1,3 +1,11 @@
+# ZoneBench Svelte Preview
+
+Work-in-progress migration. **Live site:** https://fomok.github.io/zonebench/ · **Preview:** https://fomok.github.io/zonebench-preview/
+
+The preview has separate local saves and read-only community access. See [migration status](docs/SVELTE-MIGRATION.md) for converted screens and remaining work.
+
+---
+
 # ZoneBench
 
 The browser-based item editor and community add-on library for **Squared Away**, the grid inventory mod for **S.T.A.L.K.E.R. Anomaly and G.A.M.M.A.**

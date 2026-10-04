@@ -10,17 +10,10 @@ function go(tab){if(TAB!==tab)history.pushState({},'',route(tab));TAB=tab;render
 function action(text,tab,primary=false){const b=n('button','tool'+(primary?' primary':''),text);b.onclick=()=>go(tab);return b;}
 function link(text,url,primary=false){const a=n('a','tool'+(primary?' primary':''),text);a.href=url;return a;}
 function shell(){
- root.OpeningIntro?.cancel();
  const isEditor=editing.includes(TAB);document.body.classList.toggle('site-page',!isEditor);document.body.classList.toggle('home-page',TAB==='home');document.body.classList.toggle('introduction-page',TAB==='introduction');
- document.querySelector('#nav').hidden=!isEditor;document.querySelector('#project-tools').hidden=!isEditor;
- const top=document.querySelector('#site-nav');top.replaceChildren();
- for(const [tab,label] of [['patchnotes','Patch Notes'],['home','Home'],['introduction','Introduction'],['rigs','Editor'],['catalog','Community'],['downloads','Downloads'],['help','Help'],['account','Account']]){
-  const a=n('a',(tab==='rigs'?isEditor:TAB===tab)?'active':'',label);a.href=route(tab);if(tab==='patchnotes')PatchNotes.decorate(a);if(a.classList.contains('active'))a.setAttribute('aria-current','page');a.onclick=e=>{if(e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;e.preventDefault();go(tab);};top.appendChild(a);
- }
- CommunityUpdates.paintBadge();
- document.querySelector('.brand').onclick=()=>go('home');
  if(location.hash!==route(TAB))history.replaceState({},'',route(TAB));
- document.title=(TAB==='home'?'Squared Away':(editing.includes(TAB)?'Editor':Object.entries(routes).find(([k])=>k===TAB)?.[1]||'ZoneBench'))+' | ZoneBench';
+ document.title=(TAB==='home'?'Squared Away':TAB)+' | ZoneBench Preview';
+ root.ZonebenchShell?.({tab:TAB,editor:isEditor,version:DB?.modVersion,tabs:TABS.filter(([key])=>!["catalog","account","help"].includes(key)).map(([key,label])=>({key,label,count:DB[key]?.length||0})),unread:PatchNotes.unread()});
 }
 function heading(parent,kicker,title,copy){parent.appendChild(n('p','eyebrow',kicker));parent.appendChild(n('h1',null,title));if(copy)parent.appendChild(n('p','page-lead',copy));}
 function size(bytes){return bytes?Math.round(bytes/1024/1024)+' MB':'';}

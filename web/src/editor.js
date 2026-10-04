@@ -538,16 +538,6 @@ const TABS = [["rigs","Rigs"],["pouches","Pouches"],["boxes","Containers"],
 function render(){
   Workbench.record();
   Site.shell();
-  const nav=$("#nav"); nav.innerHTML="";
-  for(const [k,label] of TABS.filter(([key])=>!["catalog","account","help"].includes(key))){
-    const b=el("button", k===TAB?"on":"", esc(label)
-      + (DB[k]&&DB[k].length ? ' <span class="cnt">'+DB[k].length+'</span>' : ""));
-    b.onclick=()=>Site.go(k);
-    nav.appendChild(b);
-  }
-  const brand = document.querySelector(".brand small");
-  if(brand) brand.textContent = DB.modVersion
-    ? "squared away " + (DB.modVersion === "3.49.2" ? "2.0" : DB.modVersion) : "squared away";
   const listy = ["rigs","pouches","boxes","packs","items"].includes(TAB);
   document.body.classList.toggle("wide", !listy);
   if(listy) renderList(); else $("#list").innerHTML="";
@@ -616,9 +606,11 @@ function renderList(){
 function fmt(n){ return String(n==null?0:n).replace(/\B(?=(\d{3})+(?!\d))/g,","); }
 
 function renderPane(){
+  window.ZonebenchPages?.clear();
   const P=$("#pane"); if(P._previewPaint){P.removeEventListener("input",P._previewPaint);P.removeEventListener("change",P._previewPaint);P._previewPaint=null;} P.innerHTML="";
   if(window.Introduction)Introduction.cleanup();
   P.classList.remove("site-content","item-editor","patch-notes-page");
+  if(window.ZonebenchPages?.render(P,TAB))return;
   if(TAB==="patchnotes")return PatchNotes.render(P);
   if(TAB==="home")return Site.home(P);
   if(TAB==="introduction")return Introduction.render(P);

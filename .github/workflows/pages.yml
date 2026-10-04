@@ -11,20 +11,23 @@ concurrency:
   cancel-in-progress: true
 jobs:
   test:
+    if: github.repository == 'Fomok/zonebench-preview'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - run: npm ci
+      - run: npm run check
       - run: npm test
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        if: github.repository == 'Fomok/zonebench-preview' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         with:
-          path: web
+          path: dist
   deploy:
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    if: github.repository == 'Fomok/zonebench-preview' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: test
     runs-on: ubuntu-latest
     permissions:

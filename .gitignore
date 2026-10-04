@@ -9,3 +9,7 @@ artifacts/
 .env.*
 *.key
 
+
+node_modules/
+dist/
+.preview-static/
