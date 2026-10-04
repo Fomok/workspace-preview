@@ -78,3 +78,14 @@ body{font-size:14px}button,a,input,textarea,select{transition:background-color .
 
 /* Keep the upcoming release legible while its downloads are disabled. */
 .release-panel .tool:disabled{opacity:.55;cursor:not-allowed;filter:saturate(.55);pointer-events:auto;}
+
+.patch-history{max-width:960px;margin:40px 0 28px;padding-top:28px;border-top:1px solid var(--line)}
+.patch-history>h2{margin:0 0 10px;font-size:25px}
+.patch-history-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:14px;margin:20px 0}
+.patch-history-tile{display:flex;flex-direction:column;gap:10px;text-align:left;padding:20px;background:#151819;border:1px solid var(--line);border-radius:7px;color:var(--text,#eee);font:inherit;cursor:pointer}
+.patch-history-tile strong{font-size:18px;line-height:1.4}
+.patch-history-tile:hover,.patch-history-tile[aria-expanded="true"]{border-color:var(--hot);background:#1d201f}
+.patch-history-tile:focus-visible{outline:2px solid var(--hot);outline-offset:3px}
+.patch-history-detail{scroll-margin-top:24px;padding-top:14px}
+.patch-history-detail[hidden]{display:none}
+.patch-history-detail>.patch-entry{margin-top:22px}

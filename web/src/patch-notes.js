@@ -80,10 +80,34 @@ function render(P){
  const el=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text)e.textContent=text;return e;};
  P.classList.add('patch-notes-page');
  P.appendChild(el('p','eyebrow','SQUARED AWAY / WHAT CHANGED'));P.appendChild(el('h1',null,'Patch Notes'));
- for(const entry of entries){
+ function articleFor(entry){
   const article=el('article','patch-entry');article.appendChild(el('p','patch-version',entry.version + (entry.date ? ' • ' + entry.date : '')));article.appendChild(el('h2',null,entry.title));article.appendChild(el('p','patch-status',entry.status));article.appendChild(el('p','page-lead',entry.summary));
   for(const group of entry.sections){const section=el('section','patch-group');section.appendChild(el('h3',null,group.title));const list=el('ul');for(const item of group.items)list.appendChild(el('li',null,item));section.appendChild(list);article.appendChild(section);}
-  P.appendChild(article);
+  return article;
+ }
+ P.appendChild(articleFor(entries[0]));
+ if(entries.length>1){
+  const history=el('section','patch-history');history.appendChild(el('h2',null,'Previous updates'));
+  history.appendChild(el('p','hint','Choose an update to read its patch notes.'));
+  const tiles=el('div','patch-history-tiles'),detail=el('div','patch-history-detail');
+  detail.id='patch-history-detail';detail.hidden=true;
+  let selected=null;const buttons=[];
+  function close(){selected=null;detail.replaceChildren();detail.hidden=true;for(const b of buttons)b.setAttribute('aria-expanded','false');}
+  for(const entry of entries.slice(1)){
+   const button=el('button','patch-history-tile');button.type='button';button.setAttribute('aria-expanded','false');button.setAttribute('aria-controls',detail.id);
+   button.appendChild(el('span','patch-version',entry.version));
+   button.appendChild(el('strong',null,entry.title));
+   if(entry.date)button.appendChild(el('span','hint',entry.date));
+   button.onclick=()=>{
+    if(selected===entry.id){close();return;}
+    close();selected=entry.id;button.setAttribute('aria-expanded','true');detail.hidden=false;
+    const back=el('button','tool','Close older notes');back.onclick=()=>{close();button.focus();};detail.appendChild(back);
+    const article=articleFor(entry);article.tabIndex=-1;detail.appendChild(article);article.focus({preventScroll:true});
+    detail.scrollIntoView({block:'start',behavior:'auto'});
+   };
+   buttons.push(button);tiles.appendChild(button);
+  }
+  history.appendChild(tiles);history.appendChild(detail);P.appendChild(history);
  }
  const help=el('button','tool primary','Installation guide');help.onclick=()=>Site.go('help');P.appendChild(help);markRead();
 }
