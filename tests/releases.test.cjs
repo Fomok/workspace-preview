@@ -29,3 +29,11 @@ test('2.0.2 pairs the new mod and engine while excluding its merge kit',()=>{
  r.assets.push({name:'Squared.Away.-.2.0.2.For.Developers.zip',browser_download_url:base+'v2.0.2/Squared.Away.-.2.0.2.For.Developers.zip'});
  const selected=c.Releases.pick(r);assert.equal(selected.tag,'v2.0.2');assert.equal(selected.mod.name,r.assets[0].name);assert.equal(selected.engine.name,r.assets[1].name);
 });
+
+test('optional Bodycam engine never replaces or invalidates the standard engine',()=>{
+ const r=fixture('v2.0.2',false,'Squared.Away.-.2.0.2.zip','Squared.Away.-.2.0.2.Engine.-.All.DX.zip');
+ const extra={name:'Squared.Away.-.2.0.2.Engine.-.Bodycam.zip',browser_download_url:base+'v2.0.2/Bodycam.zip'};
+ r.assets.push(extra);let selected=c.Releases.pick(r);assert.equal(selected.engine.name,r.assets[1].name);assert.equal(selected.bodycam.name,extra.name);
+ extra.name='Squared-Away-Engine-Bodycam-DX11-AVX.zip';selected=c.Releases.pick(r);assert.equal(selected.engine.name,r.assets[1].name);assert.equal(selected.bodycam.name,extra.name);
+ extra.browser_download_url='https://untrusted.example/engine.zip';assert.equal(c.Releases.pick(r).bodycam,null);
+});

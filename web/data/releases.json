@@ -5,12 +5,17 @@
     "draft": false,
     "prerelease": false,
     "published_at": "2026-10-04T19:54:45Z",
-    "body": "Equip weapons straight from dead bodies, even with a full backpack. Weapon swaps return the replaced weapon to the body. Works without the optional looting patch.\n\nThe optional Tarkov-like looting layout now has Field Kit equipment slots, a Pockets divider and remembered item positions and rotations.\n\n**Install both the 2.0.2 mod and matching engine (including DB0). Existing 2.0 / 2.0.1 saves work; no new game needed.**\n\n- **2.0.2.zip** \u2014 full mod with installer.\n- **Engine - All DX.zip** \u2014 required engine, all eight DX/AVX variants.\n- **For Developers.zip** \u2014 merge files and full engine diff; not needed to play.\n\nUpgrading from a version before 2.0 requires a new game.\n\n[Installation guide, editor and patch notes](https://fomok.github.io/zonebench/)\n",
+    "body": "Equip weapons straight from dead bodies, even with a full backpack. Weapon swaps return the replaced weapon to the body. Works without the optional looting patch.\n\nThe optional Tarkov-like looting layout now has Field Kit equipment slots, a Pockets divider and remembered item positions and rotations.\n\n**Install both the 2.0.2 mod and matching engine (including DB0). Existing 2.0 / 2.0.1 saves work; no new game needed.**\n\n- **2.0.2.zip** \u2014 full mod with installer.\n- **Engine - All DX.zip** \u2014 required engine, all eight DX/AVX variants.\n- **Engine - Bodycam.zip** \u2014 optional combined engine for Bodycam users, DX11-AVX only. Use instead of the standard engine; install both bin and db/mods from this ZIP.\n- **For Developers.zip** \u2014 merge files and full engine diff; not needed to play.\n\nUpgrading from a version before 2.0 requires a new game.\n\n[Installation guide, editor and patch notes](https://fomok.github.io/zonebench/)\n\n**Optional Bodycam engine \u2014 October 5, 2026**\nBased on [Bodycam 2026.8.4](https://github.com/asuparabekon/xray-monolith-bodycam/releases/tag/2026.8.4-bodycam-mt), combined with Squared Away 2.0.2. Keep the 2.0.2 mod installed. For PiP scopes, follow Bodycam\u2019s requirements for the matching external 3DSS PiP patch. Standard-engine users do not need this download.\n",
     "assets": [
       {
         "name": "Squared.Away.-.2.0.2.Engine.-.All.DX.zip",
         "size": 537568322,
         "browser_download_url": "https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/v2.0.2/Squared.Away.-.2.0.2.Engine.-.All.DX.zip"
+      },
+      {
+        "name": "Squared.Away.-.2.0.2.Engine.-.Bodycam.zip",
+        "size": 70185827,
+        "browser_download_url": "https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/v2.0.2/Squared.Away.-.2.0.2.Engine.-.Bodycam.zip"
       },
       {
         "name": "Squared.Away.-.2.0.2.For.Developers.zip",

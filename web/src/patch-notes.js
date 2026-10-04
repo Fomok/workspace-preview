@@ -2,6 +2,22 @@
 (function(root){
 'use strict';
 const entries=[{
+ id:'squared-away-2-0-2-bodycam',
+ date:'2026-10-05',
+ title:'Squared Away — Optional Bodycam Support',
+ version:'2.0.2 · Bodycam',
+ status:'Available now • Optional engine download • DX11-AVX only',
+ summary:'Use Squared Away together with Bodycam’s camera and shooting changes.',
+ sections:[
+  {title:'Optional Bodycam engine',items:[
+   'A combined engine is now available for Squared Away 2.0.2 and Bodycam, based on Bodycam’s August 4 release.',
+   'Choose Download Bodycam engine in Downloads instead of the standard engine package. Install both bin and db/mods from its ZIP.',
+   'Keep the Squared Away 2.0.2 mod installed. Only DX11-AVX is included.',
+   'For PiP scopes, use the matching external 3DSS PiP compatibility content required by Bodycam. The engine ZIP does not include that external patch.',
+   'If you do not use Bodycam, keep the standard engine. No update is needed.'
+  ]}
+ ]
+},{
  id:'squared-away-2-0-2-looting',
  date:'2026-10-04',
  title:'Squared Away â€” 2.0.2',
