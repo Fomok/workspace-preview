@@ -1,5 +1,30 @@
 [
   {
+    "tag_name": "v2.0-update",
+    "name": "Squared Away - 2.0 Update",
+    "draft": false,
+    "prerelease": false,
+    "published_at": "2026-10-04T15:00:01Z",
+    "body": "A rebuilt inventory with saved layouts, persistent rigs and boxes, direct gear transfers, and the new Field Kit interface.\n\n- **Update ZIP:** install through MO2; choose only the patches you use.\n- **Engine ZIP:** required. Includes DX8/9/10/11, AVX and non-AVX, plus matching DB0. Extract into your Anomaly folder.\n- **For Developers ZIP:** engine source changes and merge diff; players can skip it.\n\n**Start a new game when upgrading from the previous public version.** Use Mags Reloaded Fork by Priler UPDATE 6 for the baseline magazine/pouch content.\n\n[Guide, patch notes and ZoneBench](https://fomok.github.io/zonebench/)\n",
+    "assets": [
+      {
+        "name": "Squared.Away.-.2.0.Engine.-.All.DX.zip",
+        "size": 536862892,
+        "browser_download_url": "https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/v2.0-update/Squared.Away.-.2.0.Engine.-.All.DX.zip"
+      },
+      {
+        "name": "Squared.Away.-.2.0.For.Developers.zip",
+        "size": 4007658,
+        "browser_download_url": "https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/v2.0-update/Squared.Away.-.2.0.For.Developers.zip"
+      },
+      {
+        "name": "Squared.Away.-.2.0.Update.zip",
+        "size": 15320675,
+        "browser_download_url": "https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/v2.0-update/Squared.Away.-.2.0.Update.zip"
+      }
+    ]
+  },
+  {
     "tag_name": "2026.9.12",
     "name": "2026.9.12 + Squared Away",
     "draft": false,

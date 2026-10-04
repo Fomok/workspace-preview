@@ -13,7 +13,7 @@ The browser-based item editor and community add-on library for **Squared Away**,
 - Sign in to publish, update or remove your own add-ons.
 - Read patch notes and find the mod and its matching engine downloads when available.
 
-The editor targets **Squared Away 2.0**. Its release card is currently a preview with downloads disabled; the previous public release is listed separately.
+The editor targets **Squared Away 2.0**. [Download the mod and matching engine](https://fomok.github.io/zonebench/#downloads). Start a new game when upgrading from the previous public release.
 
 ## Your projects
 

@@ -2,10 +2,10 @@
 (function(root){
 'use strict';
 const entries=[{
- id:'squared-away-2-0-release-v2',
+ id:'squared-away-2-0-published',
  title:'Squared Away — 2.0 Update',
  version:'2.0 Update',
- status:'Coming soon • Mod download not yet published',
+ status:'Available now • Download the mod and matching engine',
  summary:'Your inventory, rebuilt. The 2.0 Update brings smarter packing, a cleaner interface and easier customization.',
  sections:[
   {title:'Before you install',items:[

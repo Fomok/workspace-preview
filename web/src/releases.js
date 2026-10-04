@@ -10,19 +10,12 @@ function pick(release){
  if(!safe(mod[0])||!safe(engine[0]))return null;
  return {tag:release.tag_name,name:release.name||release.tag_name,preview:!!release.prerelease,date:release.published_at,notes:release.body||'',url:'https://github.com/'+repo+'/releases/tag/'+encodeURIComponent(release.tag_name),mod:mod[0],engine:engine[0]};
 }
-// Display-only announcement: no draft asset URLs or downloadable files.
-function withAnnouncement(items){
- if(items.some(r=>r.tag==='v2.0-update'))return items;
- return [{tag:'v2.0-update',name:'Squared Away - 2.0 Update',unavailable:true,
-  notes:'Saved inventory layouts, persistent rigs and boxes, direct gear transfers, and the new Field Kit interface.\n\nStart a new game when upgrading from the previous public version. Install the mod and its matching engine together when downloads become available.',
-  mod:{name:'Squared Away - 2.0 Update.zip'},engine:{name:'Squared Away - 2.0 Engine - All DX.zip'}},...items];
-}
 let pending;
 async function load(){
  if(!pending)pending=(async()=>{
-  try{const response=await fetch('https://api.github.com/repos/'+repo+'/releases?per_page=20',{signal:AbortSignal.timeout(10000),headers:{Accept:'application/vnd.github+json'}});if(!response.ok)throw Error('Release lookup unavailable');const raw=await response.json();if(!Array.isArray(raw))throw Error('Invalid release response');return {items:withAnnouncement(raw.map(pick).filter(Boolean).sort((a,b)=>Date.parse(b.date)-Date.parse(a.date))),cached:false};}
-  catch{const response=await fetch('data/releases.json');if(!response.ok)throw Error('Downloads are temporarily unavailable. Please retry.');const raw=await response.json();return {items:withAnnouncement(raw.map(pick).filter(Boolean).sort((a,b)=>Date.parse(b.date)-Date.parse(a.date))),cached:true};}
+  try{const response=await fetch('https://api.github.com/repos/'+repo+'/releases?per_page=20',{signal:AbortSignal.timeout(10000),headers:{Accept:'application/vnd.github+json'}});if(!response.ok)throw Error('Release lookup unavailable');const raw=await response.json();if(!Array.isArray(raw))throw Error('Invalid release response');return {items:raw.map(pick).filter(Boolean).sort((a,b)=>Date.parse(b.date)-Date.parse(a.date)),cached:false};}
+  catch{const response=await fetch('data/releases.json');if(!response.ok)throw Error('Downloads are temporarily unavailable. Please retry.');const raw=await response.json();return {items:raw.map(pick).filter(Boolean).sort((a,b)=>Date.parse(b.date)-Date.parse(a.date)),cached:true};}
  })();return pending;
 }
-root.Releases={pick,load,withAnnouncement};
+root.Releases={pick,load};
 })(globalThis);

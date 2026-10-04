@@ -25,7 +25,6 @@ function shell(){
 function heading(parent,kicker,title,copy){parent.appendChild(n('p','eyebrow',kicker));parent.appendChild(n('h1',null,title));if(copy)parent.appendChild(n('p','page-lead',copy));}
 function size(bytes){return bytes?Math.round(bytes/1024/1024)+' MB':'';}
 function currentRelease(release){return release.mod.name.includes('3.49.2') || /^Squared[-_ .]*Away[-_ .]+(?:FOMOD[-_ .]+)?2[._-]0(?:[-_ .]|$)/i.test(release.mod.name);}
-function upcoming(parent,items){if(items.some(currentRelease))return;const card=n('section','upcoming-release');card.appendChild(n('p','eyebrow','NEXT RELEASE'));card.appendChild(n('h2',null,'The 2.0 Update is on its way.'));card.appendChild(n('p','hint','Squared Away 2.0 is being prepared for release. Its download will appear here when it is published. The older public version is listed below.'));parent.appendChild(card);}
 function releaseBlock(parent,release,compact=false){
  const panel=n('section','release-panel'+(compact?' compact':''));parent.appendChild(panel);
  const about=n('div','release-about');about.appendChild(n('p','eyebrow',release.unavailable?'COMING SOON':release.preview?'CURRENT PREVIEW':'LATEST STABLE RELEASE'));about.appendChild(n('h2',null,release.name));if(release.date)about.appendChild(n('p','hint','Published '+new Date(release.date).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'})));panel.appendChild(about);
@@ -49,7 +48,7 @@ async function home(P){
  const actions=n('div','site-actions');actions.appendChild(action('↓  Download Squared Away','downloads',true));actions.appendChild(action('Explore the mechanics  →','introduction'));copy.appendChild(actions);const shot=n('figure','hero-gameplay');const img=n('img');img.src='assets/gameplay/inventory.png';img.alt='Squared Away in-game inventory with equipment, an equipped rig and backpack storage';img.width=1207;img.height=1079;shot.appendChild(img);shot.appendChild(n('figcaption',null,'IN-GAME CAPTURE / SQUARED AWAY'));hero.appendChild(shot);P.appendChild(hero);root.OpeningIntro?.play(copy.querySelector('h1'));
  const content=n('div','home-sections');P.appendChild(content);
  const release=n('div');release.appendChild(n('p','hint','Checking the latest release…'));content.appendChild(release);
- Releases.load().then(result=>{if(!release.isConnected)return;release.replaceChildren();upcoming(release,result.items);if(result.items[0])releaseBlock(release,result.items[0],true);else release.appendChild(n('p','hint','A complete release package has not been published yet.'));if(result.cached)release.appendChild(n('p','hint','Showing the last verified release. Live release lookup is unavailable.'));}).catch(e=>{if(release.isConnected)release.textContent=e.message;});
+ Releases.load().then(result=>{if(!release.isConnected)return;release.replaceChildren();if(result.items[0])releaseBlock(release,result.items[0],true);else release.appendChild(n('p','hint','A complete release package has not been published yet.'));if(result.cached)release.appendChild(n('p','hint','Showing the last verified release. Live release lookup is unavailable.'));}).catch(e=>{if(release.isConnected)release.textContent=e.message;});
  const features=n('div','home-features');for(const [title,desc] of [['Every cell counts','Place and rotate items to make the most of your inventory.'],['Keep essentials close','Rigs and expansion pouches give your loadout room to work.'],['Make it your own','Build layouts, change textures and export your own add-ons.']]){const card=n('article');card.appendChild(n('h3',null,title));card.appendChild(n('p',null,desc));features.appendChild(card);}content.appendChild(features);
  const head=n('div','section-heading');const titles=n('div');titles.appendChild(n('h2',null,'Community add-ons'));titles.appendChild(n('p','eyebrow','MADE BY STALKERS. CHOSEN BY YOU.'));head.appendChild(titles);head.appendChild(action('Browse all add-ons  →','catalog'));content.appendChild(head);
  const library=n('div','home-community catalog-grid');content.appendChild(library);
@@ -68,7 +67,7 @@ async function downloads(P){
  const status=n('p','hint','Checking published releases…');P.appendChild(status);
  try{const result=await Releases.load();if(!status.isConnected)return;status.remove();if(result.cached)P.appendChild(n('p','warn','Live release lookup is unavailable. Showing the last verified downloads.'));
   if(!result.items.length){P.appendChild(n('p','hint','No complete release package is available yet.'));return;}
-  upcoming(P,result.items);releaseBlock(P,result.items[0]);
+  releaseBlock(P,result.items[0]);
   P.appendChild(n('h2','download-help-title','Install the pair'));
   const help=n('div','download-steps');for(const [title,desc] of [['01 / Mod','Install the mod ZIP through MO2 and choose only the optional patches for mods you use.'],['02 / Engine','Close the game. Back up your existing engine files, then extract the matching engine package into the Anomaly folder.'],['03 / Play','Read the release notes before loading a save. Moving from the old release to the native rebuild requires a new game.']]){const c=n('article','card');c.appendChild(n('h3',null,title));c.appendChild(n('p','hint',desc));help.appendChild(c);}P.appendChild(help);
   if(result.items.length>1){const older=n('details','older-releases');older.appendChild(n('summary',null,'Older releases'));for(const item of result.items.slice(1))releaseBlock(older,item);P.appendChild(older);}
@@ -80,7 +79,7 @@ function help(P){
  const blocks=[
   [
     "Squared Away 2.0 Update",
-    "ZoneBench is ready for the 2.0 Update. Home introduces the mod, Introduction explains its mechanics, and Patch Notes covers what changed. The 2.0 package is ready for release; its download stays hidden until publication. Downloads only lists published packages. An older download is not the version this editor targets."
+    "ZoneBench is ready for the 2.0 Update. Home introduces the mod, Introduction explains its mechanics, and Patch Notes covers what changed. The 2.0 Update is available in Downloads. Install both the mod and its matching engine. Downloads only lists published packages. An older download is not the version this editor targets."
   ],
   [
     "Install the mod",

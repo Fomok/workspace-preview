@@ -19,9 +19,7 @@ test('clean 2.0 filenames pair correctly and never leak draft downloads',()=>{
  }
 });
 
-test('2.0 announcement has no download URLs and keeps old releases available',()=>{
- const older=c.Releases.pick(releases[1]);const list=c.Releases.withAnnouncement([older]);
- assert.equal(list.length,2);assert.equal(list[0].unavailable,true);assert.equal(list[0].mod.browser_download_url,undefined);assert.equal(list[0].engine.browser_download_url,undefined);assert.equal(list[1],older);
- const published=c.Releases.pick(fixture('v2.0-update',false,'Squared.Away.-.2.0.Update.zip','Squared.Away.-.2.0.Engine.-.All.DX.zip'));
- const live=c.Releases.withAnnouncement([published,older]);assert.equal(live.length,2);assert.equal(live[0],published);assert(!live[0].unavailable);
+test('published 2.0 exposes both download links',()=>{
+ const release=c.Releases.pick(fixture('v2.0-update',false,'Squared.Away.-.2.0.Update.zip','Squared.Away.-.2.0.Engine.-.All.DX.zip'));
+ assert(release.mod.browser_download_url);assert(release.engine.browser_download_url);assert(!release.unavailable);assert(!release.preview);
 });

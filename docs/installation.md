@@ -2,7 +2,7 @@
 
 ## Current editor baseline
 
-ZoneBench targets Squared Away 2.0. Item definitions, recipes, trader templates and shared world models match the tested current mod. The older public 3.48.0 download is not compatible with these exports. The 2.0 release remains hidden until publication.
+ZoneBench targets Squared Away 2.0. Item definitions, recipes, trader templates and shared world models match the tested current mod. The older public 3.48.0 download is not compatible with these exports. The 2.0 mod and matching engine are available in the website Downloads tab.
 
 ## Install the mod
 
