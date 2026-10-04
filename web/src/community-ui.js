@@ -67,6 +67,7 @@ async function drawCommunityCatalog(P){
    if(imports.length)communityMessage(card,imports.some(x=>x.communitySource.revision<listing.revision)?'Update available — your imported version stays unchanged until you choose to import.':'Items from this version are in your project.');
    const show=AddonPreview.card(card,listing,record.load,result=>Community.preview(result));
    communityButton(card,'View items',show,true);
+   if(imports.some(x=>x.communitySource.revision<listing.revision))communityButton(card,'Compare update',async()=>Community.preview(await record.load()),true);
    if(listing.canEdit){
     communityButton(card,'Edit / update',async()=>{COMMUNITY_EDIT=listing;renderPane();});
     if(listing.status!=='removed')communityButton(card,listing.status==='published'?'Unpublish':'Publish again',async()=>{

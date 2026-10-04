@@ -42,6 +42,7 @@ function organize(P,it){
   aside.appendChild(fitPreview(it,220,190));
   const footprint=document.createElement('p');footprint.className='hint';footprint.textContent=(it.cellw||2)+' × '+(it.cellh||2)+' cells in inventory';aside.appendChild(footprint);
   if(['rigs','boxes','pouches'].includes(TAB))aside.appendChild(AddonPreview.layoutView({kind:TAB,item:it}));
+  Workbench.efficiency(aside,TAB,it);
   if(TAB==='packs'){const shape=EMIT.packSize(it.size)||EMIT.packSize(DB.packDefault);if(shape)aside.appendChild(packPreview(shape));}
  }
  if(P._previewPaint){P.removeEventListener('input',P._previewPaint);P.removeEventListener('change',P._previewPaint);}P._previewPaint=paint;

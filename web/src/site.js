@@ -1,7 +1,7 @@
 /* Site navigation and read-only home/download pages. The editor keeps its own project. */
 (function(root){
 'use strict';
-const editing=['rigs','boxes','pouches','packs','drops','check','share','build'];
+const editing=['rigs','boxes','pouches','packs','items','drops','changes','check','share','build'];
 const routes={patchnotes:'patch-notes',home:'home',introduction:'introduction',catalog:'community',downloads:'downloads',help:'help',account:'account'};
 const n=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e;};
 function route(tab){return '#'+(routes[tab]||'editor/'+tab);}
@@ -17,6 +17,7 @@ function shell(){
  for(const [tab,label] of [['patchnotes','Patch Notes'],['home','Home'],['introduction','Introduction'],['rigs','Editor'],['catalog','Community'],['downloads','Downloads'],['help','Help'],['account','Account']]){
   const a=n('a',(tab==='rigs'?isEditor:TAB===tab)?'active':'',label);a.href=route(tab);if(tab==='patchnotes')PatchNotes.decorate(a);if(a.classList.contains('active'))a.setAttribute('aria-current','page');a.onclick=e=>{if(e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;e.preventDefault();go(tab);};top.appendChild(a);
  }
+ CommunityUpdates.paintBadge();
  document.querySelector('.brand').onclick=()=>go('home');
  if(location.hash!==route(TAB))history.replaceState({},'',route(TAB));
  document.title=(TAB==='home'?'Squared Away':(editing.includes(TAB)?'Editor':Object.entries(routes).find(([k])=>k===TAB)?.[1]||'ZoneBench'))+' | ZoneBench';
@@ -56,6 +57,7 @@ async function home(P){
 }
 async function downloads(P){
  heading(P,'SQUARED AWAY','Downloads','The mod and its matching engine, together in one place.');
+ InstallationGuide.render(P);
  const status=n('p','hint','Checking published releases…');P.appendChild(status);
  try{const result=await Releases.load();if(!status.isConnected)return;status.remove();if(result.cached)P.appendChild(n('p','warn','Live release lookup is unavailable. Showing the last verified downloads.'));
   if(!result.items.length){P.appendChild(n('p','hint','No complete release package is available yet.'));return;}
@@ -67,6 +69,7 @@ async function downloads(P){
 }
 function help(P){
  heading(P,'FIELD GUIDE','Get squared away.','Installation, compatibility and the ZoneBench editor.');
+ InstallationGuide.render(P);
  const blocks=[
   [
     "Squared Away 2.0 Update",
@@ -118,7 +121,7 @@ function help(P){
   ],
   [
     "Create and install your own add-on",
-    "In Editor, choose Rigs, Containers, Pouches, Backpacks or Drops and make your changes. Save project downloads a backup. Export mod guides you through Review, Fix issues and Download. Resolve blocking errors before downloading your ZIP. Install that ZIP as a separate MO2 mod below Squared Away and its optional patches. Keep only one ZoneBench export enabled: combine everything you want in one project before exporting. Exports contain item configuration and selected assets, not the inventory scripts or engine. Saved MCM settings take priority over exported drop and condition defaults."
+    "In Editor, choose Rigs, Containers, Pouches, Backpacks or Drops and make your changes. Save project downloads a backup. Undo and Redo recover recent edits within the current tab (history resets on refresh); Changes lists customized items and available Community updates. Compare with default lets you inspect or reset one item. Export mod guides you through Review, Fix issues and Download. Resolve blocking errors before downloading your ZIP. Install that ZIP as a separate MO2 mod below Squared Away and its optional patches. Keep only one ZoneBench export enabled: combine everything you want in one project before exporting. Exports contain item configuration and selected assets, not the inventory scripts or engine. Saved MCM settings take priority over exported drop and condition defaults."
   ],
   [
     "Browse Community add-ons",

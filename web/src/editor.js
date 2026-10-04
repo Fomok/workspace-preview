@@ -284,6 +284,7 @@ function verNewer(a, b){
    made it three. */
 function adoptSave(d, say){
   ZB.validate(d);
+  CommunityUpdates.invalidate();
   DB = d; DB.notes = DB.notes || "";
 
   /* THE MOD'S FILES, AND WHOSE ARE NEWER.
@@ -394,6 +395,7 @@ document.addEventListener("visibilitychange", ()=>{
 });
 
 function fresh(){
+  CommunityUpdates.invalidate();
   DB = JSON.parse(JSON.stringify(SEED));
   DB.notes = DB.notes || "";
   DB.filesFromZip = false;
@@ -406,6 +408,7 @@ function fresh(){
    it - and if there is nothing stored, or the store is unavailable,
    the shipped bench, exactly as before. */
 async function boot(){
+  fresh(); Workbench.setDefaults(DB);
   let kept = null;
   try{ kept = await keepGet(); }catch(e){ KEEP_HOW = "off"; KEEP_ERR = String(e); }
   let note = "";
@@ -418,10 +421,10 @@ async function boot(){
         + "shipped bench (" + (e.message || e) + ")";
     }
   } else fresh();
-  render();
+  render(); Workbench.init(); CommunityUpdates.start();
   if(note) setTimeout(()=>alert(note), 60);
 }
-function touch(){ DIRTY = true; renderDirty(); scheduleKeep(); }
+function touch(){ Workbench.record(document.activeElement); DIRTY = true; renderDirty(); scheduleKeep(); }
 /* WHAT THE CORNER SAYS. It used to say "unsaved changes", which was
    the whole truth when the only memory was a file you pressed a button
    for. Now it is about the store: kept, keeping, or not keeping and
@@ -521,10 +524,11 @@ function famOf(it){ return (DB.families||{})[it.takes]; }
 const TABS = [["rigs","Rigs"],["pouches","Pouches"],["boxes","Containers"],
               ["packs","Backpacks"],
               
-              ["drops","Drops"],["check","Check"],
+              ["drops","Drops"],["changes","Changes"],["check","Check"],
               ["catalog","Public add-ons"], ["account","Account"], ["share","Share items"], ["build","Export mod"],
               ["help","How this works"]];
 function render(){
+  Workbench.record();
   Site.shell();
   const nav=$("#nav"); nav.innerHTML="";
   for(const [k,label] of TABS.filter(([key])=>!["catalog","account","help"].includes(key))){
@@ -536,7 +540,7 @@ function render(){
   const brand = document.querySelector(".brand small");
   if(brand) brand.textContent = DB.modVersion
     ? "squared away " + (DB.modVersion === "3.49.2" ? "2.0" : DB.modVersion) : "squared away";
-  const listy = ["rigs","pouches","boxes","packs"].includes(TAB);
+  const listy = ["rigs","pouches","boxes","packs","items"].includes(TAB);
   document.body.classList.toggle("wide", !listy);
   if(listy) renderList(); else $("#list").innerHTML="";
   renderPane();
@@ -599,7 +603,7 @@ function renderList(){
   const ad=el("button","addbtn","+ adopt an existing "+one);
   ad.style.marginTop="6px";
   ad.onclick=()=>addItem(true); L.appendChild(ad);
-  EditorView.list(L);
+  EditorView.list(L); Workbench.markRows();
 }
 function fmt(n){ return String(n==null?0:n).replace(/\B(?=(\d{3})+(?!\d))/g,","); }
 
@@ -616,6 +620,7 @@ function renderPane(){
   if(TAB==="catalog") return drawCatalog(P);
   if(TAB==="drops") return drawDrops(P);
   if(TAB==="check") return drawCheck(P);
+  if(TAB==="changes") return Workbench.changes(P);
   if(TAB==="share") return drawShare(P);
   if(TAB==="build") return drawBuild(P);
   if(TAB==="help") return Site.help(P);
@@ -637,7 +642,7 @@ function renderPane(){
   else if(TAB==="packs" || TAB==="items") drawItemPage(P,it);
   else drawPouch(P,it);
   if(TAB==="rigs" || TAB==="boxes") drawModel(P,it);
-  EditorView.organize(P,it);
+  EditorView.organize(P,it); Workbench.itemTools(P,it);
 }
 
 /* small field builders --------------------------------------------- */
@@ -3601,7 +3606,7 @@ function drawProjectReset(P){
     if(!confirm("Reset this browser's item customizations to the original Squared Away defaults?\n\nYour custom and imported items and project edits will be removed. Save a project backup first if you want to keep them.\n\nYour account and published add-ons will NOT be deleted.")) return;
     clearTimeout(KEEP_T);
     await keepClear();
-    fresh(); KEEP_SAID = ""; render();
+    fresh(); touch(); render();
   };
   c.appendChild(wipe);
   P.appendChild(c);
@@ -4111,7 +4116,7 @@ function drawIncoming(P) {
     + (nf === 1 ? "One rule" : nf + " rules") + " will come in beside yours; "
     + "nothing of yours is written over, and if a name clashes theirs arrives "
     + "under a new one."));
-  const one = { rigs: "rig", pouches: "pouch", boxes: "container" };
+  const one = { rigs: "rig", pouches: "pouch", boxes: "container", packs:"backpack", items:"item" };
   INCOMING.items.forEach((entry, i) => {
     const it = entry.item, clash = (DB[entry.kind] || []).some(x => x.id === it.id);
     const row = el("label", "tick");
@@ -4147,11 +4152,17 @@ function drawIncoming(P) {
       c.appendChild(how);
     }
   });
+  const replaceCount=Workbench.importReview(c,INCOMING);
+  let approved=!replaceCount;
+  let acknowledge;
+  if(replaceCount){const warning=el("label","tick");acknowledge=document.createElement("input");acknowledge.type="checkbox";warning.appendChild(acknowledge);const text=document.createElement("span");text.textContent="I understand this replaces "+replaceCount+" existing item(s), including their local customizations.";warning.appendChild(text);c.appendChild(warning);}
   const n = INCOMING.items.filter(x => x.take).length;
   const go = el("button", "tool primary");
   go.style.marginTop = "10px";
   go.textContent = "Take " + n + " item" + (n === 1 ? "" : "s");
-  if (!n) go.disabled = true; else go.onclick = takeIncoming;
+  go.disabled=!n||!approved;
+  if(acknowledge)acknowledge.onchange=()=>{approved=acknowledge.checked;go.disabled=!n||!approved;};
+  go.onclick=()=>{if(n&&approved)takeIncoming();};
   c.appendChild(go);
   const no = el("button", "tool");
   no.style.cssText = "margin-top:10px;margin-left:8px";
@@ -4179,7 +4190,7 @@ function takeIncoming() {
     it.id = uniqueId(it.id);
     arr.push(it); renamed++;
   });
-  INCOMING = null; SHARE_PICK = null; touch(); render();
+  INCOMING = null; SHARE_PICK = null; CommunityUpdates.invalidate(); touch(); render();
   const bits = [];
   if (added) bits.push(added + " added");
   if (replaced) bits.push(replaced + " replaced");
@@ -4412,7 +4423,7 @@ $("#fileIn").onchange=e=>{
        afterwards does not lose it. */
     let note = "";
     adoptSave(d, m=>{ note = m; });
-    render(); flushKeep();
+    Workbench.record(); render(); flushKeep();
     if(note) setTimeout(()=>alert(note), 60);
   };
   fr.readAsText(file);
