@@ -63,3 +63,11 @@ body .field-page .tool.primary,body .intro-shell .tool.primary {background:linea
 .intro-shell .intro-reader {margin-top:0;min-width:0}
 @media(max-width:1100px){.help-page,.intro-shell{grid-template-columns:155px minmax(0,1fr);gap:16px}.intro-shell .intro-copy{padding:18px}.intro-shell .intro-copy h1,.intro-shell .intro-copy h2{font-size:30px}}
 @media(max-width:600px){.help-page,.intro-shell{grid-template-columns:104px minmax(0,1fr);gap:10px}.help-page .help-topics,.intro-shell .intro-nav{padding:3px;border-width:4px}.help-page .help-topics .tool,.intro-shell .intro-nav-button{font-size:11px;padding:9px 5px;min-height:46px}.help-page .help-topics{max-height:calc(100dvh - 175px)}.help-content>h1{font-size:28px}.intro-shell .intro-copy{padding:12px}.intro-shell .intro-copy h1,.intro-shell .intro-copy h2{font-size:24px}.intro-shell .intro-description{font-size:14px}}
+/* Chapter drawers emerge from the underside of the ZoneBench nameplate. */
+body .site-header {position:relative;z-index:30}
+.help-page,.intro-shell {grid-template-columns:var(--drawer-width,268px) minmax(0,1fr);max-width:none}
+.help-content,.intro-shell .intro-reader {grid-column:2}
+.help-page .help-topics,.intro-shell .intro-nav {position:fixed;left:var(--drawer-left,24px);top:var(--drawer-top,94px);width:var(--drawer-width,268px);max-height:calc(100dvh - var(--drawer-top,94px) - 16px);margin:0;border-top:0;padding-top:16px;z-index:20;box-shadow:0 12px 18px #0006;animation:chapter-drawer-in .32s cubic-bezier(.2,.7,.2,1) both;transform-origin:top}
+@keyframes chapter-drawer-in {from{clip-path:inset(0 0 100% 0);transform:translateY(-18px)}to{clip-path:inset(0);transform:translateY(0)}}
+@media(max-width:760px){.help-page,.intro-shell{grid-template-columns:104px minmax(0,1fr)}.help-page .help-topics,.intro-shell .intro-nav{left:18px;width:104px;padding-top:10px}}
+@media(prefers-reduced-motion:reduce){.help-page .help-topics,.intro-shell .intro-nav{animation:none}}
