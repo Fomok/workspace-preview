@@ -243,6 +243,7 @@ async function keepClear(){
 /* The same thing "Save project" writes - one function, so the file
    and the store can never come to mean different things. */
 function snapshot(){
+  AddonExport.ensure(DB,SEED);
   const { files, ...rest } = DB;
   const orig = {};
   (SEED.rigs||[]).concat(SEED.boxes||[]).concat(SEED.pouches||[])
@@ -429,10 +430,11 @@ async function boot(){
         + "shipped bench (" + (e.message || e) + ")";
     }
   } else fresh();
+  AddonExport.ensure(DB,SEED); await flushKeep();
   render(); Workbench.init(); CommunityUpdates.start();
   if(note) setTimeout(()=>alert(note), 60);
 }
-function touch(){ Workbench.record(document.activeElement); DIRTY = true; renderDirty(); scheduleKeep(); }
+function touch(){ AddonExport.ensure(DB,SEED); Workbench.record(document.activeElement); DIRTY = true; renderDirty(); scheduleKeep(); }
 /* WHAT THE CORNER SAYS. It used to say "unsaved changes", which was
    the whole truth when the only memory was a file you pressed a button
    for. Now it is about the store: kept, keeping, or not keeping and
@@ -3664,7 +3666,8 @@ function beyondTheBench(){
   return out;
 }
 
-function drawBuild(P){
+function drawBuild(P){ return AddonExport.render(P,DB,SEED,async()=>{touch();await flushKeep();},drawLegacyBuild); }
+function drawLegacyBuild(P){
   P.appendChild(el('h1',null,'Export your add-on'));
   P.appendChild(el('p','hint','Review your project, check for issues, then download one ZIP for Mod Organizer 2.'));
   const findings=checkFindings();try{ZB.validate(DB);}catch(error){findings.bad.push(esc(error.message));}

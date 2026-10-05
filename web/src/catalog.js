@@ -10,7 +10,7 @@ function drawModel(P,it){
   const path=document.createElement('input');path.placeholder='folder\\model_name';path.value=it.modelPath||'';path.setAttribute('aria-label','Custom model path');
   path.oninput=()=>{it.modelPath=path.value;touch();};card.appendChild(path);
   card.appendChild(el('p','hint','Path under gamedata/meshes, without .ogf. The model and its textures must be installed separately.'));
- }else card.appendChild(el('p','hint','Shared models and their textures are included in the exported ZIP. This changes the dropped item, not its inventory icon.'));
+ }else card.appendChild(el('p','hint','Independent add-ons use the shared models supplied by Squared Away. Legacy exports include their assets. This changes the dropped item, not its inventory icon.'));
  P.appendChild(card);
 }
 let CATALOG=null;
