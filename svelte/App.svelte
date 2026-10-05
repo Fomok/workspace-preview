@@ -7,7 +7,7 @@
  const links=[['patchnotes','Patch Notes'],['home','Home'],['introduction','Introduction'],['rigs','Editor'],['catalog','Community'],['downloads','Downloads'],['help','Help'],['account','Account']];
  const hashes={patchnotes:'patch-notes',catalog:'community',rigs:'editor/rigs'};
  onMount(()=>{
-  const align=()=>{const h=header.getBoundingClientRect(),b=brand.getBoundingClientRect();shell.style.setProperty('--drawer-left',b.left+'px');shell.style.setProperty('--drawer-top',(h.bottom-2)+'px');shell.style.setProperty('--drawer-width',b.width+'px');};
+  const align=()=>{const h=header.getBoundingClientRect(),b=brand.getBoundingClientRect();shell.style.setProperty('--drawer-left',h.left+'px');shell.style.setProperty('--drawer-top',(h.bottom-2)+'px');shell.style.setProperty('--drawer-width',(b.right-h.left)+'px');};
   const observer=new ResizeObserver(align);observer.observe(header);observer.observe(brand);window.addEventListener('resize',align);align();
   return()=>{observer.disconnect();window.removeEventListener('resize',align);};
  });

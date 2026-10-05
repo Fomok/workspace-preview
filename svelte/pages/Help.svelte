@@ -7,7 +7,7 @@
  function toggle(i,e){if(query)return;const next=new Set(open);if(e.currentTarget.open)next.add(i);else next.delete(i);open=next;}
 </script>
 <div class="field-page help-page">
-<nav class="help-topics" aria-label="Help topics">{#each categories as [name,ids],i}<button class="tool" onclick={async()=>{query='';await tick();sections[i].scrollIntoView({block:'start',behavior:'smooth'});}}>{name}</button>{/each}</nav>
+<div class="chapter-drawer"><nav class="help-topics" aria-label="Help topics">{#each categories as [name,ids],i}<button class="tool" onclick={async()=>{query='';await tick();sections[i].scrollIntoView({block:'start',behavior:'smooth'});}}>{name}</button>{/each}</nav></div>
 <div class="help-content">
 <p class="eyebrow">FIELD GUIDE</p><h1>Get squared away.</h1><p class="page-lead">Installation, compatibility and the ZoneBench editor.</p><Checklist/>
 <div class="help-tools"><input type="search" bind:value={query} placeholder="Search installation, controls, exporting…" aria-label="Search Help"></div>

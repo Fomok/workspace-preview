@@ -25,7 +25,7 @@ const pointers=[
 ];
 function render(P){
  cleanup();const shell=el('div','intro-shell');P.appendChild(shell);
- const nav=el('nav','intro-nav');nav.setAttribute('aria-label','Introduction sections');shell.appendChild(nav);
+ const nav=el('nav','intro-nav');nav.setAttribute('aria-label','Introduction sections');const drawer=el('div','chapter-drawer');drawer.appendChild(nav);shell.appendChild(drawer);
  const reader=el('div','intro-reader');shell.appendChild(reader);
  const view=el('div','intro-viewport');view.tabIndex=0;view.setAttribute('role','region');view.setAttribute('aria-label','Squared Away introduction. Scroll or use the section buttons.');reader.appendChild(view);
  const stage=el('figure','intro-stage');reader.appendChild(stage);

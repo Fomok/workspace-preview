@@ -68,6 +68,10 @@ body .site-header {position:relative;z-index:30}
 .help-page,.intro-shell {grid-template-columns:var(--drawer-width,268px) minmax(0,1fr);max-width:none}
 .help-content,.intro-shell .intro-reader {grid-column:2}
 .help-page .help-topics,.intro-shell .intro-nav {position:fixed;left:var(--drawer-left,24px);top:var(--drawer-top,94px);width:var(--drawer-width,268px);max-height:calc(100dvh - var(--drawer-top,94px) - 16px);margin:0;border-top:0;padding-top:16px;z-index:20;box-shadow:0 12px 18px #0006;animation:chapter-drawer-in .32s cubic-bezier(.2,.7,.2,1) both;transform-origin:top}
-@keyframes chapter-drawer-in {from{clip-path:inset(0 0 100% 0);transform:translateY(-18px)}to{clip-path:inset(0);transform:translateY(0)}}
+@keyframes chapter-drawer-in {from{transform:translateY(-100%)}to{transform:translateY(0)}}
 @media(max-width:760px){.help-page,.intro-shell{grid-template-columns:104px minmax(0,1fr)}.help-page .help-topics,.intro-shell .intro-nav{left:18px;width:104px;padding-top:10px}}
 @media(prefers-reduced-motion:reduce){.help-page .help-topics,.intro-shell .intro-nav{animation:none}}
+/* A stationary opening clips the moving panel behind the header. */
+.chapter-drawer {position:fixed;left:var(--drawer-left,16px);top:var(--drawer-top,94px);width:var(--drawer-width,276px);height:calc(100dvh - var(--drawer-top,94px));overflow:hidden;z-index:20;pointer-events:none;padding-bottom:16px}
+.chapter-drawer .help-topics,.chapter-drawer .intro-nav {position:relative;left:auto;top:auto;width:100%;max-height:100%;pointer-events:auto;animation-duration:.42s}
+@media(max-width:760px){.chapter-drawer{width:104px}.chapter-drawer .help-topics,.chapter-drawer .intro-nav{left:auto;width:100%}}
