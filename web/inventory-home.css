@@ -55,6 +55,7 @@ body.home-page .site-footer {margin-top:26px;padding-bottom:32px}
 
 /* Match the content's measured bounds, including its scrollbar gutter. */
 body.home-page .site-header {width:var(--home-width,88%);margin-left:var(--home-left,auto);margin-right:0}
-body.home-page {--kit-olive:url('assets/field-kit/olive-source.svg')}
-body.home-page .site-header,body.home-page .kit-release,body.home-page .kit-features h3 {background-size:auto,250px 55px}
+body.home-page {--kit-olive:url('assets/field-kit/olive-seamless.svg')}
+body.home-page .site-header,body.home-page .kit-release,body.home-page .kit-features h3 {background-size:auto,500px 110px}
+
 
