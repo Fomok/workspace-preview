@@ -1,0 +1,53 @@
+/* Introduction, Downloads and Help share the header's field-kit materials. */
+.field-page,.intro-shell {--page-metal:url('assets/field-kit/panel-metal.svg');--page-cloth:url('assets/field-kit/patch-cloth.svg');--page-rim:url('assets/field-kit/frame.svg')}
+.field-page {width:100%;max-width:1120px;margin:0 auto;padding:0 0 24px}
+.field-page>h1 {font-size:clamp(32px,3vw,44px);margin:12px 0 14px}
+.field-page>.page-lead {font-size:16px;margin-bottom:26px}
+.field-page .installation-checklist,.field-page .release-panel,.field-page .help-group {border:7px solid transparent;border-image:var(--page-rim) 12 / 7px / 0 stretch;background:linear-gradient(#0002,#0002),var(--page-metal);background-size:auto,300px 100px;border-radius:0;max-width:none}
+.field-page .installation-checklist {padding:18px 22px;margin:24px 0}
+.field-page .installation-checklist summary {color:var(--hot);font-weight:600}
+.field-page .installation-checklist select {border:1px solid #65675e;background:#151716;border-radius:2px}
+.field-page input[type=checkbox] {accent-color:var(--detail);width:16px;height:16px;flex-shrink:0}
+.field-page .checklist-step {border-color:#41443d;padding:15px 0}
+.field-page .release-panel {padding:24px 26px;gap:22px;margin-bottom:26px}
+.field-page .release-panel h2 {font-size:26px;color:var(--ink);text-shadow:0 -1px 1px #000}
+.field-page .release-panel .card {flex-basis:100%;background:#171a18;border:1px solid #45483f;border-radius:2px;padding:18px 22px;margin:0}
+.field-page .release-panel .card h3 {margin:0 0 12px;color:var(--detail)}
+.field-page .release-note {border-color:#45483f;color:var(--dim);line-height:1.7}
+.field-page .tool,.intro-shell .tool,.intro-shell .intro-nav-button {position:relative;border:4px solid transparent;border-image:var(--page-rim) 12 / 4px / 0 stretch;border-radius:0;background:linear-gradient(#ffffff06,#0003),var(--page-metal);background-size:auto,300px 100px;color:var(--ink);box-shadow:inset 0 0 0 1px #080909;padding:10px 16px;min-height:44px}
+.field-page .tool.primary,.intro-shell .tool.primary,.intro-shell .intro-nav-button[aria-current=step] {color:var(--hot);box-shadow:inset 0 0 0 1px var(--hot)}
+.field-page .tool:hover,.intro-shell .tool:hover,.intro-shell .intro-nav-button:hover {filter:brightness(1.15);color:var(--hot)}
+.field-page .help-tools {padding:0;margin:28px 0 32px}
+.field-page .help-tools input {max-width:none;height:50px;border:1px solid #68695f;background:#171918;border-radius:2px;box-shadow:inset 0 2px 5px #0008;padding:14px 16px}
+.field-page .help-tools input:focus-visible {outline:2px solid var(--detail);outline-offset:3px}
+.field-page .help-topics {gap:9px;margin-top:16px}
+.field-page .help-topics .tool {font-size:12px}
+.field-page .help-group {padding:14px;margin:24px 0;scroll-margin-top:20px}
+.field-page .help-group h2 {position:relative;margin:0 0 12px;padding:16px 20px;font-size:21px;background:linear-gradient(#0003,#0003),var(--page-cloth);background-size:auto,120px 100px;border:1px solid #57593b;color:#e8e4d3;text-shadow:0 1px 1px #000}
+.field-page .help-group h2::after {content:'';position:absolute;inset:3px;border:1px dashed #92936a99;pointer-events:none}
+.field-page .help-topic {border-bottom:1px solid #3e413a;padding:0 6px}
+.field-page .help-topic:last-child {border-bottom:0}
+.field-page .help-topic summary {padding:18px 24px 18px 8px;font-size:15px}
+.field-page .help-topic[open] {background:#0b0e0c55}
+.field-page .help-topic[open] summary {color:var(--hot)}
+.field-page .help-topic>p {margin:0 18px 22px;max-width:none;line-height:1.8}
+.field-page .help-topic>.tool {margin:0 18px 22px;max-width:calc(100% - 36px)}
+body.introduction-page #pane {padding:22px 4% 26px!important}
+.intro-shell {max-width:1440px;margin:0 auto}
+.intro-shell .intro-nav {padding:12px;gap:8px;border:7px solid transparent;border-image:var(--page-rim) 12 / 7px / 0 stretch;background:var(--page-metal);background-size:300px 100px;flex-wrap:nowrap;overflow-x:auto}
+.intro-shell .intro-nav-button {flex:1 0 auto;font-size:12px;padding:9px 13px;white-space:nowrap;letter-spacing:0}
+.intro-shell .intro-reader {margin-top:18px}
+.intro-shell .intro-reader .intro-section {padding:16px 55% 16px 0}
+.intro-shell .intro-copy {padding:28px;border:7px solid transparent;border-image:var(--page-rim) 12 / 7px / 0 stretch;background:linear-gradient(#0002,#0002),var(--page-metal);background-size:auto,300px 100px;max-width:none}
+.intro-shell .intro-copy h1,.intro-shell .intro-copy h2 {font-size:clamp(28px,3.1vw,44px);line-height:1.13;margin:15px 0 22px}
+.intro-shell .intro-description {font-size:clamp(15px,1.2vw,18px);line-height:1.7}
+.intro-shell .intro-note {border-left-color:var(--detail);font-size:13px}
+.intro-shell .intro-scroll-hint {font-size:9px;letter-spacing:.1em}
+.intro-shell .intro-stage {right:0;width:53%;background:transparent}
+.intro-shell .intro-pointer-box {fill:#191c1b;stroke:var(--hot)}
+.intro-shell .intro-pointer-line,.intro-shell .intro-region-outline {stroke:var(--hot)}
+.intro-shell .intro-enlarge {color:var(--hot)}
+@media(max-width:900px){body.introduction-page #pane{padding:16px 14px!important}.intro-shell .intro-nav{padding:6px}.intro-shell .intro-stage{width:100%;height:38%;right:0}.intro-shell .intro-reader .intro-section{padding:10px 0}.intro-shell .intro-copy{padding:18px;width:100%}.intro-shell .intro-copy h1,.intro-shell .intro-copy h2{font-size:28px}.intro-shell .intro-description{font-size:15px}}
+@media(max-width:600px){.field-page .release-panel{padding:18px}.field-page .release-panel h2{font-size:22px}.field-page .release-panel .site-actions{width:100%;gap:10px}.field-page .installation-checklist{padding:16px}.field-page .help-group{padding:9px}.field-page .help-group h2{font-size:18px;padding:14px}.field-page .help-topic summary{font-size:14px}.field-page .help-topic>p{margin-left:8px;margin-right:8px}.field-page .help-topics .tool{flex:1 1 140px}}
+
+body .field-page .tool.primary,body .intro-shell .tool.primary {background:linear-gradient(#ffffff06,#0003),var(--page-metal);background-size:auto,300px 100px;border-color:transparent;color:var(--hot);box-shadow:inset 0 0 0 1px var(--hot)}

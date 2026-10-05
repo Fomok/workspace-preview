@@ -1,3 +1,6 @@
 <script>import Release from '../components/Release.svelte';import Checklist from '../components/Checklist.svelte';const result=window.Releases.load();</script>
+<div class="field-page downloads-page">
 <p class="eyebrow">SQUARED AWAY</p><h1>Downloads</h1><p class="page-lead">The mod and its matching engine, together in one place.</p><Checklist/>
 {#await result}<p class="hint">Checking published releases…</p>{:then data}{#if data.cached}<p class="hint">Showing the last verified downloads.</p>{/if}{#if data.items.length}<Release release={data.items[0]}/>{#if data.items.length>1}<details class="older-releases"><summary>Older releases</summary>{#each data.items.slice(1) as release}<Release {release}/>{/each}</details>{/if}{:else}<p>No complete release is available yet.</p>{/if}{:catch error}<p role="alert">{error.message}</p>{/await}
+
+</div>
