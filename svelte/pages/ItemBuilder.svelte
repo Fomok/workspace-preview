@@ -27,8 +27,8 @@
  <div class="builder-columns"><div class="builder-panel">
  {#if step===0}
  <h2>Give it an identity.</h2><p>Choose how your item looks and how much space it occupies in an inventory.</p>
- <label>Item name<input bind:value={item.name} oninput={save} maxlength="100"/></label>
- <label>Description <span class="builder-notice">Optional — a simple description is supplied if left empty.</span><textarea bind:value={item.descr} oninput={save}></textarea></label>
+ <label>Item name<input value={item.name} oninput={e=>{item.name=e.currentTarget.value;save();}} maxlength="100"/></label>
+ <label>Description <span class="builder-notice">Optional — a simple description is supplied if left empty.</span><textarea value={item.descr||''} oninput={e=>{item.descr=e.currentTarget.value;save();}}></textarea></label>
  <label>Item image<input type="file" accept="image/png,image/jpeg,image/webp" onchange={image}/></label>
  <div class="two-fields"><label>Icon width (cells)<input type="number" min="1" max="20" value={item.cellw} onchange={e=>cell(e.currentTarget.value,item.cellh)}/></label><label>Icon height (cells)<input type="number" min="1" max="20" value={item.cellh} onchange={e=>cell(item.cellw,e.currentTarget.value)}/></label></div>
  {:else if step===1}
@@ -41,7 +41,7 @@
  {:else if kind==='boxes'}
  <p>Set the inner storage space and choose which supplies belong inside.</p>
  <div class="two-fields"><label>Storage width<input type="number" min="1" max="20" value={item.inw} onchange={e=>number(e,'inw',1,20)}/></label><label>Storage height<input type="number" min="1" max="20" value={item.inh} onchange={e=>number(e,'inh',1,20)}/></label></div>
- <label>Allowed items<select bind:value={item.takes} onchange={save}><option value="any">Any item</option>{#each rules as rule}<option value={rule.id}>{rule.name}</option>{/each}</select></label>
+ <label>Allowed items<select value={item.takes} onchange={e=>{item.takes=e.currentTarget.value;save();}}><option value="any">Any item</option>{#each rules as rule}<option value={rule.id}>{rule.name}</option>{/each}</select></label>
  <label>Weight limit (kg)<input type="number" min="0" step="0.1" value={item.kg} onchange={e=>number(e,'kg')}/></label>
  <p class="builder-notice">For separate compartments or custom item rules, use the advanced editor below.</p>
  {:else if kind==='pouches'}
@@ -54,7 +54,7 @@
  {:else if step===2}
  <h2>Set the essentials.</h2><p>Choose a price and weight. Existing default crafting and availability settings are kept unless you change them in the advanced editor.</p>
  <div class="two-fields"><label>Price (RU)<input type="number" min="0" value={item.cost} onchange={e=>number(e,'cost')}/></label><label>Weight (kg)<input type="number" min="0" step="0.01" value={item.weight} onchange={e=>number(e,'weight')}/></label></div>
- {#if kind==='pouches'}<label>Loot tier<select bind:value={item.tier} onchange={save}>{#each [1,2,3,4,5] as tier}<option value={tier}>Tier {tier}</option>{/each}</select></label>{/if}
+ {#if kind==='pouches'}<label>Loot tier<select value={item.tier} onchange={e=>{item.tier=Number(e.currentTarget.value);save();}}>{#each [1,2,3,4,5] as tier}<option value={tier}>Tier {tier}</option>{/each}</select></label>{/if}
  {:else}
  <h2>Ready for the Zone?</h2><p>Your ZIP contains this item and its own texture. Install it below Squared Away in MO2 using the version with independent add-on support.</p>
  <dl class="builder-summary"><div><dt>Item</dt><dd>{item.name}</dd></div><div><dt>Type</dt><dd>{titles[kind]}</dd></div><div><dt>Inventory footprint</dt><dd>{item.cellw} × {item.cellh}</dd></div><div><dt>Price / weight</dt><dd>{item.cost} RU / {item.weight} kg</dd></div></dl>
