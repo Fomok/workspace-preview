@@ -21,3 +21,5 @@ body.editor-flow #pane{padding:0!important;overflow:auto}body.editor-flow main{d
 @media(prefers-reduced-motion:reduce){.path-card,.type-card{transition:none}.path-card:hover,.type-card:hover{transform:none}}
 
 .path-art{height:145px}.path-art img{height:135px}.path-copy{padding:20px 24px}.path-action{margin-top:18px;padding-top:14px}.editor-hub .flow-heading{margin-bottom:24px}
+
+.type-art{height:110px;margin-bottom:12px}.type-art img{max-height:108px}.type-card h2{min-height:54px}.type-card .path-action{margin-top:12px}.type-card p{min-height:62px}
