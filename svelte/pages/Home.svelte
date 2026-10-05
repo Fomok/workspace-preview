@@ -11,7 +11,7 @@
    <p class="hero-description">A grid inventory. Rigs that carry your essentials. Containers that save you some space.</p>
    <div class="site-actions"><a class="tool primary" href="#downloads">↓ Download Squared Away</a><a class="tool" href="#introduction">Explore the mechanics →</a></div>
   </div>
-  <figure class="kit-frame kit-gameplay"><img src="assets/gameplay/inventory.png" alt="Squared Away inventory with equipped rig and backpack storage" width="1207" height="1079"></figure>
+  <figure class="kit-gameplay"><img src="assets/gameplay/inventory.png" alt="Squared Away inventory with equipped rig and backpack storage" width="1207" height="1079"></figure>
  </section>
  <section class="kit-frame kit-release" aria-label="Latest release">
   {#await releases}<p class="hint">Checking the latest release…</p>{:then data}{#if data.items[0]}{@const release=data.items[0]}
@@ -23,3 +23,4 @@
  <section class="kit-frame kit-workbench"><div><h2>Build your loadout.</h2><p>Customize rigs, containers and pouches. Browse community add-ons and export your own setup.</p></div><div class="site-actions"><a class="tool primary" href="#editor/rigs">Open Editor</a><a class="tool" href="#community">Browse add-ons</a></div></section>
  <footer class="site-footer"><span>ZONEBENCH / SQUARED AWAY</span><a href="#help">Installation & help</a><span>A community project by Fomok</span></footer>
 </div>
+
