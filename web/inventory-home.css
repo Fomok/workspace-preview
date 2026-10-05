@@ -59,3 +59,6 @@ body.home-page {--kit-olive:url('assets/field-kit/olive-seamless.svg')}
 body.home-page .site-header,body.home-page .kit-release,body.home-page .kit-features h3 {background-size:auto,500px 110px}
 
 
+/* Hide the two source-image pixels beyond the screenshot's own right rim. */
+body.home-page .kit-gameplay {overflow:hidden;justify-content:flex-start}
+body.home-page .kit-gameplay img {width:calc(100% * 1207 / 1205);max-width:none;flex-shrink:0}
