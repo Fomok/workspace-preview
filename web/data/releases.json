@@ -1,5 +1,35 @@
 [
   {
+    "tag_name": "v2.0.3",
+    "name": "Squared Away - 2.0.3 Ammo Hotfix",
+    "draft": false,
+    "prerelease": false,
+    "published_at": "2026-10-05T10:55:28Z",
+    "body": "Fixes loose ammunition being consumed and recreated when reloading magazine-fed weapons, including the early-reload interaction with Dynamic Reload Speeds.\n\nInstall the **2.0.3 mod and matching engine**, then select the optional **Mags Reloaded ammo fix** in FOMOD. Requires Mags Reloaded Fork by Priler UPDATE 6 and its Dynamic Reload Speeds dependency. Let Squared Away win their file conflicts in MO2.\n\nExisting 2.0.x saves work. Normal loose-ammo weapons, grenade launchers and magazine loading retain their usual behavior.\n\n- **2.0.3.zip** \u2014 full mod with installer.\n- **Engine - All DX.zip** \u2014 standard engine and matching DB0.\n- **Engine - Bodycam.zip** \u2014 alternative for Bodycam users, DX11-AVX only.\n- **For Developers.zip** \u2014 engine merge sources and diff.\n\n[Downloads, installation guide and patch-note history](https://fomok.github.io/zonebench/)\n",
+    "assets": [
+      {
+        "name": "Squared.Away.-.2.0.3.Engine.-.All.DX.zip",
+        "size": 537288355,
+        "browser_download_url": "https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/v2.0.3/Squared.Away.-.2.0.3.Engine.-.All.DX.zip"
+      },
+      {
+        "name": "Squared.Away.-.2.0.3.Engine.-.Bodycam.zip",
+        "size": 70204964,
+        "browser_download_url": "https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/v2.0.3/Squared.Away.-.2.0.3.Engine.-.Bodycam.zip"
+      },
+      {
+        "name": "Squared.Away.-.2.0.3.For.Developers.zip",
+        "size": 7033277,
+        "browser_download_url": "https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/v2.0.3/Squared.Away.-.2.0.3.For.Developers.zip"
+      },
+      {
+        "name": "Squared.Away.-.2.0.3.zip",
+        "size": 15659581,
+        "browser_download_url": "https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/v2.0.3/Squared.Away.-.2.0.3.zip"
+      }
+    ]
+  },
+  {
     "tag_name": "v2.0.2",
     "name": "Squared Away - 2.0.2",
     "draft": false,

@@ -1,8 +1,8 @@
 {
-  "baseline": "squared-away-2.0.2",
-  "modVersion": "2.0.2",
-  "engineCommit": "6312bc321b544cc26980b95a3977d4de965dd770",
-  "sourceArchive": "Squared Away - 2.0.2.zip",
+  "baseline": "squared-away-2.0.3",
+  "modVersion": "2.0.3",
+  "engineCommit": "aee0a6ad67c4a25b4d91651d45ce03ff8d7e68f9",
+  "sourceArchive": "Squared.Away.-.2.0.3.zip",
   "templates": {
     "configs/mod_system_amp_rigs.ltx": "e2385fc9b64d42dc5b9453f324c0e35f23ab7e960f71b3e0d43b286ea23de6b9",
     "configs/mod_system_amp_boxes.ltx": "b7d8002f333bd05b49490d4a6e5658a4a44c3b0a9780d3b149d840067b144d93",

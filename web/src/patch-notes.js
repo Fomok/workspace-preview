@@ -2,6 +2,25 @@
 (function(root){
 'use strict';
 const entries=[{
+ id:'squared-away-2-0-3-ammo',
+ date:'2026-10-05',
+ title:'Squared Away — 2.0.3 Ammo Hotfix',
+ version:'2.0.3',
+ status:'Available now • Update both the mod and engine • Keep your 2.0 saves',
+ summary:'Reload magazines without loose ammunition being consumed and recreated in your inventory.',
+ sections:[
+  {title:'Magazine reload fix',items:[
+   'Stops magazine-fed weapon reloads from taking loose ammunition and returning it to your inventory.',
+   'Includes compatibility with Dynamic Reload Speeds, while keeping its reload speed and sound changes.',
+   'Normal loose-ammo weapons, grenade launchers and loading rounds into magazines keep their usual behavior.'
+  ]},
+  {title:'Installing the hotfix',items:[
+   'Replace the full mod in MO2 and install the matching 2.0.3 engine, including bin and db/mods. Standard and Bodycam engine downloads are both updated.',
+   'Select the optional Mags Reloaded ammo fix in the installer. It requires Mags Reloaded Fork by Priler UPDATE 6 and its Dynamic Reload Speeds dependency. Let Squared Away win their file conflicts in MO2.',
+   'Existing 2.0, 2.0.1 and 2.0.2 saves are supported. Your ZoneBench item customizations are preserved.'
+  ]}
+ ]
+},{
  id:'squared-away-2-0-2-bodycam',
  date:'2026-10-05',
  title:'Squared Away — Optional Bodycam Support',
