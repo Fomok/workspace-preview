@@ -79,3 +79,21 @@ body.home-page .site-header {padding:0;gap:0;height:76px;min-height:76px;backgro
 @media(max-width:1100px){body .site-header,body.home-page .site-header{height:auto;flex-wrap:wrap}body .site-header .brand{min-width:0;width:100%;border-right:0;border-bottom:1px solid #565950;padding:12px 18px;font-size:20px}body .site-header #site-nav{width:100%;flex-basis:100%;max-width:100%;gap:5px}body .site-header #site-nav a{padding:10px;min-height:42px;font-size:12px}}
 @media(prefers-reduced-motion:reduce){body .site-header #site-nav a{transition:none}}
 body .site-header #site-nav a.has-update {background:linear-gradient(#ffffff06,#0005),var(--kit-lining)}
+/* Approved stitched-nameplate atlas; shared once by every header element. */
+body .site-header,body.home-page .site-header {width:calc(100% - 32px);max-width:none;margin:10px 16px 0;height:86px;min-height:86px;padding:0;gap:0}
+body .site-header .brand {width:268px;min-width:268px;padding:2px 4px 0;background:#171918;display:grid;grid-template-rows:minmax(0,1fr) 21px;gap:2px;border-right:1px solid #454840;overflow:hidden}
+body .site-header .brand-patch {position:relative;display:block;width:100%;min-height:0}
+body .site-header .brand-accessible {position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+body .site-header .brand small.brand-version {position:relative;display:flex;align-items:center;justify-content:center;margin:0;padding:0 5px;width:100%;height:21px;font-family:'Bahnschrift','Arial Narrow',sans-serif;font-size:9px;letter-spacing:.23em;color:#beb098;text-shadow:0 -1px 1px #000,0 1px 0 #ffffff16}
+body .site-header .brand-version>span {position:relative;z-index:1}
+body .site-header #site-nav {gap:6px;padding:3px 5px;align-items:stretch}
+body .site-header #site-nav a,body .site-header #site-nav a.has-update,body .site-header #site-nav a.active,body .site-header #site-nav a.has-update.active {background:none;border:0;box-shadow:none;border-radius:0;min-height:48px;padding:10px 15px;font-size:13px}
+body .site-header #site-nav .nav-label {position:relative;z-index:1}
+body .site-header #site-nav a.has-update {padding-right:23px}
+body .site-header #site-nav a:last-child {border:0;margin-left:8px;padding-left:15px}
+body .site-header #site-nav a:hover {filter:brightness(1.18)}
+body .site-header #site-nav a.active {color:var(--hot)}
+body .site-header .patch-new {z-index:2;top:9px;right:10px}
+@media(max-width:1100px){body .site-header,body.home-page .site-header{height:auto;min-height:0;flex-wrap:wrap}body .site-header .brand{height:68px;width:268px;min-width:268px;border-bottom:0}body .site-header #site-nav{flex-basis:100%;width:100%;padding:4px;gap:5px}body .site-header #site-nav a{min-height:45px;font-size:12px;padding:10px 13px}}
+@media(max-width:760px){body .site-header,body.home-page .site-header{width:calc(100% - 20px);margin:8px 10px 0}body .site-header .brand{width:250px;min-width:250px;height:64px}}
+body .site-header .brand {grid-template-columns:minmax(0,1fr);justify-content:stretch;align-items:stretch}
