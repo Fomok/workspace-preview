@@ -2,15 +2,17 @@
 (function(root){
 'use strict';
 const editing=['rigs','boxes','pouches','packs','items','drops','changes','check','share','build'];
-const routes={patchnotes:'patch-notes',home:'home',introduction:'introduction',catalog:'community',downloads:'downloads',help:'help',account:'account'};
+const routes={patchnotes:'patch-notes',home:'home',introduction:'introduction',catalog:'addons',downloads:'downloads',help:'help',account:'account'};
 const n=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e;};
-function route(tab){return '#'+(routes[tab]||'editor/'+tab);}
-function tabFromHash(){const value=location.hash.slice(1);return Object.keys(routes).find(k=>routes[k]===value)||(value.startsWith('editor/')&&editing.includes(value.slice(7))?value.slice(7):'home');}
-function go(tab){if(TAB!==tab)history.pushState({},'',route(tab));TAB=tab;render();document.querySelector('#pane').scrollTop=0;}
+function route(tab){if(tab==='catalog')return '#addons'+(COMMUNITY_MODE==='public'?'':'/'+COMMUNITY_MODE);return '#'+(routes[tab]||'editor/'+tab);}
+function tabFromHash(){const value=location.hash.slice(1);if(value==='community'||value==='addons'||/^addons\/(mine|moderation|selections)$/.test(value)){COMMUNITY_MODE=value.split('/')[1]||'public';COMMUNITY_OFFSET=0;COMMUNITY_EDIT=null;return 'catalog';}return Object.keys(routes).find(k=>routes[k]===value)||(value.startsWith('editor/')&&editing.includes(value.slice(7))?value.slice(7):'home');}
+function go(tab){if(location.hash!==route(tab))history.pushState({},'',route(tab));TAB=tab;render();document.querySelector('#pane').scrollTop=0;}
+function addons(mode='public'){COMMUNITY_MODE=['public','mine','moderation','selections'].includes(mode)?mode:'public';COMMUNITY_OFFSET=0;COMMUNITY_EDIT=null;go('catalog');}
 function action(text,tab,primary=false){const b=n('button','tool'+(primary?' primary':''),text);b.onclick=()=>go(tab);return b;}
 function link(text,url,primary=false){const a=n('a','tool'+(primary?' primary':''),text);a.href=url;return a;}
 function shell(){
  const isEditor=editing.includes(TAB);document.body.classList.toggle('site-page',!isEditor);document.body.classList.toggle('home-page',TAB==='home');document.body.classList.toggle('introduction-page',TAB==='introduction');
+ document.body.classList.toggle('addons-page',TAB==='catalog');
  if(location.hash!==route(TAB))history.replaceState({},'',route(TAB));
  document.title=(TAB==='home'?'Squared Away':TAB)+' | ZoneBench Preview';
  root.ZonebenchShell?.({tab:TAB,editor:isEditor,version:DB?.modVersion,tabs:TABS.filter(([key])=>!["catalog","account","help"].includes(key)).map(([key,label])=>({key,label,count:DB[key]?.length||0})),unread:PatchNotes.unread()});
@@ -160,7 +162,7 @@ function help(P){
  const actions=n('div','site-actions');const communityURL=new URL(location.href);communityURL.hash='community';actions.appendChild(link('Open Community',communityURL.href));actions.appendChild(action('Go to downloads','downloads',true));P.appendChild(actions);
 
 }
-root.Site={shell,go,tabFromHash,home,downloads,help};
+root.Site={shell,go,addons,tabFromHash,home,downloads,help};
 window.addEventListener('popstate',()=>{TAB=tabFromHash();render();});
-window.addEventListener('hashchange',()=>{const next=tabFromHash();if(TAB!==next){TAB=next;render();}});
+window.addEventListener('hashchange',()=>{const next=tabFromHash();if(TAB!==next||next==='catalog'){TAB=next;render();}});
 })(globalThis);

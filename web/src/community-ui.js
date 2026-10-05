@@ -40,15 +40,18 @@ async function drawCommunityAccount(P){
  },true);
 }
 async function drawCommunityCatalog(P){
- P.appendChild(el('h1',null,'Public add-ons'));
- communityMessage(P,'Optional packs made by the community. Import only what you want; updates never overwrite your project automatically.');
+ const intro=el('div','addons-heading');P.appendChild(intro);
+ intro.appendChild(el('p','eyebrow','THE COMMUNITY WORKBENCH'));
+ intro.appendChild(el('h1',null,({public:'Add-ons',mine:'My add-ons',moderation:'Manage add-ons',selections:'Next mod update'})[COMMUNITY_MODE]||'Add-ons'));
+ communityMessage(intro,COMMUNITY_MODE==='mine'?'Your published items, in one place. Update an existing listing instead of creating a new version beside it.':'Find gear for your loadout. Inspect each item, then import only what you want.');
+ const create=el('a','tool addon-create','Create an add-on');create.href='#editor/rigs';create.onclick=e=>{if(e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;e.preventDefault();Site.go('rigs');};intro.appendChild(create);
  const controls=el('div','community-actions');P.appendChild(controls);
  const status=communityMessage(P,'Loading community library…');
  try{
   const user=await Community.refresh();if(!P.contains(status))return;
-  for(const [mode,label] of [['public','Browse add-ons'],...(user?[['mine','My add-ons']]:[]),...(user?.moderator?[['moderation','Moderate'],['selections','Next mod update']]:[])])communityButton(controls,label,async()=>{COMMUNITY_MODE=mode;COMMUNITY_OFFSET=0;COMMUNITY_EDIT=null;renderPane();},COMMUNITY_MODE===mode);
+  for(const [mode,label] of [['public','Browse add-ons'],['mine','My add-ons'],...(user?.moderator?[['moderation','Moderate'],['selections','Next mod update']]:[])]){const button=communityButton(controls,label,async()=>Site.addons(mode),COMMUNITY_MODE===mode);button.setAttribute('aria-pressed',String(COMMUNITY_MODE===mode));}
   communityButton(controls,user?'Account':'Sign in',async()=>{TAB='account';render();});
-  if(!user&&COMMUNITY_MODE!=='public')COMMUNITY_MODE='public';
+  if(!user&&COMMUNITY_MODE!=='public'){status.remove();const empty=el('section','card addon-empty');P.appendChild(empty);empty.appendChild(el('h2',null,'Your add-ons belong here'));communityMessage(empty,'Sign in to find and manage your published add-ons. You can browse and create items without an account.');communityButton(empty,'Go to account',async()=>Site.go('account'),true);communityButton(empty,'Browse add-ons',async()=>Site.addons('public'));return;}
   if(COMMUNITY_EDIT&&user){status.remove();drawCommunityPublish(P,COMMUNITY_EDIT);return;}
   const selected=COMMUNITY_MODE==='selections';
   const result=await Community.request(selected?'selections':'list',{mode:COMMUNITY_MODE,offset:COMMUNITY_MODE==='public'?0:COMMUNITY_OFFSET});if(!P.contains(status))return;

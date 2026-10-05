@@ -1,0 +1,29 @@
+/* Preview add-on library, using the approved shared Field Kit materials. */
+body.addons-page #pane{max-width:1240px;margin:0 auto;width:100%;padding:36px clamp(20px,4vw,52px) 64px;box-sizing:border-box}
+.addons-heading{position:relative;padding:0 210px 24px 0;border-bottom:1px solid #41473d;margin-bottom:18px}
+.addons-heading .eyebrow{font-size:10px;letter-spacing:.17em;color:var(--detail);margin:0 0 12px}
+.addons-heading h1{font-size:40px;line-height:1.2;margin:0 0 12px;letter-spacing:-.03em}
+.addons-heading .hint{max-width:620px;font-size:14px;line-height:1.7;margin:0}
+.addons-heading .addon-create{position:absolute;right:0;bottom:26px;text-decoration:none}
+body.addons-page .tool{border-radius:2px;border:1px solid #62675a;background:linear-gradient(#ffffff07,#0004),url('/zonebench-preview/assets/field-kit/panel-metal.svg');color:var(--ink);padding:10px 16px;min-height:42px}
+body.addons-page .tool.primary,body.addons-page .addon-create{color:var(--hot);border-color:#8b8069}
+body.addons-page .tool:hover{border-color:var(--hot);background-color:#31362c}
+body.addons-page .tool:focus-visible,body.addons-page input:focus-visible,body.addons-page select:focus-visible{outline:2px solid var(--hot);outline-offset:3px}
+body.addons-page #pane>.community-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0 0 24px}
+body.addons-page #pane>.community-actions .tool{border:0;background:none;color:var(--dim);border-bottom:2px solid transparent;padding:12px 16px}
+body.addons-page #pane>.community-actions .tool[aria-pressed=true]{color:var(--hot);border-bottom-color:var(--hot)}
+body.addons-page #pane>.community-actions .tool:last-child:not([aria-pressed]){margin-left:auto;color:var(--detail)}
+body.addons-page .catalog-browser-tools{margin:0 0 12px;padding:16px;background:#171b17 url('/zonebench-preview/assets/field-kit/olive-seamless.svg');background-size:500px 110px;border:6px solid transparent;border-image:url('/zonebench-preview/assets/field-kit/frame.svg') 12 / 6px / 0 stretch}
+body.addons-page .catalog-browser-tools input,body.addons-page .catalog-browser-tools select{background:#101310;border-color:#52594b;border-radius:2px;min-height:46px;font-size:14px;color:var(--ink)}
+body.addons-page .catalog-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:24px}
+body.addons-page .addon-listing{display:grid;grid-template-columns:136px minmax(0,1fr);gap:18px;padding:18px;border:5px solid transparent;border-image:url('/zonebench-preview/assets/field-kit/frame.svg') 12 / 5px / 0 stretch;background:#191c1a url('/zonebench-preview/assets/field-kit/panel-metal.svg');background-size:300px 100px;border-radius:0;align-items:start;margin:0}
+body.addons-page .addon-cover{width:136px;height:136px;min-height:0;margin:0;padding:8px;border:1px solid #52584e;border-radius:2px;background:#101210;box-sizing:border-box}
+body.addons-page .addon-listing-content{min-width:0}
+body.addons-page .addon-cover .addon-picture{background:#181b17;border-color:#424a3d;border-radius:2px}
+body.addons-page .addon-listing h2{font-size:19px;line-height:1.4;margin:0 0 7px;overflow-wrap:anywhere}
+body.addons-page .addon-listing .hint{line-height:1.65;font-size:12px;overflow-wrap:anywhere}
+body.addons-page .addon-listing .tool{margin:6px 6px 0 0;font-size:12px}
+body.addons-page .addon-empty{padding:30px;border:1px solid #454c40;background:#161a16;border-radius:2px}
+body.addons-page .addon-empty .tool{margin:12px 8px 0 0}
+@media(max-width:1100px){body.addons-page .catalog-grid{grid-template-columns:1fr}}
+@media(max-width:650px){.addons-heading{padding-right:0}.addons-heading h1{font-size:32px}.addons-heading .addon-create{position:static;display:inline-flex;margin-top:20px}body.addons-page .addon-listing{grid-template-columns:96px minmax(0,1fr);gap:13px;padding:12px}body.addons-page .addon-cover{width:96px;height:96px}body.addons-page #pane{padding:24px 16px 48px}body.addons-page .catalog-browser-tools{padding:10px}}

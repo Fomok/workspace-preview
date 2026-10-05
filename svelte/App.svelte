@@ -1,10 +1,11 @@
 <script>
  import { onMount } from 'svelte';
  import HeaderTexture from './components/HeaderTexture.svelte';
+ import AddonsNav from './components/AddonsNav.svelte';
  import { start, go } from './bootstrap.js';
  let shell,header,brand;
  let view=$state({tab:'home',editor:false,version:'2.0.3',tabs:[],unread:false});let error=$state('');let ready=$state(false);
- const links=[['patchnotes','Patch Notes'],['home','Home'],['introduction','Introduction'],['rigs','Editor'],['catalog','Community'],['downloads','Downloads'],['help','Help'],['account','Account']];
+ const links=[['patchnotes','Patch Notes'],['home','Home'],['introduction','Introduction'],['rigs','Editor'],['catalog','Add-ons'],['downloads','Downloads'],['help','Help'],['account','Account']];
  const hashes={patchnotes:'patch-notes',catalog:'community',rigs:'editor/rigs'};
  onMount(()=>{
   const align=()=>{const h=header.getBoundingClientRect(),b=brand.getBoundingClientRect();shell.style.setProperty('--drawer-left',h.left+'px');shell.style.setProperty('--drawer-top',(h.bottom-2)+'px');shell.style.setProperty('--drawer-width',(b.right-h.left)+'px');};
@@ -18,7 +19,7 @@
  <header class="site-header" bind:this={header}>
   <button bind:this={brand} class="brand" type="button" onclick={()=>ready&&go('home')} aria-label="ZoneBench home"><span class="brand-patch"><HeaderTexture kind="name"/><span class="brand-accessible">ZONEBENCH</span></span><small class="brand-version"><HeaderTexture kind="version"/><span>SQUARED AWAY {view.version}</span></small></button>
   <nav id="site-nav" aria-label="Main navigation">
-   {#each links as [tab,label]}<a href={'#'+(hashes[tab]||tab)} class:active={tab==='rigs'?view.editor:view.tab===tab} class:has-update={tab==='patchnotes'&&view.unread} aria-current={(tab==='rigs'?view.editor:view.tab===tab)?'page':undefined} onclick={e=>navigate(e,tab)}><HeaderTexture selected={tab==='rigs'?view.editor:view.tab===tab}/><span class="nav-label">{label}</span>{#if tab==='patchnotes'&&view.unread}<span class="patch-new" title="Unread patch notes" aria-label="Unread patch notes">New</span>{/if}</a>{/each}
+   {#each links as [tab,label]}{#if tab==='catalog'}<AddonsNav {ready} active={view.tab==='catalog'}/>{:else}<a href={'#'+(hashes[tab]||tab)} class:active={tab==='rigs'?view.editor:view.tab===tab} class:has-update={tab==='patchnotes'&&view.unread} aria-current={(tab==='rigs'?view.editor:view.tab===tab)?'page':undefined} onclick={e=>navigate(e,tab)}><HeaderTexture selected={tab==='rigs'?view.editor:view.tab===tab}/><span class="nav-label">{label}</span>{#if tab==='patchnotes'&&view.unread}<span class="patch-new" title="Unread patch notes" aria-label="Unread patch notes">New</span>{/if}</a>{/if}{/each}
   </nav>
  </header>
  <div id="project-tools" class="project-toolbar" hidden={!view.editor}><span class="project-caption">YOUR WORKBENCH</span><span id="dirty"></span><div class="spacer"></div><button hidden class="tool" id="btnMod">Update the mod</button><button class="tool" id="btnLoad">Open project</button><button class="tool primary" id="btnSave">Save project</button></div>
