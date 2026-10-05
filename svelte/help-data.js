@@ -1,7 +1,7 @@
 export const blocks=[
   [
     "Squared Away 2.0 Update",
-    "ZoneBench targets Squared Away 2.0.2. Update both the mod in MO2 and the matching engine in your Anomaly folder. Existing 2.0 and 2.0.1 saves are supported. Home introduces the mod, Introduction explains its mechanics, and Patch Notes covers what changed. The 2.0 Update is available in Downloads. Install both the mod and its matching engine. Downloads only lists published packages. An older download is not the version this editor targets."
+    "ZoneBench targets Squared Away 2.0.3. Update both the mod in MO2 and the matching engine in your Anomaly folder. Existing 2.0.x saves are supported. Home introduces the mod, Introduction explains its mechanics, and Patch Notes covers what changed. The 2.0 Update is available in Downloads. Install both the mod and its matching engine. Downloads only lists published packages. An older download is not the version this editor targets."
   ],
   [
     "Install the mod",
@@ -13,11 +13,11 @@ export const blocks=[
   ],
   [
     "Engine choices and developer files",
-    "The all-DX engine package includes DX8, DX9, DX10 and DX11 executables, each with AVX and non-AVX versions. Choose a renderer supported by your setup, and use AVX only if your CPU supports it. The separate For Developers ZIP is for engine authors merging changes; players do not need it. Always use the engine paired with your mod release in Downloads. Bodycam users can choose the optional combined Bodycam engine for 2.0.2 instead of the standard package. It supports DX11-AVX only and includes its matching DB0. Install both bin and db/mods from that ZIP. For PiP scopes, keep the matching external 3DSS PiP compatibility content required by Bodycam."
+    "The all-DX engine package includes DX8, DX9, DX10 and DX11 executables, each with AVX and non-AVX versions. Choose a renderer supported by your setup, and use AVX only if your CPU supports it. The separate For Developers ZIP is for engine authors merging changes; players do not need it. Always use the engine paired with your mod release in Downloads. Bodycam users can choose the optional combined Bodycam engine for 2.0.3 instead of the standard package. It supports DX11-AVX only and includes its matching DB0. Install both bin and db/mods from that ZIP. For PiP scopes, keep the matching external 3DSS PiP compatibility content required by Bodycam."
   ],
   [
     "Saves and upgrades",
-    "Updating from 2.0 or 2.0.1 to 2.0.2 does not require a new game. Install the updated engine as well as the mod. Upgrading from the old public version (before 2.0) to 2.0 requires a new game. Do not continue an old playthrough with the rewrite. Back up saves before changing custom item configurations, and test add-ons on a separate save."
+    "Updating from 2.0, 2.0.1 or 2.0.2 to 2.0.3 does not require a new game. Install the updated engine as well as the mod. Upgrading from the old public version (before 2.0) to 2.0 requires a new game. Do not continue an old playthrough with the rewrite. Back up saves before changing custom item configurations, and test add-ons on a separate save."
   ],
   [
     "SOTA UI and HD Inventory Icons",
@@ -33,7 +33,7 @@ export const blocks=[
   ],
   [
     "Magazine support",
-    "The baseline is Mags Reloaded Fork by Priler UPDATE 6. Install it separately for magazine support and the three stock expansion pouches. The direct download message is linked below. GAMMA recipes and trader integrations also need their corresponding GAMMA content; plain Anomaly does not include those dependencies automatically."
+    "The baseline is Mags Reloaded Fork by Priler UPDATE 6. Install it separately for magazine support and the three stock expansion pouches. It also requires Dynamic Reload Speeds. Select the optional Mags Reloaded ammo fix in the FOMOD with Mags Reloaded Fork by Priler UPDATE 6 and its Dynamic Reload Speeds dependency installed. It requires the 2.0.3 engine. Let Squared Away win their file conflicts in MO2. The direct download message is linked below. GAMMA recipes and trader integrations also need their corresponding GAMMA content; plain Anomaly does not include those dependencies automatically."
   ],
   [
     "Inventory, rigs and containers",

@@ -3,7 +3,7 @@
  import HeaderTexture from './components/HeaderTexture.svelte';
  import { start, go } from './bootstrap.js';
  let shell,header,brand;
- let view=$state({tab:'home',editor:false,version:'2.0.2',tabs:[],unread:false});let error=$state('');let ready=$state(false);
+ let view=$state({tab:'home',editor:false,version:'2.0.3',tabs:[],unread:false});let error=$state('');let ready=$state(false);
  const links=[['patchnotes','Patch Notes'],['home','Home'],['introduction','Introduction'],['rigs','Editor'],['catalog','Community'],['downloads','Downloads'],['help','Help'],['account','Account']];
  const hashes={patchnotes:'patch-notes',catalog:'community',rigs:'editor/rigs'};
  onMount(()=>{
