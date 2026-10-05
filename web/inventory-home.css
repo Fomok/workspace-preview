@@ -122,3 +122,6 @@ body.home-page .kit-workbench p {max-width:620px}
 /* Tile the panel interior at natural scale; only stretch its narrow edge strips. */
 body.home-page .kit-copy,body.home-page .kit-features article,body.home-page .kit-workbench {background:linear-gradient(#0002,#0002),url('assets/field-kit/panel-metal.svg');background-size:auto,300px 100px}
 body.home-page .kit-surface>.sliced svg:nth-child(5) {visibility:hidden}
+body.home-page .kit-copy .hero-game-label {padding:0;border:0;background:none;box-shadow:none;text-shadow:none}
+body.home-page .kit-release .kit-label {padding:0 20px 0 0;border:0;border-right:1px solid #64665c;background:none;box-shadow:none;text-shadow:none;color:var(--detail)}
+@media(max-width:760px){body.home-page .kit-release .kit-label{padding:0;border-right:0}}
