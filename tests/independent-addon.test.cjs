@@ -11,6 +11,52 @@ function setup(){
  db.rigs.push(r);return {...c,seed,db,r};
 }
 const text=f=>new TextDecoder().decode(f.bytes);
+function mixed(){const a=setup(),icon=a.r.icon;
+ a.db.boxes.push({...JSON.parse(JSON.stringify(a.seed.boxes[0])),id:'custom_box',new:true,name:'Box',descr:'',takes:'medical_rule',kg:null,slots:[{c:1,r:1,w:2,h:2}],inw:3,inh:3,icon,shelves:{}});
+ a.db.pouches.push({...JSON.parse(JSON.stringify(a.seed.pouches[0])),id:'custom_pouch',new:true,name:'Pouch',descr:'',icon,grants:{'2x2':0,'3x1':2,'2x1':0,'1x1':0}});
+ a.db.packs=[{id:'custom_pack',new:true,newItem:true,parent:'equ_military_pack',size:'12x7',name:'Backpack',descr:'',icon,cellw:2,cellh:3,weight:2,cost:6000,craft:{cat:1,kit:1,book:'recipe_basic_1',parts:[['custom_pouch',1]]}}];
+ a.db.families={medical_rule:{kinds:['i_medical'],also:['my_new_rig'],never:['medkit_army'],rigs:true,no:'Medical kit only'}};
+ return a;
+}
+test('mixed add-ons define only their own items, rules and backpack sizes',()=>{
+ const a=mixed(),p=a.AddonExport.plan(a.db,a.seed),b=mixed(),q=b.AddonExport.plan(b.db,b.seed);
+ assert.equal(p.entries.length,4);assert.equal(p.manifest.items.length,4);
+ assert(!p.manifest.files.some(f=>q.manifest.files.includes(f)));
+ const ids=Object.fromEntries(p.manifest.items.map(x=>[x.kind,x.id]));
+ const system=text(p.files.find(f=>f.name.includes('/mod_system_')));
+ for(const id of Object.values(ids))assert(system.includes('['+id+']'));
+ assert.match(system,/amp_pgrant_3x1\s*=\s*2/);assert.match(system,/amp_box_noweight\s*=\s*true/);
+ assert.match(system,/amp_box_slots\s*=\s*1,1,2,2/);assert(system.includes('['+ids.packs+']:equ_military_pack'));
+ const rule=text(p.files.find(f=>f.name.includes('/mod_amp_boxes_')));
+ assert(rule.includes('[amp_box_'+ids.boxes+'_rules]'));assert(rule.includes(ids.rigs));assert(!rule.includes('[amp_box_medical_rule]'));
+ const packs=text(p.files.find(f=>f.name.includes('/mod_zzz_grid_packs_')));assert.equal(packs.trim(),'![grid_pack_section]\r\n'+ids.packs+' = 12x7');
+ const registry=text(p.files.find(f=>f.name.includes('/mod_sqa_addons_')));assert(registry.includes('![pouches]\r\n'+ids.pouches+' = true'));
+ const craft=text(p.files.find(f=>f.name.includes('/mod_craft_')));
+ const category1=craft.split('![1]')[1].split('![')[0],category2=craft.split('![2]')[1];
+ assert(category1.includes('x_'+ids.packs));assert(category1.includes(ids.pouches));assert(category2.includes('x_'+ids.pouches));assert(category2.includes('x_'+ids.rigs));
+ for(const f of p.files.filter(f=>f.name.endsWith('.xml'))){const xml=a.BUILD.decodeStringTable(f.bytes);assert.equal((xml.match(/<string id=/g)||[]).length,8);assert(!/<text>\s*<\/text>/.test(xml));}
+});
+test('each additional category can be exported alone and rejects malformed storage',()=>{
+ for(const kind of ['boxes','pouches','packs']){const a=mixed();a.AddonExport.ensure(a.db,a.seed);a.db.independentAddon.excluded=a.AddonExport.custom(a.db,a.seed).filter(r=>!a.db[kind].includes(r)).map(r=>r.addonItemId);
+  if(kind==='boxes')a.db.families.medical_rule.also=[];
+  if(kind==='packs')a.db.packs[0].craft.parts=[['sewing_thread',4]];
+  assert.equal(a.AddonExport.plan(a.db,a.seed).manifest.items.length,1);
+ }
+ const a=mixed();a.db.boxes.at(-1).slots.push({c:1,r:1,w:1,h:1});assert.throws(()=>a.AddonExport.plan(a.db,a.seed),/overlap/);
+ const b=mixed();b.db.packs[0].parent='bad\n[parent]';assert.throws(()=>b.AddonExport.plan(b.db,b.seed),/parent section/);
+});
+test('blank or missing names and descriptions never emit empty game text entries',()=>{
+ for(const value of ['', '  \r\n\t ', undefined]){
+  const a=setup();a.r.name=value;a.r.descr=value;
+  const p=a.AddonExport.plan(a.db,a.seed);
+  for(const file of p.files.filter(f=>f.name.endsWith('.xml'))){
+   const xml=a.BUILD.decodeStringTable(file.bytes);
+   assert(xml.includes('Custom rig'));assert(xml.includes('A chest rig with storage compartments.'));
+   assert(!/<text>\s*<\/text>|<text\s*\/>/.test(xml));
+  }
+  assert.equal(a.r.descr,value,'export must not overwrite project text');
+ }
+});
 test('two offline projects have no overlapping game files or item IDs',()=>{
  const a=setup(),b=setup(),pa=a.AddonExport.plan(a.db,a.seed),pb=b.AddonExport.plan(b.db,b.seed);
  assert.equal(pa.manifest.items.length,1);assert.equal(pa.entries.length,1);
@@ -36,10 +82,10 @@ test('crafting and dismantling references between new rigs are namespaced',()=>{
  const craft=text(p.files.find(f=>f.name.includes('/mod_craft_')));
  assert(craft.includes(id));assert(!craft.includes('my_new_rig'));
  const parts=text(p.files.find(f=>f.name.includes('/mod_parts_')));assert(parts.includes(id));assert(!parts.includes('my_new_rig'));
- a.db.independentAddon.excluded=[a.r.addonItemId];assert.throws(()=>a.AddonExport.plan(a.db,a.seed),/Select the custom rig/);
+ a.db.independentAddon.excluded=[a.r.addonItemId];assert.throws(()=>a.AddonExport.plan(a.db,a.seed),/Select the custom item/);
 });
 test('existing-item edits alone cannot produce an independent add-on',()=>{
- const a=setup();a.db.rigs.pop();a.db.rigs[0].cost=999;assert.throws(()=>a.AddonExport.plan(a.db,a.seed),/at least one new rig/);
+ const a=setup();a.db.rigs.pop();a.db.rigs[0].cost=999;assert.throws(()=>a.AddonExport.plan(a.db,a.seed),/at least one new item/);
 });
 test('new localized text and selected traders contain only the new item',()=>{
  const a=setup();a.r.name='Rig & test';const shelf=Object.keys(a.EMIT.SHELF_FILES)[0];a.r.shelves={[shelf]:{count:2,chance:50}};
