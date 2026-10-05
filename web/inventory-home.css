@@ -53,3 +53,8 @@ body.home-page .site-footer {margin-top:26px;padding-bottom:32px}
 @media(max-width:1100px){body.home-page .site-header{height:auto;padding:12px 20px}body.home-page .kit-hero{gap:16px}body.home-page .kit-copy{padding:26px 20px}body.home-page .kit-copy .tool{font-size:12px;padding:9px 12px}}
 @media(max-width:760px){body.home-page .site-header{width:calc(100% - 28px);margin-top:14px;padding:12px}body.home-page .inventory-home{width:calc(100% - 28px);padding-top:18px}body.home-page .kit-hero{grid-template-columns:1fr;gap:18px}body.home-page .kit-copy{padding:28px 20px}body.home-page .kit-copy h1{font-size:clamp(30px,8vw,48px)}body.home-page .kit-features{gap:16px}body.home-page .kit-release{margin:20px 0;padding:15px}body.home-page .kit-workbench{margin-top:20px}}
 
+/* Match the content's measured bounds, including its scrollbar gutter. */
+body.home-page .site-header {width:var(--home-width,88%);margin-left:var(--home-left,auto);margin-right:0}
+body.home-page {--kit-olive:url('assets/field-kit/olive-source.svg')}
+body.home-page .site-header,body.home-page .kit-release,body.home-page .kit-features h3 {background-size:auto,250px 55px}
+

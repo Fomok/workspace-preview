@@ -1,9 +1,14 @@
 <script>
  import { onMount } from 'svelte';
- let title;const releases=window.Releases.load();
- onMount(()=>{window.OpeningIntro?.play(title);});
+ let title;let home;const releases=window.Releases.load();
+  onMount(()=>{
+  window.OpeningIntro?.play(title);
+  const alignHeader=()=>{const r=home.getBoundingClientRect();document.body.style.setProperty('--home-width',r.width+'px');document.body.style.setProperty('--home-left',r.left+'px');};
+  const observer=new ResizeObserver(alignHeader);observer.observe(home);observer.observe(document.getElementById('pane'));window.addEventListener('resize',alignHeader);alignHeader();
+  return ()=>{observer.disconnect();window.removeEventListener('resize',alignHeader);document.body.style.removeProperty('--home-width');document.body.style.removeProperty('--home-left');};
+ });
 </script>
-<div class="inventory-home">
+<div class="inventory-home" bind:this={home}>
  <section class="kit-hero" aria-label="Squared Away">
   <div class="kit-frame kit-copy hero-copy">
    <p class="eyebrow hero-game-label"><span class="game-label-prefix">INVENTORY MOD FOR</span> <span class="game-label-stalker">STALKER</span> <span class="game-label-gamma">G.A.M.M.A.</span></p>
@@ -23,4 +28,5 @@
  <section class="kit-frame kit-workbench"><div><h2>Build your loadout.</h2><p>Customize rigs, containers and pouches. Browse community add-ons and export your own setup.</p></div><div class="site-actions"><a class="tool primary" href="#editor/rigs">Open Editor</a><a class="tool" href="#community">Browse add-ons</a></div></section>
  <footer class="site-footer"><span>ZONEBENCH / SQUARED AWAY</span><a href="#help">Installation & help</a><span>A community project by Fomok</span></footer>
 </div>
+
 
