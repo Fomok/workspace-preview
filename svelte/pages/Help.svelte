@@ -1,4 +1,5 @@
 <script>
+ import {tick} from 'svelte';
  import {blocks} from '../help-data.js';import Checklist from '../components/Checklist.svelte';
  let query=$state('');let open=$state(new Set([1]));let sections=[];
  const categories=[['Install & setup',[0,1,2,3,4]],['Compatibility',[5,6,7,8]],['Playing the mod',[9,10,11]],['Editor & add-ons',[12,13,14]],['Account & administration',[15,16]]];
@@ -6,9 +7,12 @@
  function toggle(i,e){if(query)return;const next=new Set(open);if(e.currentTarget.open)next.add(i);else next.delete(i);open=next;}
 </script>
 <div class="field-page help-page">
+<nav class="help-topics" aria-label="Help topics">{#each categories as [name,ids],i}<button class="tool" onclick={async()=>{query='';await tick();sections[i].scrollIntoView({block:'start',behavior:'smooth'});}}>{name}</button>{/each}</nav>
+<div class="help-content">
 <p class="eyebrow">FIELD GUIDE</p><h1>Get squared away.</h1><p class="page-lead">Installation, compatibility and the ZoneBench editor.</p><Checklist/>
-<div class="help-tools"><input type="search" bind:value={query} placeholder="Search installation, controls, exporting…" aria-label="Search Help"><nav class="help-topics" aria-label="Help topics">{#each categories as [name,ids],i}<button class="tool" onclick={()=>{query='';sections[i].scrollIntoView({block:'start',behavior:'smooth'});}}>{name}</button>{/each}</nav></div>
+<div class="help-tools"><input type="search" bind:value={query} placeholder="Search installation, controls, exporting…" aria-label="Search Help"></div>
 {#each categories as [name,ids],i}<section class="help-group" bind:this={sections[i]} hidden={!ids.some(matches)}><h2>{name}</h2>{#each ids as id}<details class="help-topic" hidden={!matches(id)} open={query?matches(id):open.has(id)} ontoggle={e=>toggle(id,e)}><summary>{blocks[id][0]}</summary><p>{blocks[id][1]}</p>{#if blocks[id][0]==='Magazine support'}<a class="tool primary" href="https://discord.com/channels/912320241713958912/1322655858240262304/1524208180135989459" target="_blank" rel="noopener noreferrer">Download Mags Reloaded Fork by Priler UPDATE 6</a>{/if}</details>{/each}</section>{/each}
 {#if !blocks.some((_,i)=>matches(i))}<p class="hint">No matching help topics. Try a different word.</p>{/if}
 
+</div>
 </div>

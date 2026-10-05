@@ -51,3 +51,15 @@ body.introduction-page #pane {padding:22px 4% 26px!important}
 @media(max-width:600px){.field-page .release-panel{padding:18px}.field-page .release-panel h2{font-size:22px}.field-page .release-panel .site-actions{width:100%;gap:10px}.field-page .installation-checklist{padding:16px}.field-page .help-group{padding:9px}.field-page .help-group h2{font-size:18px;padding:14px}.field-page .help-topic summary{font-size:14px}.field-page .help-topic>p{margin-left:8px;margin-right:8px}.field-page .help-topics .tool{flex:1 1 140px}}
 
 body .field-page .tool.primary,body .intro-shell .tool.primary {background:linear-gradient(#ffffff06,#0003),var(--page-metal);background-size:auto,300px 100px;border-color:transparent;color:var(--hot);box-shadow:inset 0 0 0 1px var(--hot)}
+/* Persistent left-hand chapter and topic menus. */
+.help-page {display:grid;grid-template-columns:190px minmax(0,1fr);gap:26px;max-width:1440px;align-items:start}
+.help-content {min-width:0}
+.help-content>h1 {font-size:clamp(32px,3vw,44px);margin:12px 0 14px}
+.help-page .help-topics,.intro-shell .intro-nav {display:flex;flex-direction:column;flex-wrap:nowrap;align-self:start;gap:8px;margin:0;padding:10px;border:7px solid transparent;border-image:var(--page-rim) 12 / 7px / 0 stretch;background:var(--page-metal);background-size:300px 100px;overflow:auto}
+.help-page .help-topics {position:sticky;top:0;max-height:calc(100dvh - 140px)}
+.help-page .help-topics .tool,.intro-shell .intro-nav-button {flex:none;width:100%;text-align:left;justify-content:flex-start;white-space:normal;line-height:1.45;padding:12px 10px}
+.intro-shell {grid-template-columns:190px minmax(0,1fr);grid-template-rows:minmax(0,1fr);gap:24px}
+.intro-shell .intro-nav {max-height:100%}
+.intro-shell .intro-reader {margin-top:0;min-width:0}
+@media(max-width:1100px){.help-page,.intro-shell{grid-template-columns:155px minmax(0,1fr);gap:16px}.intro-shell .intro-copy{padding:18px}.intro-shell .intro-copy h1,.intro-shell .intro-copy h2{font-size:30px}}
+@media(max-width:600px){.help-page,.intro-shell{grid-template-columns:104px minmax(0,1fr);gap:10px}.help-page .help-topics,.intro-shell .intro-nav{padding:3px;border-width:4px}.help-page .help-topics .tool,.intro-shell .intro-nav-button{font-size:11px;padding:9px 5px;min-height:46px}.help-page .help-topics{max-height:calc(100dvh - 175px)}.help-content>h1{font-size:28px}.intro-shell .intro-copy{padding:12px}.intro-shell .intro-copy h1,.intro-shell .intro-copy h2{font-size:24px}.intro-shell .intro-description{font-size:14px}}
