@@ -44,7 +44,7 @@ async function drawCommunityCatalog(P){
  intro.appendChild(el('p','eyebrow','THE COMMUNITY WORKBENCH'));
  intro.appendChild(el('h1',null,({public:'Add-ons',mine:'My add-ons',moderation:'Manage add-ons',selections:'Next mod update'})[COMMUNITY_MODE]||'Add-ons'));
  communityMessage(intro,COMMUNITY_MODE==='mine'?'Your published items, in one place. Update an existing listing instead of creating a new version beside it.':'Find gear for your loadout. Inspect each item, then import only what you want.');
- const create=el('a','tool addon-create','Create an add-on');create.href='#editor/rigs';create.onclick=e=>{if(e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;e.preventDefault();Site.go('rigs');};intro.appendChild(create);
+ const create=el('a','tool addon-create','Create an add-on');create.href='#editor/create';create.onclick=e=>{if(e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;e.preventDefault();Site.go('create');};intro.appendChild(create);
  const controls=el('div','community-actions');P.appendChild(controls);
  const status=communityMessage(P,'Loading community library…');
  try{

@@ -69,7 +69,7 @@ function render(P){
   const h=el(i===0?'h1':'h2',null,c.title);h.id='intro-title-'+c.id;body.appendChild(h);body.appendChild(el('p','intro-description',c.copy));if(c.note)body.appendChild(el('p','intro-note',c.note));
   const steps=el('div','intro-actions');body.appendChild(steps);
   if(i>0){const prev=el('button','tool','Previous');prev.onclick=()=>select(i-1);steps.appendChild(prev);}
-  const next=el('button','tool primary',i===chapters.length-1?'Open the editor':'Next: '+chapters[i+1].label);next.onclick=()=>i===chapters.length-1?Site.go('rigs'):select(i+1);steps.appendChild(next);
+  const next=el('button','tool primary',i===chapters.length-1?'Open the editor':'Next: '+chapters[i+1].label);next.onclick=()=>i===chapters.length-1?Site.go('editor'):select(i+1);steps.appendChild(next);
   body.appendChild(el('p','intro-scroll-hint','Scroll to explore · '+(i+1)+' / '+chapters.length));
  });
  let current=-1;

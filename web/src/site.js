@@ -4,18 +4,18 @@
 const editing=['rigs','boxes','pouches','packs','items','drops','changes','check','share','build'];
 const routes={patchnotes:'patch-notes',home:'home',introduction:'introduction',catalog:'addons',downloads:'downloads',help:'help',account:'account'};
 const n=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e;};
-function route(tab){if(tab==='catalog')return '#addons'+(COMMUNITY_MODE==='public'?'':'/'+COMMUNITY_MODE);return '#'+(routes[tab]||'editor/'+tab);}
-function tabFromHash(){const value=location.hash.slice(1);if(value==='community'||value==='addons'||/^addons\/(mine|moderation|selections)$/.test(value)){COMMUNITY_MODE=value.split('/')[1]||'public';COMMUNITY_OFFSET=0;COMMUNITY_EDIT=null;return 'catalog';}return Object.keys(routes).find(k=>routes[k]===value)||(value.startsWith('editor/')&&editing.includes(value.slice(7))?value.slice(7):'home');}
+function route(tab){if(tab==='builder')return root.EditorFlow.route();if(tab==='editor')return '#editor';if(tab==='create')return '#editor/create';if(tab==='addonexport')return '#editor/export';if(tab==='catalog')return '#addons'+(COMMUNITY_MODE==='public'?'':'/'+COMMUNITY_MODE);return '#'+(routes[tab]||'editor/'+tab);}
+function tabFromHash(){const value=location.hash.slice(1);if(value==='editor')return 'editor';if(value==='editor/create')return 'create';if(value==='editor/export')return 'addonexport';const draft=value.match(/^editor\/new\/(rigs|boxes|pouches|packs)\/([a-f0-9-]+)$/);if(draft){root.EditorFlow?.select(draft[1],draft[2]);return 'builder';}if(value==='community'||value==='addons'||/^addons\/(mine|moderation|selections)$/.test(value)){COMMUNITY_MODE=value.split('/')[1]||'public';COMMUNITY_OFFSET=0;COMMUNITY_EDIT=null;return 'catalog';}return Object.keys(routes).find(k=>routes[k]===value)||(value.startsWith('editor/')&&editing.includes(value.slice(7))?value.slice(7):'home');}
 function go(tab){if(location.hash!==route(tab))history.pushState({},'',route(tab));TAB=tab;render();document.querySelector('#pane').scrollTop=0;}
 function addons(mode='public'){COMMUNITY_MODE=['public','mine','moderation','selections'].includes(mode)?mode:'public';COMMUNITY_OFFSET=0;COMMUNITY_EDIT=null;go('catalog');}
 function action(text,tab,primary=false){const b=n('button','tool'+(primary?' primary':''),text);b.onclick=()=>go(tab);return b;}
 function link(text,url,primary=false){const a=n('a','tool'+(primary?' primary':''),text);a.href=url;return a;}
 function shell(){
- const isEditor=editing.includes(TAB);document.body.classList.toggle('site-page',!isEditor);document.body.classList.toggle('home-page',TAB==='home');document.body.classList.toggle('introduction-page',TAB==='introduction');
+ const legacy=editing.includes(TAB),flow=['editor','create','builder','addonexport'].includes(TAB),isEditor=legacy||flow;document.body.classList.toggle('editor-flow',flow);document.body.classList.toggle('site-page',!isEditor);document.body.classList.toggle('home-page',TAB==='home');document.body.classList.toggle('introduction-page',TAB==='introduction');
  document.body.classList.toggle('addons-page',TAB==='catalog');
  if(location.hash!==route(TAB))history.replaceState({},'',route(TAB));
  document.title=(TAB==='home'?'Squared Away':TAB)+' | ZoneBench Preview';
- root.ZonebenchShell?.({tab:TAB,editor:isEditor,version:DB?.modVersion,tabs:TABS.filter(([key])=>!["catalog","account","help"].includes(key)).map(([key,label])=>({key,label,count:DB[key]?.length||0})),unread:PatchNotes.unread()});
+ root.ZonebenchShell?.({tab:TAB,editor:isEditor,tools:legacy||TAB==='builder'||TAB==='addonexport',sections:legacy,version:DB?.modVersion,tabs:TABS.filter(([key])=>!["catalog","account","help"].includes(key)).map(([key,label])=>({key,label,count:DB[key]?.length||0})),unread:PatchNotes.unread()});
 }
 function heading(parent,kicker,title,copy){parent.appendChild(n('p','eyebrow',kicker));parent.appendChild(n('h1',null,title));if(copy)parent.appendChild(n('p','page-lead',copy));}
 function size(bytes){return bytes?Math.round(bytes/1024/1024)+' MB':'';}
@@ -164,5 +164,5 @@ function help(P){
 }
 root.Site={shell,go,addons,tabFromHash,home,downloads,help};
 window.addEventListener('popstate',()=>{TAB=tabFromHash();render();});
-window.addEventListener('hashchange',()=>{const next=tabFromHash();if(TAB!==next||next==='catalog'){TAB=next;render();}});
+window.addEventListener('hashchange',()=>{const next=tabFromHash();if(TAB!==next||next==='catalog'||next==='builder'){TAB=next;render();}});
 })(globalThis);

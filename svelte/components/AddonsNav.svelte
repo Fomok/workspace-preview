@@ -4,7 +4,7 @@
  let trigger,panel;let expanded=$state(false);
  const entries=[
   ['addons','Browse add-ons','Find rigs, containers and pouches.'],
-  ['editor/rigs','Create an add-on','Build items in your current project.'],
+  ['editor/create','Create an add-on','Build items in your current project.'],
   ['editor/share','Publish an add-on','Choose the items you want to share.'],
   ['addons/mine','My add-ons','Edit, update or unpublish your listings.']
  ];

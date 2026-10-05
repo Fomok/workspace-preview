@@ -585,24 +585,8 @@ function renderList(){
       L.appendChild(r);
     }
   }
-  const one = {rigs:"rig",pouches:"pouch",boxes:"container",
-               packs:"backpack",items:"item"}[TAB];
-  /* NO "NEW ITEM" ON THE ITEM EDITOR. That tab is for changing how
-     something that already exists LOOKS - a new thing from nothing is
-     a different job, and the three tabs above it are where it is done.
-        "Item editor should not have 'new Item' we adopting existing
-         Items and changing their look not properites" */
-  if(TAB !== "items"){
-    const add=el("button","addbtn","+ new "+one);
-    add.onclick=()=>addItem(false); L.appendChild(add);
-  }
-  /* ...AND ONE FOR SOMETHING THAT ALREADY EXISTS. A pouch from another
-     magazine mod, or one of the game's own items - we add our keys to
-     it and leave everything else alone, which is what this mod already
-     does to the three Mags Reloaded pouches and to the wallet. */
-  const ad=el("button","addbtn","+ adopt an existing "+one);
-  ad.style.marginTop="6px";
-  ad.onclick=()=>addItem(true); L.appendChild(ad);
+  const back=el("button","addbtn","← Editor home");
+  back.onclick=()=>Site.go('editor');L.appendChild(back);
   EditorView.list(L); Workbench.markRows();
 }
 function fmt(n){ return String(n==null?0:n).replace(/\B(?=(\d{3})+(?!\d))/g,","); }
@@ -625,6 +609,7 @@ function renderPane(){
   if(TAB==="changes") return Workbench.changes(P);
   if(TAB==="share") return drawShare(P);
   if(TAB==="build") return drawBuild(P);
+  if(TAB==="addonexport") return AddonExport.render(P,DB,SEED,async()=>{touch();await flushKeep();},drawLegacyBuild);
   if(TAB==="help") return Site.help(P);
   const it=cur();
   if(!it){
@@ -3666,7 +3651,7 @@ function beyondTheBench(){
   return out;
 }
 
-function drawBuild(P){ return AddonExport.render(P,DB,SEED,async()=>{touch();await flushKeep();},drawLegacyBuild); }
+function drawBuild(P){ return drawLegacyBuild(P); }
 function drawLegacyBuild(P){
   P.appendChild(el('h1',null,'Export your add-on'));
   P.appendChild(el('p','hint','Review your project, check for issues, then download one ZIP for Mod Organizer 2.'));
@@ -4236,19 +4221,19 @@ function uniqueId(base){
   while(all.has(n)) n=base+"_"+(i++);
   return n;
 }
-function addItem(adopt){
+function addItem(adopt,kind=TAB,navigate=true){
   let it;
-  if(TAB==="rigs") it={id:uniqueId("amprig_new"),name:"New rig",descr:"",
+  if(kind==="rigs") it={id:uniqueId("amprig_new"),name:"New rig",descr:"",
     weight:1.5,cost:3000,tier:2,slots:{"2x2":0,"3x1":0,"2x1":0,"1x1":0},
     band:5,pins:[],icon:null,cellw:2,cellh:3,
     // MENDED LIKE EVERY OTHER RIG until you say otherwise. A section
     // with no repair_type is a rig no kit in the game will touch, and
     // it fails by simply never appearing in a repair window.
     repair:"outfit_light",repairBonus:null,new:true};
-  else if(TAB==="pouches") it={id:uniqueId("amppouch_new"),name:"New pouch",
+  else if(kind==="pouches") it={id:uniqueId("amppouch_new"),name:"New pouch",
     weight:0.3,cost:2000,tier:3,grants:{"2x2":0,"3x1":0,"2x1":1,"1x1":0},
     icon:null,cellw:2,cellh:2,new:true};
-  else if(TAB==="packs") it={id:uniqueId("amppack_new"),name:"New backpack",
+  else if(kind==="packs") it={id:uniqueId("amppack_new"),name:"New backpack",
     newItem:true, parent:"equ_military_pack", own:{size:true,look:true,price:true},
     size: DB.packDefault||"10x7", cellw:2, cellh:2, icon:null,
     cost:6000, weight:1.2, new:true};
@@ -4265,13 +4250,13 @@ function addItem(adopt){
        point of the Item editor: a new section is declared, an existing
        one is only added to. Nothing is taken over until it is ticked. */
     delete it.newItem; delete it.parent;
-    if(TAB==="packs") it.own={size:true};
-    else if(TAB==="items"){
+    if(kind==="packs") it.own={size:true};
+    else if(kind==="items"){
       it.own={};
       it={ id:"", name:"", adopt:true, own:{}, cellw:1, cellh:1, icon:null };
     }
   }
-  DB[TAB].push(it); SEL[TAB]=it.id; touch(); render();
+  DB[kind].push(it); SEL[kind]=it.id; touch(); if(navigate)render(); return it;
 }
 function removeItem(it){
   if(!confirm("Remove "+(it.name||it.id)+"?")) return;
