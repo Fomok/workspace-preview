@@ -14,7 +14,7 @@
    <div class="path-copy"><span class="fabric-label">CUSTOMIZE</span><h2>Edit existing items</h2><p>Adjust layouts, prices, recipes and textures in your current mod setup.</p><span class="path-action">Open item editor <span>↗</span></span></div>
   </button>
   <button class="path-card creation" onclick={()=>window.Site.go('create')}>
-   <div class="path-art new-art" aria-hidden="true"><div class="art-grid"></div><div class="empty-shape"><span>+</span></div><span class="art-coordinate">YOUR NEXT ADDITION</span></div>
+   <div class="path-art new-art" aria-hidden="true"><div class="art-grid"></div><div class="creation-kit">{#if pictures.rigs}<img class="kit-rig" src={pictures.rigs} alt=""/>{/if}{#if pictures.boxes}<img class="kit-container" src={pictures.boxes} alt=""/>{/if}<svg class="kit-plan" viewBox="0 0 100 110"><path d="M27 25V14h46v11M18 31h64v64H18zM18 31l10 26h44l10-26M44 54v16h12V54M25 84h50"/><path class="plan-guide" d="M8 20v83M92 20v83M10 103h80"/></svg></div><span class="art-coordinate">YOUR NEXT ADDITION</span></div>
    <div class="path-copy"><span class="fabric-label">CREATE</span><h2>Create a new item</h2><p>Build a rig, container, pouch or backpack. Export it as its own add-on.</p><span class="path-action">Choose an item type <span>↗</span></span></div>
   </button>
  </div>
