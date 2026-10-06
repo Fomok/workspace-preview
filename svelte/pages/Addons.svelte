@@ -1,4 +1,5 @@
 <script>
+ import {addonFilename} from '../lib/guided-install.mjs';
  import {onMount} from 'svelte';
  import AddonItemDetails from '../components/AddonItemDetails.svelte';
  import AddonCover from '../components/AddonCover.svelte';
@@ -16,7 +17,7 @@
  async function open(record){downloadError='';success='';selected=record.result||await hydrate(record);}
  function modal(node){node.showModal();return {destroy(){node.close();}};}
  function close(){if(!busy)selected=null;}
- async function download(){busy=true;downloadError='';success='';try{const result=await window.CommunityDownload.build(selected),blob=await result.blob,url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=selected.listing.name.replace(/[^a-z0-9 _-]/gi,'').trim()+' - '+selected.listing.version+'.zip';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);success='ZIP prepared. Install it as a separate mod below Squared Away in MO2.';if(user){try{recordDownload(user,result.manifest,{listingId:selected.listing.id,revision:selected.listing.revision});downloads=downloadedAddons(user);window.dispatchEvent(new Event('zonebench-downloads-changed'));}catch{success+=' Your download history could not be saved in this browser.';}}}catch(e){downloadError=e.message;}finally{busy=false;}}
+ async function download(){busy=true;downloadError='';success='';try{const result=await window.CommunityDownload.build(selected),blob=await result.blob,url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=addonFilename(selected.listing.name,selected.listing.version);document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);success='ZIP prepared. Install it as a separate mod below Squared Away in MO2.';if(user){try{recordDownload(user,result.manifest,{listingId:selected.listing.id,revision:selected.listing.revision});downloads=downloadedAddons(user);window.dispatchEvent(new Event('zonebench-downloads-changed'));}catch{success+=' Your download history could not be saved in this browser.';}}}catch(e){downloadError=e.message;}finally{busy=false;}}
  function imported(){const result=selected;selected=null;window.Community.preview(result);}
 </script>
 <section class="gear-browser">

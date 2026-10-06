@@ -1,4 +1,5 @@
 <script>
+ import {addonFilename} from '../lib/guided-install.mjs';
  import SizePicker from '../components/SizePicker.svelte';
  import RigLayout from '../components/RigLayout.svelte';
  import PouchStorage from '../components/PouchStorage.svelte';
@@ -23,7 +24,7 @@
  async function image(event){const file=event.currentTarget.files?.[0];if(!file)return;if(!['image/png','image/jpeg','image/webp'].includes(file.type)||file.size>4000000){error='Choose a PNG, JPEG or WebP image smaller than 4 MB.';return;}const reader=new FileReader();reader.onload=()=>{item.icon=reader.result;delete item.fit;save();};reader.onerror=()=>error='The image could not be read.';reader.readAsDataURL(file);}
  function cell(w,h){item.cellw=Math.max(1,Math.min(20,Number(w)||1));item.cellh=Math.max(1,Math.min(20,Number(h)||1));save();}
  function size(event,axis){const [h,w]=(item.size||'10x7').split('x').map(Number);const value=Math.max(1,Math.min(30,Number(event.currentTarget.value)||1));item.size=axis==='w'?`${h}x${value}`:`${value}x${w}`;save();}
- async function download(){busy=true;error='';try{save();const result=await flow.download();const blob=await result.blob;const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=(item.name||'New item').replace(/[^a-z0-9 _-]/gi,'').trim()+' - Add-on.zip';a.click();setTimeout(()=>URL.revokeObjectURL(url),60000);}catch(e){error=e.message;}finally{busy=false;}}
+ async function download(){busy=true;error='';try{save();const result=await flow.download();const blob=await result.blob;const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=addonFilename(result.manifest.name,result.manifest.addonVersion);a.click();setTimeout(()=>URL.revokeObjectURL(url),60000);}catch(e){error=e.message;}finally{busy=false;}}
 </script>
 <section class="item-builder">
  <div class="flow-breadcrumb"><button onclick={()=>window.Site.go('create')}>← Item types</button><span>WORKBENCH / CREATE</span></div>
