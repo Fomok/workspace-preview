@@ -2,6 +2,7 @@ import { mount, unmount } from 'svelte';
 import {addonFilename} from './lib/guided-install.mjs';
 import Addons from './pages/Addons.svelte';
 import Home from './pages/Home.svelte';
+import Account from './pages/Account.svelte';
 import Downloads from './pages/Downloads.svelte';
 import Help from './pages/Help.svelte';
 import Notes from './pages/Notes.svelte';
@@ -9,7 +10,7 @@ import EditorChoices from './pages/EditorChoices.svelte';
 import ItemBuilder from './pages/ItemBuilder.svelte';
 import {recordDownload,downloadedAddons} from './lib/addon-downloads.mjs';
 let page;
-const native={home:Home,downloads:Downloads,help:Help,patchnotes:Notes};
+const native={account:Account,home:Home,downloads:Downloads,help:Help,patchnotes:Notes};
 export async function start(sync){
  window.ZonebenchShell=sync;
  window.ZonebenchAddonFilename=addonFilename;

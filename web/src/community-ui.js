@@ -135,3 +135,5 @@ function drawCommunityPublish(P,listing=null,sessionChecked=false){
  if(listing)communityButton(review,'Cancel editing',async()=>{COMMUNITY_EDIT=null;renderPane();});
  else communityButton(review,'Manage my published add-ons',async()=>{COMMUNITY_MODE='mine';TAB='catalog';render();});
 }
+
+window.ZonebenchAccount={get readOnly(){return !!COMMUNITY_CONFIG.readOnly;},mountReset:node=>drawProjectReset(node),editText:()=>SiteCopy.open()};
