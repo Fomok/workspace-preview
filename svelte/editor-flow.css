@@ -24,10 +24,8 @@ body.editor-flow #pane{padding:0!important;overflow:auto}body.editor-flow main{d
 
 .type-art{height:110px;margin-bottom:12px}.type-art img{max-height:108px}.type-card h2{min-height:54px}.type-card .path-action{margin-top:12px}.type-card p{min-height:62px}
 
-.creation-kit{position:absolute;width:260px;height:140px;left:50%;top:0;transform:translateX(-50%)}
-.new-art .creation-kit .kit-rig{left:30%;top:6px;height:127px;transform:translateX(-50%) rotate(-12deg)}
-.new-art .creation-kit .kit-container{left:66%;top:69px;height:66px;max-width:100px;transform:translateX(-50%) rotate(9deg)}
-.kit-plan{position:absolute;right:10px;top:7px;width:66px;height:76px;fill:none;stroke:#a0afa0;stroke-width:2;opacity:.85;transform:rotate(8deg)}.kit-plan .plan-guide{stroke:#737e74;stroke-width:1;stroke-dasharray:3 4}
+ .cut-guide{position:absolute;left:50%;top:0;transform:translateX(-50%);width:240px;height:145px;fill:none;pointer-events:none}.cut-line{stroke:#c5b79a;stroke-width:1.3;stroke-dasharray:5 5;opacity:.8}.cut-scissors{stroke:#ddc6a4;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 2px 2px #000)}.cut-scissors circle{fill:#1a201a}
+.creation-drawing{position:absolute;width:280px;height:145px;left:50%;top:0;transform:translateX(-50%);fill:none;stroke-linecap:round;stroke-linejoin:round}.draft-gear{stroke:#b0bbab;stroke-width:1.7;fill:#64725916}.draft-guides{stroke:#627263;stroke-width:1;stroke-dasharray:3 5}.draft-stitch{stroke:#7e8e78;stroke-width:1;stroke-dasharray:2 3;fill:none}.draft-pencil{stroke:#dcb88e;stroke-width:1.7;fill:#2b2a20}
 .builder-grid{grid-auto-rows:32px;gap:3px;background:#101212;border-color:#505451}
 .builder-grid .empty-cell{width:32px;height:32px;background:#1b1e1d;border-color:#363c39}
 .builder-grid .storage-pocket{width:auto;height:auto;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;z-index:1;background:var(--pocket-fill);border:2px solid var(--pocket-edge);color:#f2eee6;box-shadow:inset 0 0 0 1px #0004;border-radius:2px;line-height:1.1;font-size:10px}
