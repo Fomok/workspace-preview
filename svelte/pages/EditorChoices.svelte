@@ -24,7 +24,26 @@
  </div>
  {:else}
  <div class="item-type-cards">{#each types as [kind,title,tagline,description]}
-  <button class="type-card" onclick={()=>flow.create(kind)}><div class="type-art" aria-hidden="true">{#if pictures[kind]}<img src={pictures[kind]} alt=""/>{:else}<svg viewBox="0 0 100 110">{#if kind==='pouches'}<path d="M27 29V18h46v11M18 35h64v59H18zM18 35l10 27h44l10-27M43 57v16h14V57M25 85h50" fill="none" stroke="currentColor" stroke-width="3"/>{:else}<path d="M34 25V15h32v10M23 35q0-12 12-12h30q12 0 12 12v55q0 10-10 10H33q-10 0-10-10zM23 51h54M32 64h36v25H32zM15 42v42M85 42v42" fill="none" stroke="currentColor" stroke-width="3"/>{/if}</svg>{/if}</div><span class="fabric-label">{title}</span><h2>{tagline}</h2><p>{description}</p><span class="path-action">Create {title.toLowerCase()} <span>↗</span></span></button>
+  <button class="type-card" onclick={()=>flow.create(kind)}><div class="type-art" aria-hidden="true"><svg class="item-sketch" viewBox="0 0 130 130">
+ <g class="sketch-guides"><path d="M12 15v100M118 15v100M8 112h114M23 10h84"/><path d="M8 25h8M8 99h8M27 108v8M103 108v8"/></g>
+ <g class="sketch-outline">
+ {#if kind==='rigs'}
+ <path d="M34 48L26 18l13-5 15 32M78 45l15-32 13 5-9 30M25 49q39-12 78 0l4 52q-41 15-85 0z"/>
+ <path d="M30 55l3 34h18l2-36M59 52v39h19V52M85 54v36h16l-2-35M32 67h20M59 65h19M85 67h15"/>
+ <path class="sketch-seam" d="M29 99q35 10 71 0M32 21l12 24M99 21L87 45"/>
+ {:else if kind==='boxes'}
+ <path d="M17 49l24-19h62l12 15v50l-25 15H23zM17 49h73l25-4M90 49v61M23 60h66M96 57l13-6M46 30v-9h29v9M50 29v-5h21v5"/>
+ <path d="M34 53h11v15H34zM69 53h11v15H69zM38 58h3M73 58h3M46 84h25v13H46z"/>
+ <path class="sketch-seam" d="M28 75v25h9M79 99h5V75M97 67v29l10-6"/>
+ {:else if kind==='pouches'}
+ <path d="M39 36V23h15v13M76 36V23h15v13M29 40q36-8 72 0v59q-36 10-72 0zM29 40l10 26h52l10-26M57 62h16v20H57zM62 67h6v10h-6z"/>
+ <path class="sketch-seam" d="M35 74v20q30 7 60 0V74M39 48h51M44 27v8M81 27v8"/>
+ {:else}
+ <path d="M49 27v-9h32v9M36 38q0-12 13-12h32q13 0 13 12v61q0 10-11 10H47q-11 0-11-10zM36 49q29 8 58 0M43 64h44v34H43zM27 55h9v42h-9zM94 55h9v42h-9zM45 33q20-5 40 0"/>
+ <path d="M44 71h42M76 71v9M50 40v11M80 40v11"/>
+ <path class="sketch-seam" d="M48 84v9h33V84M42 58v-4M88 58v-4M42 102h46"/>
+ {/if}
+ </g></svg></div><span class="fabric-label">{title}</span><h2>{tagline}</h2><p>{description}</p><span class="path-action">Create {title.toLowerCase()} <span>↗</span></span></button>
  {/each}</div>
  {/if}
  {#if drafts.length}<section class="draft-section"><div><h2>Continue a new item</h2><p>Your unfinished work stays in this browser.</p></div><div class="draft-items">{#each drafts as draft}<button onclick={()=>flow.open(draft.kind,draft.id)}>{#if draft.icon}<img src={draft.icon} alt=""/>{:else}<span class="draft-placeholder">+</span>{/if}<span><strong>{draft.name}</strong><small>{types.find(x=>x[0]===draft.kind)?.[1]}</small></span><span>→</span></button>{/each}</div><button class="flow-link" onclick={()=>window.Site.go('addonexport')}>Export selected new items together →</button></section>{/if}
