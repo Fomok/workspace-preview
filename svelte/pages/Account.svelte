@@ -11,7 +11,7 @@
 </script>
 
 <div class="account-page">
- <header class="account-heading"><p class="eyebrow">YOUR WORKBENCH</p><h1>Account</h1><p>Your profile, your creations, and the gear you’ve collected.</p></header>
+ <header class="account-heading"><p class="eyebrow">YOUR WORKBENCH</p><h1>Account</h1></header>
  <div class="account-layout">
   <aside class="account-profile account-panel">
    <h2>Profile</h2>
