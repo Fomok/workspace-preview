@@ -13,7 +13,7 @@
  {#if checking}<p role="status">Checking your account…</p>
  {:else if problem}<p>{problem}</p><button class="flow-link" onclick={refresh}>Retry</button>
  {:else if !user}<p>Sign in or create an account to use items from your other ZoneBench add-ons as recipe ingredients.</p><button class="builder-main-action" onclick={()=>window.Site.go('account')}>Sign in / Create account</button><small>Your add-on downloads will be remembered for your account in this browser.</small>
- {:else if !addons.length}<p>No add-on downloads recorded yet.</p><small>Items from add-ons you download through ZoneBench will appear here. Download tracking is coming with the redesigned add-on browser.</small>
+ {:else if !addons.length}<p>No add-on downloads recorded yet.</p><small>Items from add-ons you download through ZoneBench will appear here. Browse add-ons and download an independent add-on ZIP while signed in.</small>
  {:else}<p>Choose an item from your recorded downloads. Its add-on must also be enabled in your game.</p><label>Find an add-on item<input type="search" placeholder="Search your add-ons…" bind:value={query}/></label>
  {#each addons as addon}{@const matches=addon.items.filter(x=>x.id!==item.id&&(x.name+' '+addon.name).toLowerCase().includes(query.toLowerCase()))}{#if matches.length}<div class="downloaded-addon"><h4>{addon.name} <small>{addon.version}</small></h4>{#each matches as ingredient}<button disabled={count>=4&&!item.craft?.parts.some(x=>x[0]===ingredient.id)} onclick={()=>add(addon,ingredient)}><span>{ingredient.name}</span><span>+</span></button>{/each}</div>{/if}{/each}
  <small>Recorded downloads in this browser; ZoneBench cannot check your MO2 installation.</small>
