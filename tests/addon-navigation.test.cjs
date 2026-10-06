@@ -23,3 +23,9 @@ test('old Community links remain usable and invalid sections do not select privi
  c.location.hash='#addons/unknown';assert.equal(c.site.tabFromHash(),'home');
  c.site.addons('unknown');assert.equal(c.location.hash,'#addons');
 });
+
+test('download history links resolve a public add-on without selecting an admin mode',()=>{
+ const c=setup('#addons/view/listing_123');assert.equal(c.site.tabFromHash(),'catalog');assert.equal(c.get('COMMUNITY_MODE'),'public');
+ c.site.go('catalog');assert.equal(c.location.hash,'#addons/view/listing_123');
+ c.site.addons('mine');assert.equal(c.location.hash,'#addons/mine');
+});

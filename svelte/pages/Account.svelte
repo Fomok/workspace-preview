@@ -1,11 +1,14 @@
 <script>
  import {onMount} from 'svelte';
+ import {addonLink,downloadStatus} from '../lib/addon-requirements.mjs';
+ import {loadLibrary} from '../lib/addon-browser.mjs';
+ let listings=$state([]),checked=$state(false),updateError=$state('');
  import {downloadedAddons} from '../lib/addon-downloads.mjs';
  let user=$state(null),loading=$state(true),error=$state(''),downloads=$state([]);
  let stopped=false;
  const live='https://fomok.github.io/zonebench/#account';
  function sync(){user=window.Community.user;downloads=downloadedAddons(user).sort((a,b)=>b.downloadedAt-a.downloadedAt);}
- async function refresh(){loading=true;error='';try{await window.Community.refresh();if(!stopped)sync();}catch(e){if(!stopped)error=e.message;}finally{if(!stopped)loading=false;}}
+ async function refresh(){loading=true;error='';try{await window.Community.refresh();if(!stopped){sync();checked=false;updateError='';if(user)try{const rows=await loadLibrary(window.Community,()=>{},{get aborted(){return stopped;}});if(!stopped){listings=rows.map(r=>r.listing);checked=true;}}catch{if(!stopped)updateError='Could not check for updates. Your saved download history is still available.';}}}catch(e){if(!stopped)error=e.message;}finally{if(!stopped)loading=false;}}
  onMount(()=>{refresh();window.addEventListener('zonebench-account-changed',sync);window.addEventListener('zonebench-downloads-changed',sync);return()=>{stopped=true;window.removeEventListener('zonebench-account-changed',sync);window.removeEventListener('zonebench-downloads-changed',sync);};});
  function resetPanel(node){window.ZonebenchAccount.mountReset(node);}
 </script>
@@ -30,8 +33,8 @@
   <div class="account-content">
    <section class="account-panel"><h2>My add-ons</h2><div class="account-section-body"><h3>Give your gear a home.</h3><p>Create something new, or update a published add-on without posting another copy.</p><div class="account-actions"><a class="tool primary" href="#editor/create">Create an item →</a>{#if user}<button class="tool" onclick={()=>window.Site.addons('mine')}>Manage my add-ons →</button>{:else}<a class="tool" href={live} target="_blank" rel="noreferrer">Sign in to manage add-ons ↗</a>{/if}</div></div></section>
    <section class="account-panel"><h2>My downloads <span>{downloads.length}</span></h2><div class="account-section-body">
-    {#if !user}<h3>Keep your finds together.</h3><p>Download add-ons while signed in to remember them here and use their items in your crafting recipes.</p>{:else if !downloads.length}<h3>No downloads yet.</h3><p>Add-ons you download while signed in will appear here.</p>{:else}<ul class="account-downloads">{#each downloads as addon}<li><div><strong>{addon.name}</strong><small>Version {addon.version} · {addon.items.length} items · {new Date(addon.downloadedAt).toLocaleDateString()}</small></div><details><summary>Included items</summary><ul>{#each addon.items as item}<li>{item.name}</li>{/each}</ul></details></li>{/each}</ul>{/if}
-    <a class="tool" href="#addons">Browse add-ons →</a><p class="account-small">Saved for your account in this browser. This list does not detect what is installed in MO2 or sync between devices.</p>
+    {#if !user}<h3>Keep your finds together.</h3><p>Download add-ons while signed in to remember them here and use their items in your crafting recipes.</p>{:else if !downloads.length}<h3>No downloads yet.</h3><p>Add-ons you download while signed in will appear here.</p>{:else}<ul class="account-downloads">{#each downloads as addon}{@const status=downloadStatus(addon,listings,checked)}<li><div><strong>{addon.name}</strong><small>Version {addon.version} · {addon.items.length} items · {new Date(addon.downloadedAt).toLocaleDateString()}</small></div><span class="download-status" class:account-warning={status.kind==='update'}>{status.label}</span>{#if addonLink(addon.listingId)}<a class="tool" href={addonLink(addon.listingId)}>{status.kind==='update'?'View update →':'View add-on →'}</a>{/if}<details><summary>Included items</summary><ul>{#each addon.items as item}<li>{item.name}</li>{/each}</ul></details></li>{/each}</ul>{/if}
+    {#if updateError}<p role="status">{updateError}</p>{/if}<a class="tool" href="#addons">Browse add-ons →</a><p class="account-small">Saved for your account in this browser. This list does not detect what is installed in MO2 or sync between devices.</p>
    </div></section>
    {#if user?.moderator}<section class="account-panel account-admin"><h2>Administration <span>Maintainer only</span></h2><div class="account-section-body"><p>Review public add-ons, manage unwanted content and select additions for a future mod update.</p><div class="account-actions"><button class="tool" onclick={()=>window.Site.addons('moderation')}>Manage public add-ons</button><button class="tool" onclick={()=>window.Site.addons('selections')}>Next mod update</button><button class="tool" onclick={()=>window.ZonebenchAccount.editText()}>Edit site text</button></div><p class="account-small">Publishing and moderation changes remain disabled in this preview. Use the live site to apply changes.</p></div></section>{/if}
    <section class="account-reset" aria-label="Reset item customizations" use:resetPanel></section>
