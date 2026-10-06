@@ -29,4 +29,17 @@ test('missing drafts fail clearly and empty descriptions remain exportable',()=>
  const c=setup();c.EditorFlow.select('rigs',crypto.randomUUID());assert.equal(c.EditorFlow.current(),null);assert.equal(c.EditorFlow.review().ok,false);
  c.EditorFlow.create('boxes');const d=c.EditorFlow.current();d.item.icon=vm.runInContext('SEED.boxes[0].icon',c);d.item.descr='';c.EditorFlow.save(d.item);assert.equal(c.EditorFlow.review().ok,true);
 });
+test('recipes selected in the builder export exact ingredient IDs and quantities for every type',()=>{
+ for(const kind of ['rigs','pouches','boxes','packs']){
+  const c=setup();c.EditorFlow.create(kind);const draft=c.EditorFlow.current();
+  draft.item.icon=vm.runInContext('SEED.rigs[0].icon',c);
+  draft.item.craft={kit:2,book:'recipe_basic_1',cat:2,parts:[['sewing_thread',7],['prt_i_plastic',3]]};
+  c.EditorFlow.save(draft.item);
+  const plan=vm.runInContext('AddonExport.plan(DB,SEED)',c);
+  const file=plan.files.find(x=>x.name.includes('/mod_craft_'));
+  assert.match(new TextDecoder().decode(file.bytes),/2, recipe_basic_1,sewing_thread,7,prt_i_plastic,3/);
+  draft.item.craft.parts.push(['duct_tape',1],['prt_i_buckles',2],['leather_part',1]);c.EditorFlow.save(draft.item);
+  assert.equal(c.EditorFlow.review().ok,false);
+ }
+});
 

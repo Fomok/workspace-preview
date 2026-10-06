@@ -1,5 +1,7 @@
 <script>
- import {untrack} from 'svelte';
+ import {untrack,onMount} from 'svelte';
+ import {loadIngredients} from '../lib/gamma-ingredients.mjs';
+ onMount(()=>{loadIngredients().catch(()=>{});});
  let {create=false,flow}=$props();
  const pictures=untrack(()=>flow.pictures()),drafts=untrack(()=>flow.drafts());
  const types=[['rigs','Chest rig','Keep essentials close.','Arrange pockets for your equipped loadout.'],['boxes','Container','Give supplies a home.','Choose its storage space and what goes inside.'],['pouches','Expansion pouch','Make a little more room.','Add extra pockets to an equipped rig.'],['packs','Backpack','Carry a different load.','Choose how much inventory space it provides.']];

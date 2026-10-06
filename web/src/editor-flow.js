@@ -13,5 +13,7 @@ async function download(){await flushKeep();return AddonExport.build(project(),S
 function advanced(){const found=current();if(found){SEL[found.kind]=found.item.id;Site.go(found.kind);}}
 function pictures(){return Object.fromEntries(kinds.map(kind=>[kind,(SEED[kind]||DB[kind]||[]).find(x=>x.icon)?.icon||null]));}
 function rules(){return Object.keys(DB.families||{}).filter(x=>x!=='any').map(id=>({id,name:id.replaceAll('_',' ')}));}
-root.EditorFlow={select,current,drafts,create,open,save,review,download,advanced,pictures,rules,route:()=>selected?'#editor/new/'+selected.kind+'/'+selected.id:'#editor/create'};
+function recipe(kind,item){if(kind==='rigs')return EMIT.rigRecipe({...item,craft:null});if(kind==='pouches')return EMIT.pouchRecipe(item);return {kit:1,book:'recipe_basic_0',cat:2,parts:[]};}
+function ingredient(id){for(const kind of kinds){const it=(DB[kind]||SEED[kind]||[]).find(x=>x.id===id);if(it)return {id,name:it.name,icon:it.icon};}return null;}
+root.EditorFlow={recipe,ingredient,select,current,drafts,create,open,save,review,download,advanced,pictures,rules,route:()=>selected?'#editor/new/'+selected.kind+'/'+selected.id:'#editor/create'};
 })(globalThis);
