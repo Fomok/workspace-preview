@@ -12,7 +12,7 @@
    <p class="hero-description">A grid inventory. Rigs that carry your essentials. Containers that save you some space.</p>
    <div class="site-actions"><a class="tool primary" href="#downloads"><HeaderTexture selected/><span class="kit-button-label">↓ Download Squared Away</span></a><a class="tool" href="#introduction"><HeaderTexture/><span class="kit-button-label">Explore the mechanics →</span></a></div>
   </div>
-  <figure class="kit-gameplay"><img src="assets/gameplay/inventory.png" alt="Squared Away inventory with equipped rig and backpack storage" width="1207" height="1079"></figure>
+  <figure class="kit-gameplay"><img src="assets/gameplay/inventory.webp" fetchpriority="high" alt="Squared Away inventory with equipped rig and backpack storage" width="1207" height="1079"></figure>
  </section>
  <section class="kit-surface kit-release" aria-label="Latest release"><HeaderTexture kind="version"/>
   {#await releases}<p class="hint">Checking the latest release…</p>{:then data}{#if data.items[0]}{@const release=data.items[0]}

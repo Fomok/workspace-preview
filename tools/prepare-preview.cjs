@@ -1,6 +1,8 @@
 const fs=require('node:fs'),path=require('node:path');
 const root=path.resolve(__dirname,'..'),out=path.join(root,'.preview-static');
 fs.mkdirSync(out,{recursive:true});fs.cpSync(path.join(root,'web'),out,{recursive:true});fs.rmSync(path.join(out,'index.html'));
+// Pixel-identical, losslessly compressed assets used only by the preview.
+fs.cpSync(path.join(root,'preview-assets'),out,{recursive:true});
 function edit(file,fn){const p=path.join(out,file);fs.writeFileSync(p,fn(fs.readFileSync(p,'utf8')));}
 edit('src/editor.js',s=>s.replace('"zonebench-web-v1"','"zonebench-svelte-preview-v1"'));
 edit('src/patch-notes.js',s=>s.replace("'zonebench.patchnotes.read'","'zonebench.preview.patchnotes.read'"));

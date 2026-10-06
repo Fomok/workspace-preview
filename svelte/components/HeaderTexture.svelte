@@ -1,6 +1,6 @@
 <script>
  let {kind='tab',selected=false}=$props();
- const image=import.meta.env.BASE_URL+'assets/field-kit/header-atlas.png';
+ const image=import.meta.env.BASE_URL+'assets/field-kit/header-atlas.webp';
  const rects={name:[48,110,1158,207],version:[50,388,1155,177],tab:[52,636,1151,214],selected:[52,915,1151,208]};
  let rect=$derived(rects[kind==='tab'&&selected?'selected':kind]);
  let slices=$derived.by(()=>{const [x,y,w,h]=rect;const xs=[x,x+32,x+w-32],ys=[y,y+32,y+h-32],ws=[32,w-64,32],hs=[32,h-64,32];return ys.flatMap((v,j)=>xs.map((u,i)=>[u,v,ws[i],hs[j]].join(' ')));});
