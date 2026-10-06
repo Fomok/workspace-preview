@@ -42,3 +42,7 @@ body.editor-flow #pane{padding:0!important;overflow:auto}body.editor-flow main{d
 @media(max-width:720px){.builder-sidebar{position:static}.builder-sidebar .builder-preview{display:none}}
 
 .builder-sidebar:has(.addon-ingredients){position:static}
+
+.type-art .equipment-doodle{width:140px;height:130px;overflow:visible;fill:none}.equipment-doodle .doodle-line{stroke:#c4c2aa;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}.equipment-doodle .doodle-echo{stroke:#aaa88e;stroke-width:1.2;opacity:.55}.creation-doodle{position:absolute;left:50%;top:1px;transform:translateX(-50%) rotate(-4deg);width:190px;height:140px}.creation-doodle .equipment-doodle{width:145px;height:138px;fill:none}.doodle-pencil{position:absolute;right:8px;top:47px;width:32px;height:83px;transform:rotate(22deg);fill:none;stroke:#dcb88e;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+
+.draft-card{display:flex;align-items:stretch;min-width:0;border:1px solid #414739;background:#191d19}.draft-items .draft-open{flex:1;min-width:0;border:0;background:none}.draft-items .draft-remove{border:0;border-left:1px solid #414739;background:none;color:#d09ba6;font-size:11px;padding:10px;cursor:pointer}.draft-remove:hover{background:#683b4826!important}.draft-open strong{overflow-wrap:anywhere}.draft-removal{display:flex;align-items:center;justify-content:space-between;gap:15px;border:1px solid #526247;background:#1c241b;padding:12px 16px;margin-top:20px;font-size:13px;color:var(--ink)}
