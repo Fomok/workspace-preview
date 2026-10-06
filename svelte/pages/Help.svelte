@@ -1,8 +1,9 @@
 <script>
  import {tick} from 'svelte';
- import {blocks} from '../help-data.js';import Checklist from '../components/Checklist.svelte';
+ import {blocks as guideBlocks,faq} from '../help-data.js';
+ const blocks=[...guideBlocks,...faq];import Checklist from '../components/Checklist.svelte';
  let query=$state('');let open=$state(new Set());let sections=[];
- const categories=[['Install & setup',[0,1,2,3,4]],['Compatibility',[5,6,7,8]],['Playing the mod',[9,10,11]],['Editor & add-ons',[12,13,14]],['Account & administration',[15,16]]];
+ const categories=[['Install & setup',[0,1,2,3,4]],['FAQ',faq.map((_,i)=>guideBlocks.length+i)],['Compatibility',[5,6,7,8]],['Playing the mod',[9,10,11]],['Editor & add-ons',[12,13,14]],['Account & administration',[15,16]]];
  const matches=i=>!query||blocks[i].join(' ').toLowerCase().includes(query.toLowerCase());
  function toggle(i){if(query)return;const next=new Set(open);if(next.has(i))next.delete(i);else next.add(i);open=next;}
 </script>

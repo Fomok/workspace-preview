@@ -68,3 +68,26 @@ export const blocks=[
     "Your admin account has Manage public add-ons for removing unwanted listings and blocking abusive publishers. Next mod update keeps selected add-ons for later review. Account → Edit site text lets you change website wording: navigate to a page, select Refresh list, choose text, and Save for everyone. Identical phrases share the edit. Restore original returns to the current built-in wording. These controls are restricted to the administrator; website text edits do not change item configurations."
   ]
 ];
+
+export const faq = [
+  [
+    "Why are my item icons so big?",
+    "HD Inventory Icons Framework is missing or installed in the wrong load order. Install the correct version for your UI and check its load order."
+  ],
+  [
+    "Why do the stats under my equipment look broken?",
+    "This is probably a resolution or aspect-ratio issue, especially on widescreen displays. I recommend using SOTA UI."
+  ],
+  [
+    "Can I use the rigs without the Tarkov-style inventory grid?",
+    "No. A rigs-only mode is not supported, and I do not plan to add one. Some MCM options may let you turn off the grid, but the inventory will look broken. If you want rigs without the grid-based inventory limit, you would need to make a separate mod. Feel free to use Squared Away as a baseline."
+  ],
+  [
+    "Can I move the rig and its slots out of the inventory column?",
+    "That layout is part of the intended design, and there is no option to move it. Feel free to make an add-on or patch that puts the rig and its slots somewhere else."
+  ],
+  [
+    "I made a patch that changes how the mod works. Where can I share it?",
+    "Post it in the Squared Away Discord thread and tag me (Fomok). I’ll pin it in the first message. You are responsible for keeping your patch updated: future Squared Away changes may break it, and I will not maintain compatibility for you."
+  ]
+];
