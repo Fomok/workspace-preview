@@ -1,4 +1,5 @@
 <script>
+ import AddonIngredients from '../components/AddonIngredients.svelte';
  import RecipeBuilder from '../components/RecipeBuilder.svelte';
  import {untrack} from 'svelte';
  let {flow}=$props();
@@ -69,6 +70,6 @@
  {#if error}<p class="builder-error" role="alert">{error}</p>{/if}
  <div class="builder-actions"><button onclick={()=>step?next(step-1):window.Site.go('create')}>{step?'Back':'Item types'}</button>{#if step<4}<button class="primary" onclick={()=>next(step+1)}>Continue →</button>{:else}<button onclick={()=>window.Site.go('create')}>Create another item</button>{/if}</div>
  <details><summary>Need more control?</summary><p>Fine-tune image fitting, crafting, trader availability, repair settings and custom layouts in the full editor. Return through Editor to resume this draft.</p><button class="flow-link" onclick={()=>flow.advanced()}>Open advanced editor →</button></details>
- </div><aside class="builder-preview"><span class="fabric-label">LIVE PREVIEW</span><h3>{item.name||'Untitled item'}</h3><div class="preview-footprint" style:width={`${Math.min(220,item.cellw*40)}px`} style:height={`${Math.min(280,item.cellh*40)}px`}>{#if item.icon}<img src={item.icon} alt={item.name||'Item image'}/>{:else}<span>Add an item image</span>{/if}</div><small>{item.cellw} wide · {item.cellh} tall</small><dl><div><dt>Type</dt><dd>{titles[kind]}</dd></div><div><dt>Price</dt><dd>{item.cost} RU</dd></div><div><dt>Weight</dt><dd>{item.weight} kg</dd></div></dl><small>Draft saved in this browser.</small></aside></div>
+ </div><div class="builder-sidebar"><aside class="builder-preview"><span class="fabric-label">LIVE PREVIEW</span><h3>{item.name||'Untitled item'}</h3><div class="preview-footprint" style:width={`${Math.min(220,item.cellw*40)}px`} style:height={`${Math.min(280,item.cellh*40)}px`}>{#if item.icon}<img src={item.icon} alt={item.name||'Item image'}/>{:else}<span>Add an item image</span>{/if}</div><small>{item.cellw} wide · {item.cellh} tall</small><dl><div><dt>Type</dt><dd>{titles[kind]}</dd></div><div><dt>Price</dt><dd>{item.cost} RU</dd></div><div><dt>Weight</dt><dd>{item.weight} kg</dd></div></dl><small>Draft saved in this browser.</small></aside>{#if step===3}<AddonIngredients {item} {kind} {flow} changed={save}/>{/if}</div></div>
  {/if}
 </section>

@@ -42,4 +42,13 @@ test('recipes selected in the builder export exact ingredient IDs and quantities
   assert.equal(c.EditorFlow.review().ok,false);
  }
 });
+test('recipe dependencies retain external game IDs and omit unused add-ons',()=>{
+ const c=setup();c.EditorFlow.create('boxes');const draft=c.EditorFlow.current();
+ draft.item.icon=vm.runInContext('SEED.boxes[0].icon',c);
+ draft.item.craft={kit:1,book:'recipe_basic_0',cat:2,parts:[['zb_external_box',2]]};
+ draft.item.recipeDependencies={zb_external_box:{id:'downloaded-addon',name:'Other gear',version:'1.2'},unused_item:{id:'unused',name:'Removed ingredient'}};
+ c.EditorFlow.save(draft.item);const plan=vm.runInContext('AddonExport.plan(DB,SEED)',c);
+ assert.equal(plan.manifest.requiredAddons.length,1);assert.equal(plan.manifest.requiredAddons[0].id,'downloaded-addon');
+ assert.match(new TextDecoder().decode(plan.files.find(x=>x.name.includes('/mod_craft_')).bytes),/zb_external_box,2/);
+});
 

@@ -121,12 +121,14 @@ function plan(db,seed){
  const width=pow(Math.max(...pictures.map(e=>(e.rect.x+e.rect.w)*50))),height=pow(Math.max(...pictures.map(e=>(e.rect.y+e.rect.h)*50)));
  const texture='gamedata/textures/ui/zonebench/'+suffix+'.dds';
  const manifest={format:'zonebench-independent-addon',version:1,id:a.id,name:a.name,addonVersion:a.version,requires:'Squared Away 2.0.3 + Independent Add-ons Test 2',items:chosen.map(({kind,item:r},i)=>({sourceId:r.id,id:entries[i].item.id,name:entries[i].item.name,kind})),texture:{path:texture,width,height},files:[...files.map(f=>f.name),texture]};
+ const dependencies=new Map();for(const {item:r} of chosen)for(const [id] of r.craft?.parts||[]){const dep=r.recipeDependencies?.[id];if(dep?.id)dependencies.set(dep.id,{id:dep.id,name:String(dep.name||dep.id),version:String(dep.version||'')});}if(dependencies.size)manifest.requiredAddons=[...dependencies.values()];
  return {files,entries:pictures,width,height,texture,manifest};
 }
 async function build(db,seed){const p=plan(db,seed),canvas=document.createElement('canvas');canvas.width=p.width;canvas.height=p.height;const ctx=canvas.getContext('2d');
  for(const e of p.entries){const r=e.rect,img=await BUILD.fitPicture(e.icon,r.w*50,r.h*50,e.fit,false);ctx.putImageData(img,r.x*50,r.y*50);}
  p.files.push({name:p.texture,bytes:BUILD.ddsFrom(ctx.getImageData(0,0,p.width,p.height))});
  p.files.push({name:'addon.json',bytes:BUILD.utf8(JSON.stringify(p.manifest,null,2))});
+ if(p.manifest.requiredAddons?.length)p.files.push({name:'REQUIRED-ADDONS.txt',bytes:BUILD.utf8('Enable these add-ons alongside this item. Its crafting recipe uses their items.\n'+p.manifest.requiredAddons.map(x=>x.name+' ('+x.version+') - '+x.id).join('\n'))});
  p.files.push({name:'INSTALL.txt',bytes:BUILD.utf8('INDEPENDENT ADD-ON - TEST 2\nInstall below Squared Away Independent Add-ons Test 2 in MO2. Multiple independent add-ons may be enabled together. Keep the Squared Away 2.0.3 engine.\nReplace this add-on to update it; keep its ID. Save your ZoneBench project before making another add-on.\nExports selected NEW rigs, containers, pouches and backpacks. Existing-item edits and global settings are excluded. Models are supplied by Squared Away. Custom model paths require their own assets.\nTest on a separate save. Do not remove an add-on while that save still contains its items.\n')});
  return {blob:BUILD.zip(p.files),manifest:p.manifest};
 }

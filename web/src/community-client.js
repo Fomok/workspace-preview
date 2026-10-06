@@ -9,11 +9,11 @@ async function request(action,data={}){
 }
 root.Community={
  get enabled(){return COMMUNITY_CONFIG.enabled;},get user(){return current;},request,
- async refresh(){const result=await request('me');current=result.user;return current;},
+ async refresh(){const result=await request('me');current=result.user;root.dispatchEvent?.(new root.Event('zonebench-account-changed'));return current;},
  async sendCode(email){init();pending=await account.createEmailToken({userId:Appwrite.ID.unique(),email,phrase:true});return pending.phrase;},
  async verify(code){if(!pending)throw new Error('Request a sign-in code first.');await account.createSession({userId:pending.userId,secret:code});pending=null;return this.refresh();},
  async name(name){init();await account.updateName({name});return this.refresh();},
- async signOut(){init();await account.deleteSession({sessionId:'current'});current=null;pending=null;},
+ async signOut(){init();await account.deleteSession({sessionId:'current'});current=null;pending=null;root.dispatchEvent?.(new root.Event('zonebench-account-changed'));},
  packSelection(){
   const mine=mineToShare().filter(m=>SHARE_PICK?.has(m.kind+'/'+m.it.id));
   const families={};for(const {kind,it} of mine)if(kind==='boxes'&&DB.families?.[it.takes])families[it.takes]=DB.families[it.takes];
