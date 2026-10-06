@@ -52,3 +52,21 @@ test('recipe dependencies retain external game IDs and omit unused add-ons',()=>
  assert.match(new TextDecoder().decode(plan.files.find(x=>x.name.includes('/mod_craft_')).bytes),/zb_external_box,2/);
 });
 
+test('builder defaults are 2x2 and trader and rig repair settings reach additive files',()=>{
+ for(const kind of ['rigs','boxes','pouches','packs']){
+  const c=setup();c.EditorFlow.create(kind);const draft=c.EditorFlow.current();
+  assert.equal(draft.item.cellw,2);assert.equal(draft.item.cellh,2);
+  draft.item.icon=vm.runInContext('SEED.rigs[0].icon',c);
+  draft.item.shelves={mechanic:{count:2,chance:35}};
+  if(kind==='rigs'){draft.item.parts=['prt_o_fabrics_2','prt_o_ballistic_3'];draft.item.repair='outfit_medium';draft.item.repairBonus=0.25;}
+  c.EditorFlow.save(draft.item);const plan=vm.runInContext('AddonExport.plan(DB,SEED)',c);
+  const decoded=plan.files.map(f=>({name:f.name,text:new TextDecoder().decode(f.bytes)}));
+  assert.match(decoded.find(f=>f.name.includes('/trade/mod_trade_generic_mechanic')).text,/= 2, 0.35/);
+  assert(!decoded.some(f=>f.name.includes('trade_stalker_sidorovich')));
+  if(kind==='rigs'){
+   assert.match(decoded.find(f=>f.name.includes('/mod_system_')).text,/repair_type\s*=\s*outfit_medium/);
+   assert.match(decoded.find(f=>f.name.includes('/mod_system_')).text,/repair_part_bonus\s*=\s*0.25/);
+   assert(decoded.some(f=>/prt_o_fabrics_2, prt_o_ballistic_3/.test(f.text)));
+  }
+ }
+});
