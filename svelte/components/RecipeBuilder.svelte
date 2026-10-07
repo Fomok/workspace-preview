@@ -10,7 +10,7 @@
  let categories=$derived([...new Set(catalog.map(x=>x.category))].sort());
  function info(id){if(item.recipeDependencies?.[id])return {id,name:item.recipeDependencies[id].itemName,icon:null};return catalog.find(x=>x.id===id)||flow.ingredient(id)||{id,name:id.replaceAll('_',' '),icon:null};}
  function commit(value){item.craft=value;changed();}
- function update(key,value){commit({...recipe,cat:2,parts:recipe.parts.map(x=>[...x]),[key]:value});}
+ function update(key,value){commit({...recipe,cat:recipe.cat??2,parts:recipe.parts.map(x=>[...x]),[key]:value});}
  function add(id){const parts=recipe.parts.map(x=>[...x]),existing=parts.find(x=>x[0]===id);if(existing)existing[1]=Math.min(999,Number(existing[1])+1);else if(parts.length<4)parts.push([id,1]);update('parts',parts);}
  function count(i,value){const parts=recipe.parts.map(x=>[...x]);parts[i][1]=Math.max(1,Math.min(999,Math.round(Number(value)||1)));update('parts',parts);}
  function remove(i){if(automatic&&recipe.parts.length===1)return;update('parts',recipe.parts.filter((_,n)=>n!==i));}
@@ -19,7 +19,7 @@
 </script>
 <h2>Choose what it takes to craft.</h2>
 <p class="builder-notice">Pick ingredients by name, then set their quantities. Up to four different ingredients are supported.</p>
-{#if !automatic}<label class="inline-check"><input type="checkbox" checked={enabled} onchange={e=>commit(e.currentTarget.checked?{kit:1,book:'recipe_basic_0',cat:2,parts:[['sewing_thread',4]]}:null)}/>Make this item craftable</label>{/if}
+{#if !automatic}<label class="inline-check"><input type="checkbox" checked={enabled} onchange={e=>commit(e.currentTarget.checked?{kit:1,book:'recipe_basic_0',cat:recipe.cat??2,parts:[['sewing_thread',4]]}:null)}/>Make this item craftable</label>{/if}
 {#if enabled}
  <div class="two-fields"><label>Required toolkit<select value={String(recipe.kit)} onchange={e=>update('kit',Number(e.currentTarget.value))}><option value="1">Basic toolkit</option><option value="2">Advanced toolkit</option><option value="3">Expert toolkit</option></select></label><label>Required recipe book<select value={recipe.book} onchange={e=>update('book',e.currentTarget.value)}>{#each ['recipe_basic_0','recipe_basic_1','recipe_advanced_1'] as id,i}<option value={id}>{catalog.find(x=>x.id===id)?.name||['Basic recipes — first book','Basic recipes — second book','Advanced recipes'][i]}</option>{/each}</select></label></div>
  <div class="recipe-heading"><h3>Ingredients</h3><span>{recipe.parts.length} / 4</span></div>
@@ -32,3 +32,4 @@
  {/if}
 {/if}
 <p class="recipe-credit">Item names and icons from <a href={DATABASE} target="_blank" rel="noreferrer">GAMMA Database</a> · GAMMA 0.9.5{offline?' · Using the saved item list':''}.</p>
+

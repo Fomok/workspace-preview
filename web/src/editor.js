@@ -1213,7 +1213,15 @@ const REPAIRS = [
   ["outfit_heavy",   "Heavy armour"],
   ["outfit_exo",     "Exoskeletons \u2014 the dearest kits only"]
 ];
+function modernRecipe(P,it,mode){
+  if(!window.ZonebenchAdvancedRecipe)return false;
+  P.appendChild(el('div','sect',mode==='repair'?'How it is mended':'What it costs to build'));
+  const target=el('div','card advanced-recipe-host');P.appendChild(target);
+  window.ZonebenchAdvancedRecipe.mount(target,it,TAB,mode,()=>{if(TAB==='packs')packMark(it);touch();});
+  return true;
+}
 function drawRepair(P, it){
+  if(modernRecipe(P,it,'repair'))return;
   /* A BENCH KEPT BY AN OLDER PAGE HAS NO REPAIR ON IT. The store
      carries what the page that wrote it knew about, so every field
      added later arrives undefined - and a dropdown whose value is
@@ -1285,6 +1293,7 @@ function drawRepair(P, it){
    hardware is exactly what a rig should give back.
    ========================================================== */
 function partsCard(P, it){
+  if(!window.ZonebenchAdvancedRecipe){
   P.appendChild(el("div","sect","What it is made of"));
   const c=el("div","card"); c.style.maxWidth="640px";
   c.appendChild(el("div","hint",
@@ -1295,6 +1304,7 @@ function partsCard(P, it){
   partsList(c, it, "parts", EMIT.partsDefault(it.slots), true);
   P.appendChild(c);
 
+  }
   P.appendChild(el("div","sect","What it breaks down into"));
   const c2=el("div","card"); c2.style.maxWidth="640px";
   c2.appendChild(el("div","hint",
@@ -1800,6 +1810,7 @@ function craftSeed(it){
 function drawPouchCraft(P, it){ drawCraftCard(P, it); }
 
 function drawCraftCard(P, it){
+  if(modernRecipe(P,it,'craft'))return;
   const isRig = !!it.slots;
   /* LOOKING IS NOT CHANGING. This used to write the worked-out recipe
      onto the item the moment the card was drawn, which FROZE it: add a
@@ -3134,6 +3145,7 @@ function drawItemPage(P, it){
    rig-and-pouch reasoning - an item has nothing underneath it to be
    worked out from. */
 function itemCraftRows(P, it){
+  if(modernRecipe(P,it,'craft'))return;
   const c0 = it.craft;
   const c = el("div","card"); c.style.maxWidth="640px";
   const g = el("div","grid2");
@@ -4431,3 +4443,4 @@ window.onbeforeunload=e=>{
 };
 
 boot().catch(error=>{ document.querySelector("#pane").textContent="Could not open the editor: "+error.message; });
+
