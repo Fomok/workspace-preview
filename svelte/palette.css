@@ -66,3 +66,13 @@ body .site-header #site-nav a .patch-new {position:absolute;z-index:2;top:auto;b
  body .help-content{min-width:0}
  body .field-page .release-panel .site-actions .tool{white-space:normal;overflow-wrap:anywhere}
 }
+/* Compact metal buttons with clear space around each plate. */
+body .site-header #site-nav{gap:12px;padding:7px 12px;align-items:center}
+body .site-header #site-nav>a,body .site-header #site-nav>a.active,body .site-header #site-nav>a.has-update,body .site-header #site-nav>a.has-update.active,body .site-header #site-nav .addons-trigger{height:54px;min-height:54px;box-sizing:border-box;padding:8px 10px;font-size:12px}
+body .site-header #site-nav>a:last-child{margin-left:0;padding-left:10px}
+body .site-header #site-nav>a:last-child::before{display:none}
+body .site-header #site-nav>a.has-update{padding-bottom:22px}
+body .site-header #site-nav>a .patch-new{bottom:6px}
+@media(max-width:1100px){body .site-header #site-nav{gap:9px;padding:8px}body .site-header #site-nav>a,body .site-header #site-nav>a.active,body .site-header #site-nav>a.has-update,body .site-header #site-nav>a.has-update.active,body .site-header #site-nav .addons-trigger{height:52px;min-height:52px}}
+@media(max-width:760px){body .site-header #site-nav{gap:7px}body .site-header #site-nav>a,body .site-header #site-nav>a.active,body .site-header #site-nav>a.has-update,body .site-header #site-nav>a.has-update.active,body .site-header #site-nav .addons-trigger{padding:8px 3px;font-size:11px}body .site-header #site-nav>a.has-update{padding-bottom:22px}}
+
