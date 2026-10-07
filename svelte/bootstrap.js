@@ -1,3 +1,4 @@
+import editorRelease from './editor-release.json';
 import { mount, unmount } from 'svelte';
 import {loadScripts} from './lib/load-scripts.mjs';
 import {addonFilename} from './lib/guided-install.mjs';
@@ -12,7 +13,7 @@ import {recordDownload,downloadedAddons} from './lib/addon-downloads.mjs';
 let page;
 const native={account:Account,home:Home,downloads:Downloads,help:Help,patchnotes:Notes};
 export async function start(sync){
- window.ZonebenchShell=sync;
+ window.ZonebenchShell=sync; window.ZonebenchExportRevision=editorRelease.exportRevision;
  window.ZonebenchAddonFilename=addonFilename;
  window.ZonebenchDownloads={list:()=>downloadedAddons(window.Community?.user),recordCompletedDownload(manifest,options){const result=recordDownload(window.Community?.user,manifest,options);window.dispatchEvent(new Event('zonebench-downloads-changed'));return result;}};
  window.ZonebenchAdvancedRecipe={mount(target,source,kind,mode,changed){editorWidgets.push(mount(AdvancedRecipe,{target,props:{source,kind,mode,changed}}));}};
@@ -27,7 +28,7 @@ export async function start(sync){
   const status=document.createElement('p');status.className='site-loading';status.setAttribute('role','status');status.textContent='Opening your workbench…';document.querySelector('#pane').prepend(status);
   loading=(async()=>{
    [EditorChoices,ItemBuilder,ItemLibrary,AdvancedRecipe]=await Promise.all([import('./pages/EditorChoices.svelte'),import('./pages/ItemBuilder.svelte'),import('./pages/ItemLibrary.svelte'),import('./components/AdvancedRecipe.svelte')]).then(modules=>modules.map(m=>m.default));
-   await loadScripts(files.filter(file=>!lightFiles.includes(file)),import.meta.env.BASE_URL);
+   await loadScripts(files.filter(file=>!lightFiles.includes(file)),import.meta.env.BASE_URL,document,__SITE_BUILD__);
   })();
   try{await loading;}catch(error){status.textContent='Could not open this section. Reload the page to try again. '+error.message;throw error;}
  }
@@ -40,10 +41,11 @@ export async function start(sync){
   sync({tab:route==='patch-notes'?'patchnotes':route,editor:false,tools:false,sections:false,version:'2.0.3',tabs:[],unread:window.PatchNotes.unread()});
   page=mount(Page,{target});target.scrollTop=0;
  }
- await loadScripts(lightFiles,import.meta.env.BASE_URL);
+ await loadScripts(lightFiles,import.meta.env.BASE_URL,document,__SITE_BUILD__);
  window.Site={go(tab){location.hash=({patchnotes:'patch-notes',catalog:'addons',create:'editor/create',share:'editor/share'}[tab]||tab);},addons(mode='public'){location.hash='#addons'+(mode==='public'?'':'/'+mode);}};
  window.addEventListener('hashchange',routeLight);
  if(lightPages[location.hash.slice(1)||'home'])routeLight();else await full();
 }
 export function go(tab){window.Site.go(tab);}
+
 

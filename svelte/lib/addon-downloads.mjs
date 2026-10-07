@@ -10,7 +10,8 @@ export function recordDownload(user,manifest,{listingId=null,revision=0}={},stor
  if(!user?.id)throw Error('Sign in to remember add-on downloads.');
  if(manifest?.format!=='zonebench-independent-addon'||!validId(manifest.id)||!Array.isArray(manifest.items)||!manifest.items.length)throw Error('A completed independent add-on export is required.');
  const items=manifest.items.map(x=>{if(!validId(x.id)||!['rigs','boxes','pouches','packs'].includes(x.kind))throw Error('Invalid downloaded item.');return {id:x.id,name:String(x.name||x.id),kind:x.kind};});
- const record={id:manifest.id,listingId,revision,name:String(manifest.name||'Add-on'),version:String(manifest.addonVersion||'1.0'),downloadedAt:Date.now(),items};
+ const record={id:manifest.id,listingId,revision,name:String(manifest.name||'Add-on'),version:String(manifest.addonVersion||'1.0'),downloadedAt:Date.now(),exportRevision:Number(manifest.exportRevision)||0,items};
  const rows=downloadedAddons(user,storage).filter(x=>x.id!==record.id);rows.push(record);storage.setItem(prefix+encodeURIComponent(user.id),JSON.stringify(rows));return record;
 }
 export function downloadedIngredient(user,id,storage=globalThis.localStorage){for(const addon of downloadedAddons(user,storage)){const item=addon.items.find(x=>x.id===id);if(item)return {...item,addon};}return null;}
+

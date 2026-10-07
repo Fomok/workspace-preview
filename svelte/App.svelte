@@ -1,5 +1,6 @@
 <script>
  import { onMount } from 'svelte';
+ import EditorUpdateNotice from './components/EditorUpdateNotice.svelte';
  import HeaderTexture from './components/HeaderTexture.svelte';
  import AddonsNav from './components/AddonsNav.svelte';
  import { start, go } from './bootstrap.js';
@@ -22,6 +23,7 @@
    {#each links as [tab,label]}{#if tab==='catalog'}<AddonsNav {ready} active={view.tab==='catalog'}/>{:else}<a href={'#'+(hashes[tab]||tab)} class:active={tab==='editor'?view.editor:view.tab===tab} class:has-update={tab==='patchnotes'&&view.unread} aria-current={(tab==='editor'?view.editor:view.tab===tab)?'page':undefined} onclick={e=>navigate(e,tab)}><HeaderTexture selected={tab==='editor'?view.editor:view.tab===tab}/><span class="nav-label">{label}</span>{#if tab==='patchnotes'&&view.unread}<span class="patch-new" title="Unread patch notes" aria-label="Unread patch notes">New</span>{/if}</a>{/if}{/each}
   </nav>
  </header>
+ <EditorUpdateNotice/>
  <div id="project-tools" class="project-toolbar" hidden={!view.tools}><span class="project-caption">YOUR WORKBENCH</span><span id="dirty"></span><div class="spacer"></div><button hidden class="tool" id="btnMod">Update the mod</button><button class="tool" id="btnLoad">Open project</button><button class="tool primary" id="btnSave">Save project</button></div>
  <input type="file" id="modIn" accept=".zip,application/zip" hidden><input type="file" id="shareIn" accept=".json,application/json" hidden><input type="file" id="fileIn" accept=".json,application/json" hidden><input type="file" id="imgIn" accept="image/*" hidden>
  <nav id="nav" aria-label="Editor sections" hidden={!view.sections}>{#each view.tabs as item}<button class:on={item.key===view.tab} onclick={()=>go(item.key)}>{item.label}{#if item.count}<span class="cnt"> {item.count}</span>{/if}</button>{/each}</nav>
@@ -32,3 +34,4 @@
  :global(#svelte-root){height:100%} :global(#app){grid-template-rows:auto auto auto minmax(0,1fr)}
  .startup-error{position:fixed;inset:30% 15% auto;background:#211a1a;padding:30px;z-index:1000}
 </style>
+

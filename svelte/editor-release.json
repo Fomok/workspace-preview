@@ -1,0 +1,7 @@
+{
+  "revision": 1,
+  "exportRevision": 1,
+  "title": "Editor updated",
+  "message": "Crafting, repair and dismantling now use searchable database icons. Browser update handling has also been fixed.",
+  "requiresRedownload": false
+}

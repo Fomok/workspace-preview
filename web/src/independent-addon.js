@@ -120,7 +120,7 @@ function plan(db,seed){
  const pow=n=>2**Math.ceil(Math.log2(Math.max(4,n)));
  const width=pow(Math.max(...pictures.map(e=>(e.rect.x+e.rect.w)*50))),height=pow(Math.max(...pictures.map(e=>(e.rect.y+e.rect.h)*50)));
  const texture='gamedata/textures/ui/zonebench/'+suffix+'.dds';
- const manifest={format:'zonebench-independent-addon',version:1,id:a.id,name:a.name,addonVersion:a.version,requires:'Squared Away 2.0.3 + Independent Add-ons Test 2',items:chosen.map(({kind,item:r},i)=>({sourceId:r.id,id:entries[i].item.id,name:entries[i].item.name,kind})),texture:{path:texture,width,height},files:[...files.map(f=>f.name),texture]};
+ const manifest={format:'zonebench-independent-addon',version:1,exportRevision:globalThis.ZonebenchExportRevision||1,id:a.id,name:a.name,addonVersion:a.version,requires:'Squared Away 2.0.3 + Independent Add-ons Test 2',items:chosen.map(({kind,item:r},i)=>({sourceId:r.id,id:entries[i].item.id,name:entries[i].item.name,kind})),texture:{path:texture,width,height},files:[...files.map(f=>f.name),texture]};
  const dependencies=new Map();for(const {item:r} of chosen)for(const [id] of r.craft?.parts||[]){const dep=r.recipeDependencies?.[id];if(dep?.id)dependencies.set(dep.id,{id:dep.id,name:String(dep.name||dep.id),version:String(dep.version||'')});}if(dependencies.size)manifest.requiredAddons=[...dependencies.values()];
  return {files,entries:pictures,width,height,texture,manifest};
 }
@@ -152,3 +152,4 @@ function render(P,db,seed,save,legacy){
 }
 root.AddonExport={ensure,custom,plan,build,render,sectionId};
 })(globalThis);
+
