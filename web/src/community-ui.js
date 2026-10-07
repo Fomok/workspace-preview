@@ -59,7 +59,7 @@ async function drawCommunityCatalog(P){
   if(COMMUNITY_MODE==='public'){let offset=result.items.length;while(offset<result.total){status.textContent='Loading add-ons: '+offset+' of '+result.total+'…';const page=await Community.request('list',{mode:'public',offset});if(!P.contains(status))return;if(!page.items.length)break;result.items.push(...page.items);offset+=page.items.length;}}
   status.remove();
   if(COMMUNITY_MODE==='mine')communityButton(P,'Publish a new add-on',async()=>{TAB='share';render();},true);
-  if(!result.items.length&&COMMUNITY_MODE!=='public')communityMessage(P,selected?'No versions selected for the next mod update.':'No add-ons here yet. Create items in the editor, then publish them from Share items.');
+  if(!result.items.length&&COMMUNITY_MODE!=='public')communityMessage(P,selected?'No versions selected for the next mod update.':'No add-ons here yet. Create items in the editor, then choose Publish an add-on from the Add-ons menu.');
   const records=[...new Map(result.items.map(listing=>[listing.id,listing])).values()].map(listing=>({listing,load:CatalogBrowser.once(()=>Community.request(selected?'selectedPack':'pack',{id:listing.id}))}));
   function renderListing(record,grid){const listing=record.listing;
    const row=el('article','card addon-listing');grid.appendChild(row);const card=el('div','addon-listing-content');row.appendChild(card);const title=el('h2');title.textContent=listing.name;card.appendChild(title);
@@ -113,13 +113,38 @@ function drawCommunityPublish(P,listing=null,sessionChecked=false){
  for(const [key,label,max,type] of [['name','Add-on name',100,'text'],['author','Author display name',60,'text'],['version','Version',32,'text'],['description','Description',2000,'textarea'],['dependencies','Required mods (optional)',500,'text']]){
   const input=communityField(fields,label,draft[key],type);input.maxLength=max;input.oninput=()=>{draft[key]=input.value;};
  }
- let replace=null;
- if(listing){const label=el('label','tick');replace=document.createElement('input');replace.type='checkbox';replace.disabled=!Community.packSelection().items.length;replace.checked=draft.replace&&!replace.disabled;replace.onchange=()=>{draft.replace=replace.checked;};label.appendChild(replace);const span=document.createElement('span');span.textContent='Replace contents with the items selected in Share items';label.appendChild(span);card.appendChild(label);}
+ let currentPack=null;
+ if(listing){
+  const contents=el('section','update-contents');card.appendChild(contents);
+  contents.appendChild(el('h3',null,'Items in this update'));
+  const status=el('p','hint','Loading published contents…');contents.appendChild(status);
+  Community.request('pack',{id:listing.id}).then(result=>{
+   if(!card.isConnected)return;ZB.validateAddon(result.pack);currentPack=result.pack;
+   const local=EditorLibrary.entries('addons');
+   const fresh=CommunityUpdateSelection.candidates(listing,currentPack,local);
+   const previous=new Map((draft.rows||[]).map(row=>[row.key,row]));
+   draft.rows=fresh.map(row=>{const old=previous.get(row.key);return old?{...row,selected:old.selected,useLocal:!!row.local&&old.useLocal}:row;});
+   status.textContent='Keep published items, use edited local copies, or add items from your library. Unchecking a published item removes it from this update.';
+   const grid=el('div','share-item-grid');contents.appendChild(grid);
+   for(const row of draft.rows){
+    const entry=row.published||row.local,tile=el('div','share-item');
+    const label=document.createElement('label');label.className='share-item-label';
+    const check=document.createElement('input');check.type='checkbox';check.checked=row.selected;check.setAttribute('aria-label','Include '+(entry.item.name||entry.item.id));check.onchange=()=>{row.selected=check.checked;tile.classList.toggle('selected',row.selected);};
+    label.append(check,AddonPreview.picture(entry));const name=el('strong');name.textContent=entry.item.name||entry.item.id;label.appendChild(name);tile.appendChild(label);tile.classList.toggle('selected',row.selected);
+    tile.appendChild(el('p','hint',row.published?'Already published':'Local item · not yet included'));
+    if(row.local&&row.published){const select=document.createElement('select');select.setAttribute('aria-label','Version of '+(entry.item.name||entry.item.id));for(const [value,text] of [['published','Keep published version'],['local','Use edited local version']]){const option=document.createElement('option');option.value=value;option.textContent=text;select.appendChild(option);}select.value=row.useLocal?'local':'published';select.onchange=()=>row.useLocal=select.value==='local';tile.appendChild(select);}
+    communityButton(tile,'Inspect',async()=>AddonPreview.openItem(row.useLocal?row.local:row.published,{families:{...currentPack.families,...DB.families}}));
+    communityButton(tile,'Edit item',async()=>{if(row.local)EditorLibrary.open({kind:row.local.kind,item:row.local.item},'addons');else await EditorLibrary.importPack(result,entry.kind,entry.item.id);});
+    grid.appendChild(tile);
+   }
+  }).catch(error=>status.textContent=error.message+' Published contents have not changed.');
+ }
+ const updatePack=()=>{if(!listing)return Community.packSelection();if(!currentPack)throw Error('Wait for the published contents to load.');return CommunityUpdateSelection.build(currentPack,draft.rows,DB.families);};
  const review=el('div','share-publish-review');card.appendChild(review);review.appendChild(el('h2',null,listing?'Review and save':'3. Preview and publish'));
  const n=Community.packSelection().items.length;
  communityMessage(review,listing?'Preview the version you are about to save.':n+' selected item'+(n===1?'':'s')+'. The first four provide the listing preview.');
  const preview=communityButton(review,'Preview add-on',async()=>{
-  const pack=listing&&!replace.checked?(await Community.request('pack',{id:listing.id})).pack:Community.packSelection();
+  const pack=updatePack();
   if(!pack.items.length)throw new Error('Select at least one item above.');
   AddonPreview.openPack({listing:{...draft,name:draft.name||'Your add-on'},pack},null);
  });preview.disabled=!listing&&!n;
@@ -127,9 +152,9 @@ function drawCommunityPublish(P,listing=null,sessionChecked=false){
  communityMessage(review,'Publishing makes the add-on visible immediately. Up to 20 items / 2 MB; PNG icons up to 512 KB each. No adult imagery. Required custom models must be supplied separately.');
  const publish=communityButton(review,listing?'Save update':'Publish add-on',async()=>{
   if(!draft.agree)throw new Error('Confirm public sharing first.');
-  const pack=Community.packSelection();if(!listing&&!pack.items.length)throw new Error('Select items to publish.');
+  const pack=updatePack();if(!listing&&!pack.items.length)throw new Error('Select items to publish.');
   const data={name:draft.name,author:draft.author,version:draft.version,description:draft.description,dependencies:draft.dependencies};
-  if(listing){data.id=listing.id;data.expectedRevision=listing.revision;if(replace.checked)data.pack=pack;}else data.pack=pack;
+  if(listing){data.id=listing.id;data.expectedRevision=listing.revision;data.pack=pack;}else data.pack=pack;
   await Community.request(listing?'update':'publish',data);COMMUNITY_DRAFTS.delete(draftKey);COMMUNITY_EDIT=null;COMMUNITY_MODE='mine';COMMUNITY_OFFSET=0;TAB='catalog';render();
  },true);publish.disabled=!listing&&(!n||n>20);
  if(listing)communityButton(review,'Cancel editing',async()=>{COMMUNITY_EDIT=null;renderPane();});
@@ -137,3 +162,4 @@ function drawCommunityPublish(P,listing=null,sessionChecked=false){
 }
 
 window.ZonebenchAccount={get readOnly(){return !!COMMUNITY_CONFIG.readOnly;},mountReset:node=>drawProjectReset(node),editText:()=>SiteCopy.open()};
+

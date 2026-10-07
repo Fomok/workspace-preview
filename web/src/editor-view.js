@@ -74,7 +74,9 @@ function focused(P,it){
  const actions=document.createElement('div');actions.className='focused-actions';
  for(const [text,tab] of [['Review changes','changes'],['Check project','check']]){const button=document.createElement('button');button.className='tool';button.textContent=text;button.onclick=()=>Site.go(tab);actions.appendChild(button);}
  const download=document.createElement('button');download.className='tool primary';download.textContent='Export';download.onclick=async()=>{download.disabled=true;try{await EditorLibrary.exportFocused();}catch(error){let message=header.querySelector('[role=alert]');if(!message){message=document.createElement('p');message.setAttribute('role','alert');header.appendChild(message);}message.textContent=error.message;}finally{download.disabled=false;}};actions.appendChild(download);
+ if(typeof COMMUNITY_EDIT!=='undefined'&&COMMUNITY_EDIT){const backUpdate=document.createElement('button');backUpdate.className='tool';backUpdate.textContent='Back to add-on update';backUpdate.onclick=()=>Site.go('catalog');actions.prepend(backUpdate);}
  header.appendChild(actions);P.prepend(breadcrumb,header);
 }
 root.EditorView={organize,list,focused};
 })(globalThis);
+
