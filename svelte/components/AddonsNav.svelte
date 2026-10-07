@@ -5,8 +5,9 @@
  const entries=[
   ['addons','Browse add-ons','Find rigs, containers and pouches.'],
   ['editor/create','Create an add-on','Build items in your current project.'],
+  ['editor/library/addons','Edit add-on items','Open your created and downloaded items.'],
   ['editor/share','Publish an add-on','Choose the items you want to share.'],
-  ['addons/mine','My add-ons','Edit, update or unpublish your listings.']
+  ['addons/mine','My published add-ons','Edit, update or unpublish your listings.']
  ];
  function toggle(){
   if(expanded){panel.hidePopover();return;}
@@ -20,8 +21,7 @@
  function choose(e,path){
   if(e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;
   e.preventDefault();close();
-  if(path.startsWith('addons'))window.Site.addons(path.endsWith('/mine')?'mine':'public');
-  else window.Site.go(path.slice(7));
+  location.hash='#'+path;
  }
 </script>
 <svelte:window onresize={close} onhashchange={close}/>
@@ -51,4 +51,5 @@
  @keyframes arrive{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
  @media(prefers-reduced-motion:reduce){#addons-shortcuts:popover-open{animation:none}}
 </style>
+
 

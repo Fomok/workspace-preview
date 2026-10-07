@@ -4052,7 +4052,8 @@ function drawShare(P) {
   section.appendChild(el('p',count>20?'warn':'hint',count+' selected / 20 per public add-on'));
   if(!mine.length){
     section.appendChild(el('p','hint','Create a rig, container or pouch first. Your custom and adopted items will appear here.'));
-    for(const [tab,label] of [['rigs','Create a rig'],['boxes','Create a container'],['pouches','Create a pouch']])communityButton(section,label,async()=>{TAB=tab;render();});
+    communityButton(section,'Create an item',async()=>Site.go('create'));
+    communityButton(section,'Edit add-on items',async()=>EditorLibrary.choose('addons')); 
   }else{
     const controls=el('div','community-actions');section.appendChild(controls);
     communityButton(controls,'Select all',async()=>{SHARE_PICK=new Set(mine.map(m=>m.kind+'/'+m.it.id));renderPane();});
@@ -4444,5 +4445,6 @@ window.onbeforeunload=e=>{
 };
 
 boot().catch(error=>{ document.querySelector("#pane").textContent="Could not open the editor: "+error.message; });
+
 
 
