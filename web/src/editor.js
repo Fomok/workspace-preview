@@ -1215,7 +1215,7 @@ const REPAIRS = [
 ];
 function modernRecipe(P,it,mode){
   if(!window.ZonebenchAdvancedRecipe)return false;
-  P.appendChild(el('div','sect',mode==='repair'?'How it is mended':'What it costs to build'));
+  P.appendChild(el('div','sect',mode==='repair'?'How it is mended':mode==='yield'?'What it breaks down into':'What it costs to build'));
   const target=el('div','card advanced-recipe-host');P.appendChild(target);
   window.ZonebenchAdvancedRecipe.mount(target,it,TAB,mode,()=>{if(TAB==='packs')packMark(it);touch();});
   return true;
@@ -1305,6 +1305,7 @@ function partsCard(P, it){
   P.appendChild(c);
 
   }
+  if(modernRecipe(P,it,'yield'))return;
   P.appendChild(el("div","sect","What it breaks down into"));
   const c2=el("div","card"); c2.style.maxWidth="640px";
   c2.appendChild(el("div","hint",
@@ -4443,4 +4444,5 @@ window.onbeforeunload=e=>{
 };
 
 boot().catch(error=>{ document.querySelector("#pane").textContent="Could not open the editor: "+error.message; });
+
 
