@@ -37,7 +37,7 @@ function organize(P,it){
  const controls=document.createElement('div');controls.className='editor-controls';controls.append(bar,container);workspace.appendChild(controls);
  const aside=document.createElement('aside');aside.className='editor-preview card';aside.setAttribute('aria-label','Item preview');aside.setAttribute('data-no-site-copy','');workspace.appendChild(aside);
  function paint(){
-  aside.replaceChildren();const title=document.createElement('h2');title.textContent=it.name||it.id;aside.appendChild(title);
+  aside.replaceChildren();const title=document.createElement('h2');title.textContent=root.EditorLibrary?.label(it)||it.name||it.id;aside.appendChild(title);
   const label=document.createElement('p');label.className='eyebrow';label.textContent='INVENTORY PREVIEW';aside.appendChild(label);
   aside.appendChild(fitPreview(it,220,190));
   const footprint=document.createElement('p');footprint.className='hint';footprint.textContent=(it.cellw||2)+' × '+(it.cellh||2)+' cells in inventory';aside.appendChild(footprint);
@@ -63,5 +63,18 @@ function list(L){
  const rows=[...L.querySelectorAll('.row')];const empty=document.createElement('p');empty.className='hint';empty.textContent='No matching items.';toolbar.after(empty);
  const filter=()=>{queries.set(TAB,input.value);const q=input.value.trim().toLowerCase();let found=0;for(const row of rows){row.hidden=!row.textContent.toLowerCase().includes(q);if(!row.hidden)found++;}count.textContent=found+' of '+rows.length+' items';empty.hidden=found>0;};input.oninput=filter;filter();
 }
-root.EditorView={organize,list};
+function focused(P,it){
+ if(!root.EditorLibrary?.isFocused(TAB))return;
+ const breadcrumb=document.createElement('div');breadcrumb.className='focused-breadcrumb';
+ const back=document.createElement('button');back.className='tool';back.textContent='← '+(EditorLibrary.scope==='mod'?'Mod items':'Optional add-ons');back.onclick=()=>EditorLibrary.choose(EditorLibrary.scope);
+ const label=document.createElement('span');label.textContent='ADVANCED ITEM EDITOR / '+({rigs:'RIG',boxes:'CONTAINER',pouches:'POUCH',packs:'BACKPACK',items:'ITEM'}[TAB]);breadcrumb.append(back,label);
+ const header=document.createElement('div');header.className='focused-heading';
+ const title=P.querySelector('h1'),tools=P.querySelector('.item-change-tools');
+ if(title){title.textContent=EditorLibrary.label(it);header.appendChild(title);}if(tools)header.appendChild(tools);
+ const actions=document.createElement('div');actions.className='focused-actions';
+ for(const [text,tab] of [['Review changes','changes'],['Check project','check']]){const button=document.createElement('button');button.className='tool';button.textContent=text;button.onclick=()=>Site.go(tab);actions.appendChild(button);}
+ const download=document.createElement('button');download.className='tool primary';download.textContent='Export';download.onclick=async()=>{download.disabled=true;try{await EditorLibrary.exportFocused();}catch(error){let message=header.querySelector('[role=alert]');if(!message){message=document.createElement('p');message.setAttribute('role','alert');header.appendChild(message);}message.textContent=error.message;}finally{download.disabled=false;}};actions.appendChild(download);
+ header.appendChild(actions);P.prepend(breadcrumb,header);
+}
+root.EditorView={organize,list,focused};
 })(globalThis);

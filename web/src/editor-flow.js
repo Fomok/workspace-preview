@@ -11,7 +11,7 @@ function save(data){const found=current();if(!found)return;const target=DB[found
 function project(){const found=current();if(!found)throw Error('This item is no longer in the current project.');const copy=JSON.parse(JSON.stringify(DB));if(found.item.builderAddonId)copy.independentAddon.id=found.item.builderAddonId;copy.independentAddon.name=found.item.name||'My item';copy.independentAddon.excluded=AddonExport.custom(copy,SEED).filter(x=>x.addonItemId!==selected.id).map(x=>x.addonItemId);return copy;}
 function review(){try{const p=AddonExport.plan(project(),SEED);return {ok:true,count:p.manifest.files.length,files:p.manifest.files,width:p.width,height:p.height};}catch(e){return {ok:false,error:e.message};}}
 async function download(){await flushKeep();return AddonExport.build(project(),SEED);}
-function advanced(){const found=current();if(found){SEL[found.kind]=found.item.id;Site.go(found.kind);}}
+function advanced(){const found=current();if(found){EditorLibrary.open({kind:found.kind,item:DB[found.kind].find(x=>x.addonItemId===selected.id)},'addons');}}
 function pictures(){return Object.fromEntries(kinds.map(kind=>[kind,(SEED[kind]||DB[kind]||[]).find(x=>x.icon)?.icon||null]));}
 function rules(){return Object.keys(DB.families||{}).filter(x=>x!=='any').map(id=>({id,name:id.replaceAll('_',' ')}));}
 function recipe(kind,item){if(kind==='rigs')return EMIT.rigRecipe({...item,craft:null});if(kind==='pouches')return EMIT.pouchRecipe(item);return {kit:1,book:'recipe_basic_0',cat:2,parts:[]};}

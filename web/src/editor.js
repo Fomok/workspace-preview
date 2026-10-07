@@ -538,9 +538,10 @@ const TABS = [["rigs","Rigs"],["pouches","Pouches"],["boxes","Containers"],
               ["catalog","Public add-ons"], ["account","Account"], ["share","Share items"], ["build","Export mod"],
               ["help","How this works"]];
 function render(){
+  if(window.EditorLibrary?.isFocused(TAB))EditorLibrary.resolve();
   Workbench.record();
   Site.shell();
-  const listy = ["rigs","pouches","boxes","packs","items"].includes(TAB);
+  const listy = ["rigs","pouches","boxes","packs","items"].includes(TAB)&&!window.EditorLibrary?.isFocused(TAB);
   document.body.classList.toggle("wide", !listy);
   if(listy) renderList(); else $("#list").innerHTML="";
   renderPane();
@@ -548,6 +549,7 @@ function render(){
 }
 
 function renderList(){
+  if(window.EditorLibrary?.isFocused(TAB)){document.querySelector("#list").replaceChildren();return;}
   const L=$("#list"); L.innerHTML="";
   const items = DB[TAB]||[];
   const groups = TAB==="boxes"
@@ -612,6 +614,7 @@ function renderPane(){
   if(TAB==="addonexport") return AddonExport.render(P,DB,SEED,async()=>{touch();await flushKeep();},drawLegacyBuild);
   if(TAB==="help") return Site.help(P);
   const it=cur();
+  if(!it&&window.EditorLibrary?.isFocused(TAB)){const back=el("button","tool","← Return to item library");back.onclick=()=>EditorLibrary.choose(EditorLibrary.scope);P.append(el("h1",null,"This item is no longer in your project."),back);return;}
   if(!it){
     /* THE BACKPACKS PAGE HAS SOMETHING TO SAY WITH NO PACK SELECTED -
        what every pack nobody has listed is - so an empty list is not an
@@ -629,7 +632,7 @@ function renderPane(){
   else if(TAB==="packs" || TAB==="items") drawItemPage(P,it);
   else drawPouch(P,it);
   if(TAB==="rigs" || TAB==="boxes") drawModel(P,it);
-  EditorView.organize(P,it); Workbench.itemTools(P,it);
+  EditorView.organize(P,it); Workbench.itemTools(P,it); EditorView.focused?.(P,it);
 }
 
 /* small field builders --------------------------------------------- */
@@ -4266,7 +4269,7 @@ function removeItem(it){
   else { it.removed=true; arr.splice(i,1); DB.removed=DB.removed||[];
     DB.removed.push({kind:TAB,id:it.id,name:it.name}); }
   SEL[TAB]=arr[Math.min(i,arr.length-1)] && arr[Math.min(i,arr.length-1)].id;
-  touch(); render();
+  touch(); if(window.EditorLibrary?.isFocused(TAB))EditorLibrary.choose(EditorLibrary.scope);else render();
 }
 
 /* ==========================================================

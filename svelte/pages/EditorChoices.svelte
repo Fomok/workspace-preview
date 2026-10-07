@@ -14,7 +14,7 @@
  <div class="flow-heading"><p class="flow-kicker">YOUR EQUIPMENT. YOUR CHOICE.</p><h1>{create?'What are you making?':'Make it your own.'}</h1><p>{create?'Choose an item type. We’ll walk you through the rest.':'Tune the equipment you already use, or build something of your own.'}</p></div>
  {#if !create}
  <div class="editor-paths">
-  <button class="path-card" onclick={()=>window.Site.go('rigs')}>
+  <button class="path-card" onclick={()=>window.Site.go('editchoice')}>
    <div class="path-art edit-art" aria-hidden="true"><div class="art-grid"></div>{#if pictures.rigs}<img src={pictures.rigs} alt=""/>{/if}<svg class="cut-guide" viewBox="0 0 240 145"><rect class="cut-line" x="64" y="7" width="106" height="128" rx="9" transform="rotate(-8 117 71)"/><g class="cut-scissors" transform="translate(173 92) rotate(-98) translate(-15 -16)"><circle cx="0" cy="7" r="6"/><circle cx="0" cy="25" r="6"/><path d="M5 10L36 31M5 22L36 1"/><circle cx="15" cy="16" r="2"/></g></svg><span class="art-coordinate">02 × 03</span></div>
    <div class="path-copy"><span class="fabric-label">CUSTOMIZE</span><h2>Edit existing items</h2><p>Adjust layouts, prices, recipes and textures in your current mod setup.</p><span class="path-action">Open item editor <span>↗</span></span></div>
   </button>

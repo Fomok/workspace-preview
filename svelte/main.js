@@ -5,3 +5,5 @@ import './palette.css';
 import './addons.css';
 
 import './editor-flow.css';
+
+import './item-library.css';
