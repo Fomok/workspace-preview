@@ -3,6 +3,7 @@
  import EditorUpdateNotice from './components/EditorUpdateNotice.svelte';
  import HeaderTexture from './components/HeaderTexture.svelte';
  import AddonsNav from './components/AddonsNav.svelte';
+ import DownloadsNav from './components/DownloadsNav.svelte';
  import { start, go } from './bootstrap.js';
  let shell,header,brand;
  let view=$state({tab:'home',editor:false,tools:false,sections:false,version:'2.0.4',tabs:[],unread:false});let error=$state('');let ready=$state(false);
@@ -20,7 +21,7 @@
  <header class="site-header" bind:this={header}>
   <button bind:this={brand} class="brand" type="button" onclick={()=>ready&&go('home')} aria-label="ZoneBench home"><span class="brand-patch"><HeaderTexture kind="name"/><span class="brand-accessible">ZONEBENCH</span></span><small class="brand-version"><HeaderTexture kind="version"/><span>SQUARED AWAY {view.version}</span></small></button>
   <nav id="site-nav" aria-label="Main navigation">
-   {#each links as [tab,label]}{#if tab==='catalog'}<AddonsNav {ready} active={view.tab==='catalog'}/>{:else}<a href={'#'+(hashes[tab]||tab)} class:active={tab==='editor'?view.editor:view.tab===tab} class:has-update={tab==='patchnotes'&&view.unread} aria-current={(tab==='editor'?view.editor:view.tab===tab)?'page':undefined} onclick={e=>navigate(e,tab)}><HeaderTexture selected={tab==='editor'?view.editor:view.tab===tab}/><span class="nav-label">{label}</span>{#if tab==='patchnotes'&&view.unread}<span class="patch-new" title="Unread patch notes" aria-label="Unread patch notes">New</span>{/if}</a>{/if}{/each}
+   {#each links as [tab,label]}{#if tab==='catalog'}<AddonsNav {ready} active={view.tab==='catalog'}/>{:else if tab==='downloads'}<DownloadsNav {ready} active={['downloads','update'].includes(view.tab)}/>{:else}<a href={'#'+(hashes[tab]||tab)} class:active={tab==='editor'?view.editor:view.tab===tab} class:has-update={tab==='patchnotes'&&view.unread} aria-current={(tab==='editor'?view.editor:view.tab===tab)?'page':undefined} onclick={e=>navigate(e,tab)}><HeaderTexture selected={tab==='editor'?view.editor:view.tab===tab}/><span class="nav-label">{label}</span>{#if tab==='patchnotes'&&view.unread}<span class="patch-new" title="Unread patch notes" aria-label="Unread patch notes">New</span>{/if}</a>{/if}{/each}
   </nav>
  </header>
  <EditorUpdateNotice/>
