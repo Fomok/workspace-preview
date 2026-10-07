@@ -76,13 +76,10 @@ function help(P){
  heading(P,'FIELD GUIDE','Get squared away.','Installation, compatibility and the ZoneBench editor.');
  InstallationGuide.render(P);
  const blocks=[
-  [
-    "Squared Away 2.0 Update",
-    "ZoneBench targets Squared Away 2.0.3. Update both the mod in MO2 and the matching engine in your Anomaly folder. Existing 2.0.x saves are supported. Home introduces the mod, Introduction explains its mechanics, and Patch Notes covers what changed. The 2.0 Update is available in Downloads. Install both the mod and its matching engine. Downloads only lists published packages. An older download is not the version this editor targets."
-  ],
+  ["Squared Away 2.0.5", "ZoneBench targets Squared Away 2.0.5 with independent add-on support. Install the full mod through MO2 and use the standard or Bodycam 2.0.3 engine. Existing 2.0.x saves can continue. Downloads and patch-note history are available on this website."],
   [
     "Install the mod",
-    "Use Anomaly 1.5.3 or your GAMMA installation. Install the full Squared Away ZIP through Mod Organizer 2 (MO2). Its FOMOD installer lets you choose optional patches. Replace an older Squared Away installation instead of merging files, and disable old copies and hotfixes. Select only patches for mods you actually have."
+    "Use Anomaly 1.5.3, GAMMA or ZONA V1.38. Install the full Squared Away ZIP through Mod Organizer 2 (MO2). Its FOMOD installer lets you choose optional patches. Replace an older Squared Away installation instead of merging files, and disable old copies and hotfixes. Select only patches for mods you actually have."
   ],
   [
     "Install the matching engine",
@@ -92,13 +89,10 @@ function help(P){
     "Engine choices and developer files",
     "The all-DX engine package includes DX8, DX9, DX10 and DX11 executables, each with AVX and non-AVX versions. Choose a renderer supported by your setup, and use AVX only if your CPU supports it. The separate For Developers ZIP is for engine authors merging changes; players do not need it. Always use the engine paired with your mod release in Downloads. Bodycam users can choose the optional combined Bodycam engine for 2.0.3 instead of the standard package. It supports DX11-AVX only and includes its matching DB0. Install both bin and db/mods from that ZIP. For PiP scopes, keep the matching external 3DSS PiP compatibility content required by Bodycam."
   ],
-  [
-    "Saves and upgrades",
-    "Updating from 2.0, 2.0.1 or 2.0.2 to 2.0.3 does not require a new game. Install the updated engine as well as the mod. Upgrading from the old public version (before 2.0) to 2.0 requires a new game. Do not continue an old playthrough with the rewrite. Back up saves before changing custom item configurations, and test add-ons on a separate save."
-  ],
+  ["Saves and upgrades", "Updating from 2.0.x to 2.0.5 does not require a new game. Keep the 2.0.3 custom engine; update it if you still use an older engine. First installation and upgrading from before 2.0 require a new game. Keep add-ons installed while your save contains their items."],
   [
     "SOTA UI and HD Inventory Icons",
-    "SOTA UI is optional. Select SOTA UI compatibility in the installer only if SOTA and its usual requirements are installed. HD Inventory Icons Framework is required so item icons display correctly in the inventory. Choose its SOTA-patched version with SOTA, or its non-SOTA version without it. Never enable both. Place Squared Away below those UI mods in the MO2 left pane so its files win conflicts. Both UI choices use the Field Kit artwork and support the Tarkov-like and Anomaly default layouts."
+    "SOTA UI is optional. Choose SOTA UI Compatibility (GAMMA) or SOTA UI Compatibility (ZONA) in the matching installer group, only if that SOTA UI and its requirements are installed. Do not combine both groups. HD Inventory Icons Framework is required so item icons display correctly in the inventory. Choose its SOTA-patched version with SOTA, or its non-SOTA version without it. Never enable both. Place Squared Away below those UI mods in the MO2 left pane so its files win conflicts. Both UI choices use the Field Kit artwork and support the Tarkov-like and Anomaly default layouts."
   ],
   [
     "Wearable Devices support",
@@ -110,7 +104,7 @@ function help(P){
   ],
   [
     "Magazine support",
-    "The baseline is Mags Reloaded Fork by Priler UPDATE 6. Install it separately for magazine support and the three stock expansion pouches. It also requires Dynamic Reload Speeds. Select the optional Mags Reloaded ammo fix in the FOMOD with Mags Reloaded Fork by Priler UPDATE 6 and its Dynamic Reload Speeds dependency installed. It requires the 2.0.3 engine. Let Squared Away win their file conflicts in MO2. The direct download message is linked below. GAMMA recipes and trader integrations also need their corresponding GAMMA content; plain Anomaly does not include those dependencies automatically."
+    "For ZONA V1.38, keep its Magazines Redux setup and choose Mags Redux ammo fix under ZONA compatibility. This does not require Dynamic Reload Speeds. For GAMMA, the baseline is Mags Reloaded Fork by Priler UPDATE 6. Install it separately for magazine support and the three stock expansion pouches. It also requires Dynamic Reload Speeds. Select the optional Mags Reloaded ammo fix in the FOMOD with Mags Reloaded Fork by Priler UPDATE 6 and its Dynamic Reload Speeds dependency installed. It requires the 2.0.3 engine. Let Squared Away win their file conflicts in MO2. The direct download message is linked below. GAMMA recipes and trader integrations also need their corresponding GAMMA content; plain Anomaly does not include those dependencies automatically."
   ],
   [
     "Inventory, rigs and containers",
@@ -124,18 +118,9 @@ function help(P){
     "Appearance and controls",
     "Open Squared Away in MCM to choose your inventory layout, adjust background opacity, and configure controls, rig rules and drops. The backpack and rig equipment slots scroll with the inventory. White key prompts show available actions. The Swap toggle is beside the weight display. Box and rig context-menu actions are included for Anomaly and GAMMA; they do not need a separate installer patch."
   ],
-  [
-    "Create and install your own add-on",
-    "In Editor, choose Rigs, Containers, Pouches, Backpacks or Drops and make your changes. Save project downloads a backup. Undo and Redo recover recent edits within the current tab (history resets on refresh); Changes lists customized items and available Community updates. Compare with default lets you inspect or reset one item. Export mod guides you through Review, Fix issues and Download. Resolve blocking errors before downloading your ZIP. Install that ZIP as a separate MO2 mod below Squared Away and its optional patches. Keep only one ZoneBench export enabled: combine everything you want in one project before exporting. Exports contain item configuration and selected assets, not the inventory scripts or engine. Saved MCM settings take priority over exported drop and condition defaults."
-  ],
-  [
-    "Browse Community add-ons",
-    "Community lets you browse optional player-made add-ons. Open View items to inspect their icons, storage layouts, descriptions, prices and crafting details before importing. Choose what to bring into your project, then export the combined result. Imports do not install anything into your game, and creator updates do not automatically overwrite your project."
-  ],
-  [
-    "Publish and update your add-ons",
-    "Sign in through Account using a code sent to your email. Your email is not shown on listings. Use Share items in Editor to select customizations and publish an add-on. In My add-ons, use Edit / update to revise the same listing instead of publishing duplicate versions, or Unpublish to remove it from public browsing. Other users keep items they already imported."
-  ],
+  ["Create and install your own add-on", "In Editor, choose Add new item and follow the steps for appearance, storage, crafting, traders and repair. Download the resulting ZIP and install it below Squared Away 2.0.5 in MO2. Independent add-ons have separate files and can be used together. To change existing gear, choose Edit existing items, pick mod items or optional add-ons, then select an item tile. Older full-project exports replace shared files and should not be stacked. Crafting, repair and dismantling offer Enter item IDs manually for ingredients outside the GAMMA database, including ZONA items. The toggle keeps existing values. Recipe book and repair type IDs can also be edited. IDs are checked for format, not whether they exist in your game. Save project keeps a backup of your work."],
+  ["Browse add-ons", "Use Add-ons → Browse add-ons to inspect item icons, layouts, descriptions, prices and recipes. Download an independent ZIP directly or open items in the editor. Install each add-on below Squared Away in MO2. Updating replaces its previous installation. Signed-in downloads are remembered in this browser; this does not detect your MO2 installation."],
+  ["Publish and update your add-ons", "Sign in through Account using an email code. Use Add-ons → Publish an add-on to choose your items. My published add-ons → Edit / update starts from the published contents: keep or remove items, choose edited local versions, or add items from your library. Edit item opens the focused editor; Back to add-on update returns to your draft. Preview before saving. Updating revises the same listing; unpublishing removes it from browsing without deleting existing downloads."],
   [
     "Keep your work",
     "Item editing and exports happen in your browser. Use Save project regularly and Open project to restore a downloaded backup. Account → Reset item customizations clears local item edits and imported items only. It does not delete your account, sign you out, or remove published add-ons or installed game files."
@@ -150,7 +135,7 @@ function help(P){
  const nav=n('nav','help-topics');nav.setAttribute('aria-label','Help topics');tools.appendChild(nav);const entries=[],sections=[];
  for(const [name,indices] of categories){const section=n('section','help-group');section.appendChild(n('h2',null,name));P.appendChild(section);sections.push(section);
   const jump=n('button','tool',name);jump.onclick=()=>{search.value='';filter();section.scrollIntoView({block:'start',behavior:'smooth'});};nav.appendChild(jump);
-  for(const index of indices){const [title,copy]=blocks[index],c=n('details','help-topic');c.open=title==='Install the mod';const summary=n('summary',null,title);c.appendChild(summary);c.appendChild(n('p',null,copy));
+  for(const index of indices){const [title,copy]=blocks[index],c=n('details','help-topic');c.open=false;const summary=n('summary',null,title);c.appendChild(summary);c.appendChild(n('p',null,copy));
    if(title==='Magazine support'){const a=link('Download Mags Reloaded Fork by Priler UPDATE 6','https://discord.com/channels/912320241713958912/1322655858240262304/1524208180135989459',true);a.target='_blank';a.rel='noopener noreferrer';c.appendChild(a);}
    section.appendChild(c);entries.push({node:c,text:(title+' '+copy).toLowerCase()});
   }

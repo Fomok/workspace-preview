@@ -1,7 +1,7 @@
 {
-  "revision": 2,
+  "revision": 3,
   "exportRevision": 1,
-  "title": "Welcome to the new ZoneBench",
-  "message": "A redesigned editor, guided item builder, searchable database parts and independent add-on downloads are now available. Use Squared Away 2.0.4 for independent add-ons.",
+  "title": "Manual recipe IDs are available",
+  "message": "Crafting, repair and dismantling now support direct item-ID entry for modpack authors, including ZONA. Existing database selection is still available.",
   "requiresRedownload": false
 }

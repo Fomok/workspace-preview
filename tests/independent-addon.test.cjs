@@ -93,3 +93,10 @@ test('new localized text and selected traders contain only the new item',()=>{
  for(const f of p.files.filter(f=>f.name.endsWith('.xml'))){const xml=a.BUILD.decodeStringTable(f.bytes);assert(xml.includes('Rig &amp; test'));assert(xml.includes('st_'+id+'_name'));assert(!xml.includes('st_amprig_bandolier_name'));}
  const trader=p.files.find(f=>f.name.includes('/trade/'));assert(text(trader).includes(id+' = 2, 0.5'));
 });
+
+test('manual modpack references survive independent export and project validation',()=>{
+ const a=setup();a.r.craft={kit:2,book:'zona_recipe_book',cat:2,parts:[['zona_custom_fabric',3],['zona_custom_plate',2]]};a.r.parts=['zona_repair_fabric'];a.r.yield=['zona_scrap'];a.r.repair='zona_light_armour';
+ assert.doesNotThrow(()=>a.ZB.validate(a.db));
+ const p=a.AddonExport.plan(a.db,a.seed),all=p.files.map(text).join('\n');
+ for(const id of ['zona_recipe_book','zona_custom_fabric','zona_custom_plate','zona_repair_fabric','zona_scrap','zona_light_armour'])assert(all.includes(id),id);
+});

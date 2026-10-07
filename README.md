@@ -6,7 +6,7 @@ The item editor and community add-on library for **Squared Away**, for S.T.A.L.K
 
 Create rigs, containers, pouches and backpacks through a guided builder, or edit existing items in the focused editor. Browse community add-ons, inspect their contents and download independent ZIPs for MO2. Crafting, repair and dismantling use GAMMA Database names and icons.
 
-Targets **Squared Away 2.0.4**, using the existing **2.0.3 engines**. Existing 2.0.x saves can continue; first-time installations and pre-2.0 upgrades require a new game. Independent add-ons install below Squared Away and can be combined. Older full-project exports replace shared files.
+Targets **Squared Away 2.0.5**, using the existing **2.0.3 engines**. Existing 2.0.x saves can continue; first-time installations and pre-2.0 upgrades require a new game. Independent add-ons install below Squared Away and can be combined. Older full-project exports replace shared files.
 
 ## Projects and accounts
 
@@ -27,3 +27,5 @@ npm run build
 Builds default to the preview. Set `ZONEBENCH_TARGET=live` for the production build. GitHub Actions selects the correct target for each repository. Live publishes from main; the preview repository remains separate.
 
 See [installation](docs/installation.md) and [editor update notices](tools/EDITOR-UPDATES.md).
+
+ZONA V1.38 has separate SOTA UI and Magazines Redux compatibility choices. Recipes, repair parts, dismantling returns and trader settings remain GAMMA-based and may need adaptation. The editor supports manual item IDs for these recipes and parts.
