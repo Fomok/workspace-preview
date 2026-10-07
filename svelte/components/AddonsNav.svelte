@@ -26,7 +26,7 @@
 </script>
 <svelte:window onresize={close} onhashchange={close}/>
 <button bind:this={trigger} type="button" class="addons-trigger" class:active aria-expanded={expanded} aria-controls="addons-shortcuts" disabled={!ready} onclick={toggle}>
- <HeaderTexture selected={active||expanded}/><span>Add-ons <span class="chevron" aria-hidden="true">⌄</span></span>
+ <HeaderTexture selected={active||expanded}/><span>Add-ons</span>
 </button>
 <div id="addons-shortcuts" bind:this={panel} popover="auto" ontoggle={e=>expanded=e.newState==='open'}>
  <p class="menu-title">THE COMMUNITY WORKBENCH</p>
@@ -38,7 +38,7 @@
 </div>
 <style>
  :global(body .site-header #site-nav .addons-trigger){position:relative;display:flex;align-items:center;justify-content:center;flex:1 0 auto;min-height:48px;padding:10px 15px;border:0;border-radius:0;background:none;box-shadow:none;color:var(--dim);font:inherit;font-size:13px;white-space:nowrap;cursor:pointer}
- .addons-trigger>span{position:relative;z-index:1}.chevron{margin-left:7px;color:var(--hot)}
+ .addons-trigger>span{position:relative;z-index:1}
  :global(body .site-header #site-nav .addons-trigger.active){color:var(--hot)}
  .addons-trigger:hover{filter:brightness(1.18)}.addons-trigger:focus-visible{outline:2px solid var(--hot);outline-offset:-5px}
  #addons-shortcuts{position:fixed;inset:auto;margin:0;padding:7px;width:328px;max-width:calc(100vw - 24px);box-sizing:border-box;overflow:auto;color:var(--ink);border:5px solid transparent;border-image:url('/zonebench-preview/assets/field-kit/frame.svg') 12 / 5px / 0 stretch;background:#161918 url('/zonebench-preview/assets/field-kit/panel-metal.svg');box-shadow:0 15px 45px #000a}
@@ -51,3 +51,4 @@
  @keyframes arrive{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
  @media(prefers-reduced-motion:reduce){#addons-shortcuts:popover-open{animation:none}}
 </style>
+
