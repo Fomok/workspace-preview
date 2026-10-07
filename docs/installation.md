@@ -2,7 +2,7 @@
 
 ## Current editor baseline
 
-ZoneBench targets Squared Away 2.0.2. Item definitions, recipes, trader templates and shared world models match the tested current mod. The older public 3.48.0 download is not compatible with these exports. The 2.0 mod and matching engine are available in the website Downloads tab.
+ZoneBench targets Squared Away 2.0.4. Item definitions, recipes, trader templates and shared world models match the tested current mod. The older public 3.48.0 download is not compatible with these exports. The 2.0 mod and matching engine are available in the website Downloads tab.
 
 ## Install the mod
 
@@ -10,11 +10,11 @@ Use Anomaly 1.5.3 or your GAMMA installation. Install the full Squared Away FOMO
 
 ## Install the required engine
 
-Squared Away 2.0.2 uses custom engine commit 6312bc321b544cc26980b95a3977d4de965dd770 and its matching DB0. With the game closed, back up your existing files and extract the engine ZIP into the Anomaly game folder: executables and PDBs go under bin, and the DB0 under db/mods. The engine package is installed in the game folder, not as a normal MO2 mod. Stock Anomaly or upstream Monolith executables are not supported for this native rebuild.
+Squared Away 2.0.4 uses the standard or Bodycam 2.0.3 custom engine and its matching DB0. With the game closed, back up your existing files and extract the engine ZIP into the Anomaly game folder: executables and PDBs go under bin, and the DB0 under db/mods. The engine package is installed in the game folder, not as a normal MO2 mod. Stock Anomaly or upstream Monolith executables are not supported for this native rebuild.
 
 ## Saves and upgrades
 
-The 2.0.2 update supports existing 2.0 and 2.0.1 saves. Install the new matching engine package as well as the mod. Replace the full mod in MO2 and choose the same optional patches.
+The 2.0.4 update supports existing 2.0.x saves. Keep the 2.0.3 engine, or install it if you still have an older engine. Replace the full mod in MO2 and choose the same optional patches.
 
 Start a new game when moving from the old public mod to the native rebuild. Back up saves before changing item configurations and test custom exports on a disposable save.
 
@@ -36,7 +36,7 @@ The baseline is Mags Reloaded Fork by Priler UPDATE 6. Install it separately for
 
 ## Create and install an add-on
 
-Save a project backup, edit your items, then open Check and resolve errors. Use Export mod to create the ZIP and install it as a separate MO2 mod below Squared Away and all its patches. Enable only one ZoneBench export; combine desired community items in one project before exporting. Existing browser customizations are preserved when the baseline updates. Exports include item configuration and selected assets, not the inventory runtime or engine.
+Save a project backup, edit your items, then open Check and resolve errors. Use Export mod to create the ZIP and install it as a separate MO2 mod below Squared Away and all its patches. New independent add-ons can be enabled together. Older full-project exports overwrite shared files and must not be stacked; rebuild them through the new item builder when combining add-ons. Existing browser customizations are preserved when the baseline updates. Exports include item configuration and selected assets, not the inventory runtime or engine.
 
 ## Settings and context menus
 
