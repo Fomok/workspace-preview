@@ -71,7 +71,7 @@ function plan(db,seed){
  const items=entries.map(e=>e.item),suffix='zba_'+a.id.replaceAll('-',''),sheet='ui\\zonebench\\'+suffix;
  const packed=BUILD.itemSheetPlan({items},{});if(packed.overflow.length)throw Error('Selected icons do not fit on one texture sheet.');
  const files=[];const put=(path,text)=>files.push({name:'gamedata/'+path,bytes:BUILD.utf8(text)});
- let system='; Independent ZoneBench items. Requires Squared Away Independent Add-ons Test 2.\r\n';
+ let system='; Independent ZoneBench items. Requires Squared Away 2.0.4.\r\n';
  const pending=entries.slice(),done=new Set();
  while(pending.length){const i=pending.findIndex(e=>!items.some(x=>x.id===e.item.parent)||done.has(e.item.parent));if(i<0)throw Error('Backpack parents form an inheritance loop.');
   const {kind,item:r}=pending.splice(i,1)[0];let text='';
@@ -120,7 +120,7 @@ function plan(db,seed){
  const pow=n=>2**Math.ceil(Math.log2(Math.max(4,n)));
  const width=pow(Math.max(...pictures.map(e=>(e.rect.x+e.rect.w)*50))),height=pow(Math.max(...pictures.map(e=>(e.rect.y+e.rect.h)*50)));
  const texture='gamedata/textures/ui/zonebench/'+suffix+'.dds';
- const manifest={format:'zonebench-independent-addon',version:1,exportRevision:globalThis.ZonebenchExportRevision||1,id:a.id,name:a.name,addonVersion:a.version,requires:'Squared Away 2.0.3 + Independent Add-ons Test 2',items:chosen.map(({kind,item:r},i)=>({sourceId:r.id,id:entries[i].item.id,name:entries[i].item.name,kind})),texture:{path:texture,width,height},files:[...files.map(f=>f.name),texture]};
+ const manifest={format:'zonebench-independent-addon',version:1,exportRevision:globalThis.ZonebenchExportRevision||1,id:a.id,name:a.name,addonVersion:a.version,requires:'Squared Away 2.0.4',items:chosen.map(({kind,item:r},i)=>({sourceId:r.id,id:entries[i].item.id,name:entries[i].item.name,kind})),texture:{path:texture,width,height},files:[...files.map(f=>f.name),texture]};
  const dependencies=new Map();for(const {item:r} of chosen)for(const [id] of r.craft?.parts||[]){const dep=r.recipeDependencies?.[id];if(dep?.id)dependencies.set(dep.id,{id:dep.id,name:String(dep.name||dep.id),version:String(dep.version||'')});}if(dependencies.size)manifest.requiredAddons=[...dependencies.values()];
  return {files,entries:pictures,width,height,texture,manifest};
 }
@@ -129,13 +129,13 @@ async function build(db,seed){const p=plan(db,seed),canvas=document.createElemen
  p.files.push({name:p.texture,bytes:BUILD.ddsFrom(ctx.getImageData(0,0,p.width,p.height))});
  p.files.push({name:'addon.json',bytes:BUILD.utf8(JSON.stringify(p.manifest,null,2))});
  if(p.manifest.requiredAddons?.length)p.files.push({name:'REQUIRED-ADDONS.txt',bytes:BUILD.utf8('Enable these add-ons alongside this item. Its crafting recipe uses their items.\n'+p.manifest.requiredAddons.map(x=>x.name+' ('+x.version+') - '+x.id).join('\n'))});
- p.files.push({name:'INSTALL.txt',bytes:BUILD.utf8('INDEPENDENT ADD-ON - TEST 2\nInstall below Squared Away Independent Add-ons Test 2 in MO2. Multiple independent add-ons may be enabled together. Keep the Squared Away 2.0.3 engine.\nReplace this add-on to update it; keep its ID. Save your ZoneBench project before making another add-on.\nExports selected NEW rigs, containers, pouches and backpacks. Existing-item edits and global settings are excluded. Models are supplied by Squared Away. Custom model paths require their own assets.\nTest on a separate save. Do not remove an add-on while that save still contains its items.\n')});
+ p.files.push({name:'INSTALL.txt',bytes:BUILD.utf8('SQUARED AWAY INDEPENDENT ADD-ON\nInstall below Squared Away 2.0.4 in MO2. Multiple independent add-ons may be enabled together. Keep the Squared Away 2.0.3 engine.\nReplace this add-on to update it; keep its ID. Save your ZoneBench project before making another add-on.\nExports selected NEW rigs, containers, pouches and backpacks. Existing-item edits and global settings are excluded. Models are supplied by Squared Away. Custom model paths require their own assets.\nDo not remove an add-on while that save still contains its items.\n')});
  return {blob:BUILD.zip(p.files),manifest:p.manifest};
 }
 function render(P,db,seed,save,legacy){
  const a=ensure(db,seed),node=(tag,text)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;return e;};
  P.appendChild(node('h1','Export independent add-on'));
- P.appendChild(node('p','Export selected new rigs, containers, pouches and backpacks with their own files. Requires Independent Add-ons Test 2. Existing-item edits and global settings are not included.'));
+ P.appendChild(node('p','Export selected new rigs, containers, pouches and backpacks with their own files. Requires Squared Away 2.0.4. Existing-item edits and global settings are not included.'));
  const card=node('section');card.className='card';P.appendChild(card);
  for(const [key,label] of [['name','Add-on name'],['version','Version']]){const wrap=node('label',label+' '),input=node('input');input.type='text';input.value=a[key];input.maxLength=80;input.setAttribute('aria-label',label);input.onchange=()=>{a[key]=input.value.trim()|| (key==='name'?'My add-on':'1.0');save();};wrap.appendChild(input);card.appendChild(wrap);}
  card.appendChild(node('p','Permanent ID: '+a.id));
@@ -146,7 +146,7 @@ function render(P,db,seed,save,legacy){
  const status=node('p');status.setAttribute('role','status');P.appendChild(status);
  const button=node('button','Download independent add-on ZIP');button.className='tool primary';P.appendChild(button);
  function preview(){try{const p=plan(db,seed);listing.textContent=p.manifest.files.join('\n')+'\naddon.json\nINSTALL.txt';status.textContent=p.manifest.items.length+' item(s); texture '+p.width+' × '+p.height+' px. No base-mod files are replaced.';button.disabled=false;}catch(e){listing.textContent='';status.textContent=e.message;button.disabled=true;}}
- button.onclick=async()=>{button.disabled=true;try{await save();const result=await build(db,seed);const blob=await result.blob,link=node('a');link.href=URL.createObjectURL(blob);link.download=root.ZonebenchAddonFilename?root.ZonebenchAddonFilename(a.name,a.version):'ZoneBench-'+a.id+'.zip';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(link.href),8000);status.textContent='Downloaded. Install this ZIP below the test mod in MO2.';}catch(e){status.textContent=e.message;}finally{button.disabled=false;}};
+ button.onclick=async()=>{button.disabled=true;try{await save();const result=await build(db,seed);const blob=await result.blob,link=node('a');link.href=URL.createObjectURL(blob);link.download=root.ZonebenchAddonFilename?root.ZonebenchAddonFilename(a.name,a.version):'ZoneBench-'+a.id+'.zip';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(link.href),8000);status.textContent='Downloaded. Install this ZIP below Squared Away 2.0.4 in MO2.';}catch(e){status.textContent=e.message;}finally{button.disabled=false;}};
  const duplicate=node('button','Start a separate add-on ID');duplicate.className='tool';duplicate.onclick=async()=>{if(!confirm('Save your project first if you want to update this add-on later. Start a separate add-on using the current items and a new ID?'))return;a.id=freshId();await save();renderPane();};P.appendChild(duplicate);
  const old=node('details');old.appendChild(node('summary','Legacy full-project export'));old.appendChild(node('p','The older exporter replaces shared files and cannot be stacked with other full-project exports. It is not used for this test.'));const b=node('button','Open legacy exporter');b.className='tool';b.onclick=()=>{P.replaceChildren();legacy(P);};old.appendChild(b);P.appendChild(old);preview();
 }

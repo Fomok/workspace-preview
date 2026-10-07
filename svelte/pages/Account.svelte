@@ -1,4 +1,5 @@
 <script>
+ import AccountAccess from '../components/AccountAccess.svelte';
  import {onMount} from 'svelte';
  import {addonLink,downloadStatus} from '../lib/addon-requirements.mjs';
  import {loadLibrary} from '../lib/addon-browser.mjs';
@@ -6,6 +7,7 @@
  import {downloadedAddons} from '../lib/addon-downloads.mjs';
  let user=$state(null),loading=$state(true),error=$state(''),downloads=$state([]);
  let stopped=false;
+ const preview=import.meta.env.BASE_URL.includes('preview');
  const live='https://fomok.github.io/zonebench/#account';
  function sync(){user=window.Community.user;downloads=downloadedAddons(user).sort((a,b)=>b.downloadedAt-a.downloadedAt);}
  async function refresh(){loading=true;error='';try{await window.Community.refresh();if(!stopped){sync();checked=false;updateError='';if(user)try{const rows=await loadLibrary(window.Community,()=>{},{get aborted(){return stopped;}});if(!stopped){listings=rows.map(r=>r.listing);checked=true;}}catch{if(!stopped)updateError='Could not check for updates. Your saved download history is still available.';}}}catch(e){if(!stopped)error=e.message;}finally{if(!stopped)loading=false;}}
@@ -23,12 +25,12 @@
     <h3>{user.name||'Your account'}</h3><span class="account-badge">{user.moderator?'Maintainer':'Creator'}</span>
     {#if user.blocked}<p class="account-warning">Publishing is disabled for this account. You can still remove your own listings from public browsing.</p>{/if}
     <p>Your display name appears on your public add-ons.</p>
-    <a class="tool" href={live} target="_blank" rel="noreferrer">Manage profile / sign out ↗</a>
+    {#if preview}<a class="tool" href={live} target="_blank" rel="noreferrer">Manage profile / sign out ↗</a>{:else}<div class="account-section-body"><AccountAccess changed={refresh}/></div>{/if}
     <details class="account-id"><summary>Account details</summary><p>Account ID</p><code>{user.id}</code></details>
    {:else}
-    <div class="account-avatar" aria-hidden="true">Z</div><h3>Make it yours.</h3><p>Sign in to publish add-ons, manage your listings and remember your downloads.</p><a class="tool primary" href={live} target="_blank" rel="noreferrer">Sign in / create account ↗</a><p class="account-small">Your email is private and is used only for sign-in.</p>
+    <div class="account-avatar" aria-hidden="true">Z</div><h3>Make it yours.</h3><p>Sign in to publish add-ons, manage your listings and remember your downloads.</p>{#if preview}<a class="tool primary" href={live} target="_blank" rel="noreferrer">Sign in / create account ↗</a>{:else}<div class="account-section-body"><AccountAccess changed={refresh}/></div>{/if}<p class="account-small">Your email is private and is used only for sign-in.</p>
    {/if}
-   <p class="account-small">Account changes are handled on the live site while this redesign is in preview. Refresh your account here after signing in or making changes.</p><button class="account-link" onclick={refresh} disabled={loading}>Refresh account ↻</button>
+   {#if preview}<p class="account-small">Account changes are handled on the live site while this redesign is in preview. Refresh your account here after signing in or making changes.</p>{/if}<button class="account-link" onclick={refresh} disabled={loading}>Refresh account ↻</button>
   </aside>
   <div class="account-content">
    <section class="account-panel"><h2>My add-ons</h2><div class="account-section-body"><h3>Give your gear a home.</h3><p>Create something new, or update a published add-on without posting another copy.</p><div class="account-actions"><a class="tool primary" href="#editor/create">Create an item →</a>{#if user}<button class="tool" onclick={()=>window.Site.addons('mine')}>Manage my add-ons →</button>{:else}<a class="tool" href={live} target="_blank" rel="noreferrer">Sign in to manage add-ons ↗</a>{/if}</div></div></section>
@@ -36,7 +38,7 @@
     {#if !user}<h3>Keep your finds together.</h3><p>Download add-ons while signed in to remember them here and use their items in your crafting recipes.</p>{:else if !downloads.length}<h3>No downloads yet.</h3><p>Add-ons you download while signed in will appear here.</p>{:else}<ul class="account-downloads">{#each downloads as addon}{@const status=downloadStatus(addon,listings,checked)}<li><div><strong>{addon.name}</strong><small>Version {addon.version} · {addon.items.length} items · {new Date(addon.downloadedAt).toLocaleDateString()}</small></div><span class="download-status" class:account-warning={status.kind==='update'}>{status.label}</span>{#if addonLink(addon.listingId)}<a class="tool" href={addonLink(addon.listingId)}>{status.kind==='update'?'View update →':'View add-on →'}</a>{/if}<details><summary>Included items</summary><ul>{#each addon.items as item}<li>{item.name}</li>{/each}</ul></details></li>{/each}</ul>{/if}
     {#if updateError}<p role="status">{updateError}</p>{/if}<a class="tool" href="#addons">Browse add-ons →</a><p class="account-small">Saved for your account in this browser. This list does not detect what is installed in MO2 or sync between devices.</p>
    </div></section>
-   {#if user?.moderator}<section class="account-panel account-admin"><h2>Administration <span>Maintainer only</span></h2><div class="account-section-body"><p>Review public add-ons, manage unwanted content and select additions for a future mod update.</p><div class="account-actions"><button class="tool" onclick={()=>window.Site.addons('moderation')}>Manage public add-ons</button><button class="tool" onclick={()=>window.Site.addons('selections')}>Next mod update</button><button class="tool" onclick={()=>window.ZonebenchAccount.editText()}>Edit site text</button></div><p class="account-small">Publishing and moderation changes remain disabled in this preview. Use the live site to apply changes.</p></div></section>{/if}
+   {#if user?.moderator}<section class="account-panel account-admin"><h2>Administration <span>Maintainer only</span></h2><div class="account-section-body"><p>Review public add-ons, manage unwanted content and select additions for a future mod update.</p><div class="account-actions"><button class="tool" onclick={()=>window.Site.addons('moderation')}>Manage public add-ons</button><button class="tool" onclick={()=>window.Site.addons('selections')}>Next mod update</button><button class="tool" onclick={()=>window.ZonebenchAccount.editText()}>Edit site text</button></div>{#if preview}<p class="account-small">Publishing and moderation changes remain disabled in this preview. Use the live site to apply changes.</p>{/if}</div></section>{/if}
    <section class="account-reset" aria-label="Reset item customizations" use:resetPanel></section>
   </div>
  </div>

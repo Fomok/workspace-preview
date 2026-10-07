@@ -14,7 +14,7 @@ function shell(){
  const legacy=editing.includes(TAB),flow=['editor','create','builder','addonexport','editchoice','itemlibrary','share'].includes(TAB),isEditor=legacy||flow;document.body.classList.toggle('editor-flow',flow);document.body.classList.toggle('site-page',!isEditor);document.body.classList.toggle('home-page',TAB==='home');document.body.classList.toggle('introduction-page',TAB==='introduction');
  document.body.classList.toggle('addons-page',TAB==='catalog');document.body.classList.toggle('focused-editor',!!root.EditorLibrary?.isFocused(TAB));
  if(location.hash!==route(TAB))history.replaceState({},'',route(TAB));
- document.title=(TAB==='home'?'Squared Away':TAB)+' | ZoneBench Preview';
+ document.title=(TAB==='home'?'Squared Away':TAB)+' | ZoneBench';
  root.ZonebenchShell?.({tab:TAB,editor:isEditor,tools:legacy||TAB==='builder'||TAB==='addonexport'||TAB==='share',sections:legacy&&!root.EditorLibrary?.isFocused(TAB),version:DB?.modVersion,tabs:TABS.filter(([key])=>!["catalog","account","help"].includes(key)).map(([key,label])=>({key,label,count:DB[key]?.length||0})),unread:PatchNotes.unread()});
 }
 function heading(parent,kicker,title,copy){parent.appendChild(n('p','eyebrow',kicker));parent.appendChild(n('h1',null,title));if(copy)parent.appendChild(n('p','page-lead',copy));}

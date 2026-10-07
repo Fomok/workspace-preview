@@ -2,7 +2,7 @@
  import {onMount} from 'svelte';
  import release from '../editor-release.json';
  let visible=$state(false),newBuild=$state(false),refreshing=$state(false),error=$state('');
- const key='zonebench.preview.editor-update.read';
+ const key=import.meta.env.BASE_URL.includes('preview')?'zonebench.preview.editor-update.read':'zonebench.editor-update.read';
  onMount(()=>{
   try{visible=Number(localStorage.getItem(key)||0)<release.revision;}catch{visible=true;}
   let stopped=false,busy=false;

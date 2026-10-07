@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   test:
-    if: github.repository == 'Fomok/zonebench-preview'
+    if: (github.repository == 'Fomok/zonebench-preview' || github.repository == 'Fomok/zonebench')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,12 +22,14 @@ jobs:
       - run: npm run check
       - run: npm test
       - run: npm run build
+        env:
+          ZONEBENCH_TARGET: ${{ github.repository == 'Fomok/zonebench' && 'live' || 'preview' }}
       - uses: actions/upload-pages-artifact@v3
-        if: github.repository == 'Fomok/zonebench-preview' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        if: (github.repository == 'Fomok/zonebench-preview' || github.repository == 'Fomok/zonebench') && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         with:
           path: dist
   deploy:
-    if: github.repository == 'Fomok/zonebench-preview' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    if: (github.repository == 'Fomok/zonebench-preview' || github.repository == 'Fomok/zonebench') && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: test
     runs-on: ubuntu-latest
     permissions:

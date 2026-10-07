@@ -1,7 +1,7 @@
 {
-  "revision": 1,
+  "revision": 2,
   "exportRevision": 1,
-  "title": "Editor updated",
-  "message": "Crafting, repair and dismantling now use searchable database icons. Browser update handling has also been fixed.",
+  "title": "Welcome to the new ZoneBench",
+  "message": "A redesigned editor, guided item builder, searchable database parts and independent add-on downloads are now available. Use Squared Away 2.0.4 for independent add-ons.",
   "requiresRedownload": false
 }

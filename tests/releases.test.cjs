@@ -37,3 +37,10 @@ test('optional Bodycam engine never replaces or invalidates the standard engine'
  extra.name='Squared-Away-Engine-Bodycam-DX11-AVX.zip';selected=c.Releases.pick(r);assert.equal(selected.engine.name,r.assets[1].name);assert.equal(selected.bodycam.name,extra.name);
  extra.browser_download_url='https://untrusted.example/engine.zip';assert.equal(c.Releases.pick(r).bodycam,null);
 });
+
+test('2.0.4 reuses the explicitly compatible 2.0.3 engines',async()=>{
+ const old=fixture('v2.0.3',false,'Squared.Away.-.2.0.3.zip','Squared.Away.-.2.0.3.Engine.-.All.DX.zip');
+ const latest={tag_name:'v2.0.4',name:'Squared Away 2.0.4',draft:false,assets:[{name:'Squared.Away.-.2.0.4.zip',browser_download_url:base+'v2.0.4/Squared.Away.-.2.0.4.zip'}]};
+ const context=vm.createContext({URL,AbortSignal,fetch:async()=>({ok:true,json:async()=>[latest,old]})});vm.runInContext(fs.readFileSync('web/src/releases.js','utf8'),context);
+ const result=await context.Releases.load();const release=result.items.find(r=>r.tag==='v2.0.4');assert(release);assert.match(release.engine.browser_download_url,/v2.0.3/);assert.match(release.mod.browser_download_url,/v2.0.4/);
+});

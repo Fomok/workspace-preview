@@ -1,4 +1,4 @@
-const prefix='zonebench.preview.downloads.v1.';
+const prefix=import.meta.env?.BASE_URL==='/zonebench/'?'zonebench.downloads.v1.':'zonebench.preview.downloads.v1.';
 const validId=x=>typeof x==='string'&&/^[a-z0-9_-]+$/i.test(x);
 export function downloadedAddons(user,storage=globalThis.localStorage){
  if(!user?.id)return [];

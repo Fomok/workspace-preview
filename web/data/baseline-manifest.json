@@ -1,5 +1,5 @@
 {
-  "baseline": "squared-away-2.0.3",
+  "baseline": "squared-away-2.0.4",
   "modVersion": "2.0.3",
   "engineCommit": "aee0a6ad67c4a25b4d91651d45ce03ff8d7e68f9",
   "sourceArchive": "Squared.Away.-.2.0.3.zip",
@@ -50,7 +50,8 @@
     "configs/items/trade/mod_trade_stalker_loris_amp.ltx": "badaf720ef264c8da46946c7403822e8f9287307e83e728a677503f0f5a67753",
     "configs/items/trade/mod_trade_stalker_nimble_amp.ltx": "5ff56dda2342c71cd5705a04cb052640a19caf914949f19f0cd33f7afd226a69",
     "configs/items/trade/mod_trade_stalker_owl_amp.ltx": "55feb799806ad86d4ba23aeec3cf7ffbeb6fe8c347b7caf1ddc2872cb3b544e5",
-    "configs/items/trade/mod_trade_stalker_sidorovich_amp.ltx": "6964d142444f5dfaf2ff8921673eeda1104f7f688daaba09347e1ae4a944e3b7"
+    "configs/items/trade/mod_trade_stalker_sidorovich_amp.ltx": "6964d142444f5dfaf2ff8921673eeda1104f7f688daaba09347e1ae4a944e3b7",
+    "configs/sqa_addons.ltx": "cf7887049f05b54a5018e70ca2a451d2efd7490952d1e0277103afb6fd8a8d9e"
   },
   "models": {
     "meshes/squared_away/box_shared.ogf": "41b7bf1b41ee352d6cd51f7e7c26ff9fabaa80c64cfc24172fbbf82096f2d003",

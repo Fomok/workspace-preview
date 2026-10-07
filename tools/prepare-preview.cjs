@@ -4,6 +4,7 @@ fs.mkdirSync(out,{recursive:true});fs.cpSync(path.join(root,'web'),out,{recursiv
 // Pixel-identical, losslessly compressed assets used only by the preview.
 fs.cpSync(path.join(root,'preview-assets'),out,{recursive:true});
 function edit(file,fn){const p=path.join(out,file);fs.writeFileSync(p,fn(fs.readFileSync(p,'utf8')));}
+if(process.env.ZONEBENCH_TARGET!=='live'){
 edit('src/editor.js',s=>s.replace('"zonebench-web-v1"','"zonebench-svelte-preview-v1"'));
 edit('src/patch-notes.js',s=>s.replace("'zonebench.patchnotes.read'","'zonebench.preview.patchnotes.read'"));
 edit('src/intro.js',s=>s.replace(/const key=([^;]+);/,"const key='zonebench.preview.intro';"));
@@ -15,3 +16,6 @@ edit('src/community-client.js',s=>{
  return s;
 });
 console.log('Preview assets prepared with isolated editor storage and read-only community access.');
+
+}
+if(process.env.ZONEBENCH_TARGET==='live'){function rewrite(dir){for(const e of fs.readdirSync(dir,{withFileTypes:true})){const p=path.join(dir,e.name);if(e.isDirectory())rewrite(p);else if(/\.(css|js|json|svg|html)$/.test(p)){const s=fs.readFileSync(p,'utf8');if(s.includes('/zonebench-preview/'))fs.writeFileSync(p,s.replaceAll('/zonebench-preview/','/zonebench/'));}}}rewrite(out);}
