@@ -2755,12 +2755,9 @@ function defaultCond(){
     veteran:[10,35],expert:[15,40],master:[20,45],legend:[25,55]};
 }
 
-/* WHAT THE COLUMN SHOWS. The bag panel is a fixed slice of the actor
-   menu and a cell is the player's own icon size, so seven across is
-   what the standard layout has room for. A pack wider than this is not
-   refused - the game keeps the cells and draws them narrower - but it
-   will not look like what was typed, so the page says so. */
-const PACK_ROOM = 7;
+/* The current smaller inventory cells fit eleven columns. Wider shapes
+   retain their capacity but cannot be previewed at their requested width. */
+const PACK_ROOM = 11;
 /* GAMMA'S OWN FIVE, in the order Craft and Repair Overhaul builds them
    - each one made out of the one above it. Offered as suggestions: the
    field takes anything typed into it, because the interesting case is

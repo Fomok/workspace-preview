@@ -14,7 +14,7 @@ const text=f=>new TextDecoder().decode(f.bytes);
 function mixed(){const a=setup(),icon=a.r.icon;
  a.db.boxes.push({...JSON.parse(JSON.stringify(a.seed.boxes[0])),id:'custom_box',new:true,name:'Box',descr:'',takes:'medical_rule',kg:null,slots:[{c:1,r:1,w:2,h:2}],inw:3,inh:3,icon,shelves:{}});
  a.db.pouches.push({...JSON.parse(JSON.stringify(a.seed.pouches[0])),id:'custom_pouch',new:true,name:'Pouch',descr:'',icon,grants:{'2x2':0,'3x1':2,'2x1':0,'1x1':0}});
- a.db.packs=[{id:'custom_pack',new:true,newItem:true,parent:'equ_military_pack',size:'12x7',name:'Backpack',descr:'',icon,cellw:2,cellh:3,weight:2,cost:6000,craft:{cat:1,kit:1,book:'recipe_basic_1',parts:[['custom_pouch',1]]}}];
+ a.db.packs=[{id:'custom_pack',new:true,newItem:true,parent:'equ_military_pack',size:'12x11',name:'Backpack',descr:'',icon,cellw:2,cellh:3,weight:2,cost:6000,craft:{cat:1,kit:1,book:'recipe_basic_1',parts:[['custom_pouch',1]]}}];
  a.db.families={medical_rule:{kinds:['i_medical'],also:['my_new_rig'],never:['medkit_army'],rigs:true,no:'Medical kit only'}};
  return a;
 }
@@ -29,7 +29,7 @@ test('mixed add-ons define only their own items, rules and backpack sizes',()=>{
  assert.match(system,/amp_box_slots\s*=\s*1,1,2,2/);assert(system.includes('['+ids.packs+']:equ_military_pack'));
  const rule=text(p.files.find(f=>f.name.includes('/mod_amp_boxes_')));
  assert(rule.includes('[amp_box_'+ids.boxes+'_rules]'));assert(rule.includes(ids.rigs));assert(!rule.includes('[amp_box_medical_rule]'));
- const packs=text(p.files.find(f=>f.name.includes('/mod_zzz_grid_packs_')));assert.equal(packs.trim(),'![grid_pack_section]\r\n'+ids.packs+' = 12x7');
+ const packs=text(p.files.find(f=>f.name.includes('/mod_zzz_grid_packs_')));assert.equal(packs.trim(),'![grid_pack_section]\r\n'+ids.packs+' = 12x11');
  const registry=text(p.files.find(f=>f.name.includes('/mod_sqa_addons_')));assert(registry.includes('![pouches]\r\n'+ids.pouches+' = true'));
  const craft=text(p.files.find(f=>f.name.includes('/mod_craft_')));
  const category1=craft.split('![1]')[1].split('![')[0],category2=craft.split('![2]')[1];
