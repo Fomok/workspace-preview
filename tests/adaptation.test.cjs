@@ -1,5 +1,5 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),crypto=require('node:crypto');
-function setup(kind,own={}){const c=vm.createContext({console,TextEncoder,TextDecoder,Uint8Array,Uint32Array,Blob,crypto});for(const f of ['src/emit.js','src/archive.js','data/baseline.js','src/compatibility.js','src/independent-addon.js','src/adaptation-export.js'])vm.runInContext(fs.readFileSync('web/'+f,'utf8'),c);const seed=vm.runInContext('SEED',c),db=JSON.parse(JSON.stringify(seed));let item=JSON.parse(JSON.stringify(kind==='packs'?{size:'10x7',cellw:2,cellh:3}:seed[kind][0]));Object.assign(item,{id:'external_item',name:'External gear',adopt:true,own});delete item.newItem;db[kind]=[item];return {c,seed,db,item,plan:()=>c.AdaptationExport.plan(db,seed,kind,item)};}
+function setup(kind,own={}){const c=vm.createContext({console,TextEncoder,TextDecoder,Uint8Array,Uint32Array,Blob,crypto});for(const f of ['src/emit.js','src/archive.js','data/baseline.js','src/compatibility.js','src/independent-addon.js','src/adaptation-export.js'])vm.runInContext(fs.readFileSync('web/'+f,'utf8'),c);const seed=vm.runInContext('SEED',c),db=JSON.parse(JSON.stringify(seed));let item=JSON.parse(JSON.stringify(kind==='packs'?{size:'10x7',cellw:2,cellh:3}:seed[kind][0]));Object.assign(item,{id:'external_item',name:'External gear',adopt:true,new:true,own});delete item.newItem;db[kind]=[item];return {c,seed,db,item,plan:()=>c.AdaptationExport.plan(db,seed,kind,item)};}
 const texts=p=>p.files.map(f=>new TextDecoder().decode(f.bytes)).join('\n');
 test('adapted rigs keep original identity and picture while adding current engine storage',()=>{const a=setup('rigs'),p=a.plan(),s=texts(p);assert.match(s,/!\[external_item\]/);assert.match(s,/class = II_CONTR/);assert.match(s,/slot = 15/);assert(!s.includes('icons_texture'));assert(!s.includes('inv_name'));assert(!p.files.some(f=>f.name.includes('mod_sqa_addons')));assert.equal(p.manifest.sourceSection,'external_item');assert.deepEqual(a.plan().manifest.files,p.manifest.files);});
 test('NPC drop registration is explicit, isolated and supports rigs and pouches',()=>{for(const kind of ['rigs','pouches']){const a=setup(kind,{drops:true}),p=a.plan();assert(p.files.some(f=>f.name.includes('mod_sqa_addons')));assert.match(texts(p),new RegExp('!\\['+kind+'\\]'));const b=setup(kind,{drops:true}).plan();assert(!p.files.some(f=>b.files.some(g=>f.name===g.name)));}});
@@ -28,5 +28,18 @@ test('package rejects empty selection, duplicate entries and colliding adaptatio
 test('focused review and validation stay in dialogs and package control is available',()=>{
  const view=fs.readFileSync('web/src/editor-view.js','utf8'),library=fs.readFileSync('web/src/editor-library.js','utf8');
  assert(view.includes('EditorLibrary.inspect(tab)'));assert(!view.includes('button.onclick=()=>Site.go(tab)'));
- assert(view.includes('EditorLibrary.packageDialog()'));assert(library.includes("d.showModal()"));
+ assert(view.includes('EditorLibrary.saveAdaptation()'));assert(library.includes("d.showModal()"));
+});
+
+test('adapted library excludes baseline backpacks and unsaved drafts but keeps previous user adaptations',()=>{
+ const a=setup('rigs'),db=JSON.parse(JSON.stringify(a.seed));db.rigs.push(a.item);
+ const draft=JSON.parse(JSON.stringify(a.item));draft.id='draft_rig';draft.adaptationSaved=false;db.rigs.push(draft);
+ const saved=a.c.AdaptationExport.entries(db,a.seed);
+ assert.deepEqual(Array.from(saved,e=>e.item.id),['external_item']);
+ assert.deepEqual(Array.from(a.c.AdaptationExport.entries(db,a.seed,{includeDrafts:true}),e=>e.item.id),['external_item','draft_rig']);
+ assert.throws(()=>a.c.AdaptationExport.packagePlan(db,a.seed,[{kind:'rigs',item:draft}],{name:'Test',version:'1'}),/Save this adaptation/);
+ draft.adaptationSaved=true;
+ assert.equal(a.c.AdaptationExport.entries(db,a.seed).length,2);
+ const section=Object.keys(a.c.EMIT.readPacks(a.seed.files['configs/items/settings/zzz_grid_packs.ltx']).sec)[0];const base={id:section,adopt:true};db.packs=[base];assert(section,'baseline config contains backpacks');
+ assert.throws(()=>a.c.AdaptationExport.packagePlan(db,a.seed,[{kind:'packs',item:base}],{name:'Test',version:'1'}),/Save this adaptation/);
 });

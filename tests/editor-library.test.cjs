@@ -2,6 +2,7 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),vm=requir
 function setup(){
  const DB={rigs:[{id:'base',name:'Base rig'}],boxes:[{id:'box',takes:'meds'}],pouches:[],packs:[],items:[],families:{meds:{allow:['old']}}};
  const context=vm.createContext({DB,SEED:JSON.parse(JSON.stringify(DB)),SEL:{},Workbench:{status:()=> 'Default',record(){}},ZB:{validateAddon(pack){if(!pack.items?.length)throw Error('Invalid pack');}},CommunityDownload:{identity:async x=>'stable-'+x},touch(){},Site:{go(tab){context.tab=tab;}}});
+ vm.runInContext(fs.readFileSync('web/src/emit.js','utf8'),context);vm.runInContext(fs.readFileSync('web/src/adaptation-export.js','utf8'),context);
  vm.runInContext(fs.readFileSync('web/src/editor-library.js','utf8'),context);return {db:DB,context,library:context.EditorLibrary};
 }
 test('item source lists separate baseline and local creations; focused selection stays on its item',()=>{
@@ -46,4 +47,13 @@ test('focused add-on export retains the listing namespace and excludes unrelated
  assert.equal(exported.independentAddon.version,'1.2');
  assert.deepEqual(Array.from(exported.independentAddon.excluded),['other-id']);
  assert.equal(db.independentAddon,undefined);
+});
+
+test('adaptations have their own source and focused validation never checks unrelated defaults',()=>{
+ const {db,context,library}=setup();const item={id:'zona_rig',adopt:true,adaptationId:'adaptation',name:'ZONA rig'};db.rigs.push(item);
+ assert.equal(library.entries('addons').length,0);assert.equal(library.entries('adaptations').length,1);
+ library.open(library.entries('adaptations')[0]);assert.equal(library.route(),'#editor/edit/adaptations/rigs/zona_rig');
+ context.checkFindings=()=>{throw Error('Unrelated project validation called');};context.esc=x=>x;
+ context.AdaptationExport.plan=(project,seed,kind,current)=>{assert.equal(current,item);};
+ assert.equal(library.focusedFindings().bad.length,0);
 });

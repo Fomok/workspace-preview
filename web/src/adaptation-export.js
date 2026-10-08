@@ -79,13 +79,21 @@ async function build(db,seed,kind,item){
  return {blob:BUILD.zip(p.files),manifest:p.manifest};
 }
 async function download(db,seed,kind,item){const result=await build(db,seed,kind,item);touch();const url=URL.createObjectURL(await result.blob),link=document.createElement('a');link.href=url;link.download=root.ZonebenchAddonFilename((item.name||item.id)+' adaptation','1.0');document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);}
-function entries(db){return kinds.flatMap(kind=>(db[kind]||[]).filter(item=>item.adopt).map(item=>({kind,item})));}
+function isUserAdaptation(seed,kind,item){
+ if(!item.adopt)return false;
+ const baseline=Array.isArray(seed[kind])?seed[kind]:[];
+ if(baseline.some(base=>base.id===item.id))return false;
+ if(kind==='packs'&&EMIT.readPacks(seed.files?.['configs/items/settings/zzz_grid_packs.ltx']||'').sec[item.id]!==undefined)return false;
+ return !!(item.adaptationId||item.new);
+}
+function entries(db,seed,{includeDrafts=false}={}){return kinds.flatMap(kind=>(db[kind]||[]).filter(item=>isUserAdaptation(seed,kind,item)&&(includeDrafts||item.adaptationSaved!==false)).map(item=>({kind,item})));}
 function packagePlan(db,seed,selected,options={}){
  if(!selected.length)throw Error('Select at least one adapted item.');
  const name=String(options.name||'').trim(),version=String(options.version||'').trim();
  if(!name||!version)throw Error('Enter a package name and version.');
  const seen=new Set(),paths=new Set(),plans=[];
  for(const entry of selected){
+  if(!isUserAdaptation(seed,entry.kind,entry.item)||entry.item.adaptationSaved===false)throw Error('Save this adaptation to the adapted items library first.');
   if(!(db[entry.kind]||[]).includes(entry.item))throw Error('Selected item is no longer in this project.');
   if(seen.has(entry.item.id))throw Error('The same source item is selected more than once.');seen.add(entry.item.id);
   const p=plan(db,seed,entry.kind,entry.item);
@@ -101,5 +109,5 @@ async function buildPackage(db,seed,selected,options){
  return {blob:BUILD.zip(files),manifest:result.manifest};
 }
 async function downloadPackage(db,seed,selected,options){const result=await buildPackage(db,seed,selected,options);touch();const url=URL.createObjectURL(await result.blob),link=document.createElement('a');link.href=url;link.download=root.ZonebenchAddonFilename(result.manifest.name,result.manifest.addonVersion);document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);}
-root.AdaptationExport={plan,build,download,entries,packagePlan,buildPackage,downloadPackage};
+root.AdaptationExport={plan,build,download,isUserAdaptation,entries,packagePlan,buildPackage,downloadPackage};
 })(globalThis);

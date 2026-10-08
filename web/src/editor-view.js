@@ -66,15 +66,15 @@ function list(L){
 function focused(P,it){
  if(!root.EditorLibrary?.isFocused(TAB))return;
  const breadcrumb=document.createElement('div');breadcrumb.className='focused-breadcrumb';
- const back=document.createElement('button');back.className='tool';back.textContent='← '+(EditorLibrary.scope==='mod'?'Mod items':'Optional add-ons');back.onclick=()=>EditorLibrary.choose(EditorLibrary.scope);
+ const back=document.createElement('button');back.className='tool';back.textContent='← '+(EditorLibrary.scope==='mod'?'Mod items':EditorLibrary.scope==='adaptations'?'Adapted items library':'Optional add-ons');back.onclick=()=>EditorLibrary.choose(EditorLibrary.scope);
  const label=document.createElement('span');label.textContent='ADVANCED ITEM EDITOR / '+({rigs:'RIG',boxes:'CONTAINER',pouches:'POUCH',packs:'BACKPACK',items:'ITEM'}[TAB]);breadcrumb.append(back,label);
  const header=document.createElement('div');header.className='focused-heading';
  const title=P.querySelector('h1'),tools=P.querySelector('.item-change-tools');
  if(title){title.textContent=EditorLibrary.label(it);header.appendChild(title);}if(tools)header.appendChild(tools);
  const actions=document.createElement('div');actions.className='focused-actions';
- for(const [text,tab] of [['Review changes','changes'],['Check project','check']]){const button=document.createElement('button');button.className='tool';button.textContent=text;button.onclick=()=>EditorLibrary.inspect(tab);actions.appendChild(button);}
+ for(const [text,tab] of [['Review changes','changes'],[EditorLibrary.scope==='adaptations'?'Check adaptation':'Check project','check']]){const button=document.createElement('button');button.className='tool';button.textContent=text;button.onclick=()=>EditorLibrary.inspect(tab);actions.appendChild(button);}
  const download=document.createElement('button');download.className='tool primary';download.textContent=it.adopt?'Download compatibility patch':'Export';download.onclick=async()=>{download.disabled=true;try{await EditorLibrary.exportFocused();}catch(error){let message=header.querySelector('[role=alert]');if(!message){message=document.createElement('p');message.setAttribute('role','alert');header.appendChild(message);}message.textContent=error.message;}finally{download.disabled=false;}};actions.appendChild(download);
- if(it.adopt){const pack=document.createElement('button');pack.className='tool';pack.textContent='Download adaptation package';pack.onclick=()=>EditorLibrary.packageDialog();actions.appendChild(pack);}
+ if(EditorLibrary.scope==='adaptations'){const save=document.createElement('button');save.className='tool';save.textContent=it.adaptationSaved===false?'Add to adapted items library':'Save to adapted items library';save.onclick=()=>{try{EditorLibrary.saveAdaptation();}catch(error){let message=header.querySelector('[role=alert]');if(!message){message=document.createElement('p');message.setAttribute('role','alert');header.appendChild(message);}message.textContent=error.message;}};actions.appendChild(save);}
  if(typeof COMMUNITY_EDIT!=='undefined'&&COMMUNITY_EDIT){const backUpdate=document.createElement('button');backUpdate.className='tool';backUpdate.textContent='Back to add-on update';backUpdate.onclick=()=>Site.go('catalog');actions.prepend(backUpdate);}
  header.appendChild(actions);P.prepend(breadcrumb,header);
 }
