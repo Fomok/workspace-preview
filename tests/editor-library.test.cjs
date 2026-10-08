@@ -57,3 +57,22 @@ test('adaptations have their own source and focused validation never checks unre
  context.AdaptationExport.plan=(project,seed,kind,current)=>{assert.equal(current,item);};
  assert.equal(library.focusedFindings().bad.length,0);
 });
+
+test('removing an adaptation erases its entry without creating a game deletion override',()=>{
+ const {db,library}=setup();const item={id:'zona_pack',adopt:true,adaptationId:'id',name:'Pack'};db.packs=[item];db.packEdited={zona_pack:true};
+ library.removeEntry(library.entries('adaptations')[0]);
+ assert.equal(db.packs.length,0);assert.equal(db.packEdited.zona_pack,undefined);assert.equal(db.removed.length,0);assert.equal(library.entries('adaptations').length,0);
+ assert.throws(()=>library.removeEntry(library.entries('mod')[0]),/Built-in/);
+});
+test('removing a downloaded working copy hides its remote row without deleting other items',()=>{
+ const {db,library}=setup();const source={id:'listing',originalId:'source_rig'};db.rigs.push({id:'downloaded',communitySource:source});
+ library.removeEntry(library.entries('addons')[0]);assert.equal(db.rigs.length,1);
+ const row={kind:'rigs',id:'source_rig',result:{listing:{id:'listing'}}};assert(library.isHidden(row));assert(!library.isHidden({...row,id:'other'}));
+});
+test('library package exports exactly the selected local items using its own stable namespace',()=>{
+ const {db,context,library}=setup();const first={id:'one',addonItemId:'one'},second={id:'two',addonItemId:'two'};db.rigs.push(first,second);
+ context.AddonExport={ensure(){},custom:project=>project.rigs.filter(x=>x.addonItemId)};
+ const opts={id:'package-id',name:'Mixed gear',version:'1.2'},project=library.addonPackageProject([second],opts);
+ assert.deepEqual(Array.from(project.independentAddon.excluded),['one']);assert.equal(project.independentAddon.id,'package-id');assert.equal(db.independentAddon,undefined);
+ assert.throws(()=>library.addonPackageProject([],opts),/Select/);assert.throws(()=>library.addonPackageProject([db.rigs[0]],opts),/custom rigs/);
+});

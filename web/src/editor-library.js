@@ -23,11 +23,11 @@ function select(source,kind,key){scope=['addons','adaptations'].includes(source)
 function resolve(){if(!focused)return null;const item=(DB[focused.kind]||[]).find(x=>token(x)===focused.key);if(item)SEL[focused.kind]=item.id;return item;}
 function open(entry,source=scope){if(AdaptationExport.isUserAdaptation(SEED,entry.kind,entry.item))source='adaptations';select(source,entry.kind,entry.key||token(entry.item));resolve();Site.go(entry.kind);}
 function route(){return focused?'#editor/edit/'+scope+'/'+focused.kind+'/'+encodeURIComponent(focused.key):'#editor/library/'+scope;}
-async function importPack(result,kind,id){
+async function importPack(result,kind,id,navigate=true){
  ZB.validateAddon(result.pack);
  const selected=result.pack.items.find(x=>x.kind===kind&&x.item.id===id);if(!selected)throw Error('This item is no longer available in the add-on.');
  const existing=DB[kind]?.find(x=>x.communitySource?.id===result.listing.id&&x.communitySource.originalId===id);
- if(existing){open({kind,item:existing},'addons');return;}
+ if(existing){if(navigate)open({kind,item:existing},'addons');return existing;}
  const used=new Set(kinds.flatMap(k=>(DB[k]||[]).map(x=>x.id))),mapping=new Map(),incoming=[];
  for(const entry of result.pack.items){
   const old=DB[entry.kind]?.find(x=>x.communitySource?.id===result.listing.id&&x.communitySource.originalId===entry.item.id);
@@ -45,7 +45,7 @@ async function importPack(result,kind,id){
  }
  for(const entry of incoming){const item=entry.item;if(item.craft?.parts)item.craft.parts=item.craft.parts.map(([part,count])=>[mapping.get(part)||part,count]);if(familyMap.has(item.takes))item.takes=familyMap.get(item.takes);}
  Workbench.record();DB.families=families;for(const entry of incoming)(DB[entry.kind]||(DB[entry.kind]=[])).push(entry.item);
- touch();const item=DB[kind].find(x=>x.id===mapping.get(id));open({kind,item},'addons');
+ touch();const item=DB[kind].find(x=>x.id===mapping.get(id));if(navigate)open({kind,item},'addons');return item;
 }
 function dialog(title){
  const d=document.createElement('dialog');d.className='addon-dialog';d.setAttribute('aria-label',title);
@@ -81,6 +81,41 @@ function packageDialog(){
  const status=document.createElement('p');status.setAttribute('role','status');const button=document.createElement('button');button.className='tool primary';button.textContent='Download package ZIP';body.append(button,status);
  button.onclick=async()=>{button.disabled=true;status.textContent='Checking and packing selected items…';try{save();await AdaptationExport.downloadPackage(DB,SEED,checks.filter(x=>x.check.checked).map(x=>x.entry),DB.adaptationPackage);status.textContent='Package downloaded.';}catch(e){status.textContent=e.message;}finally{button.disabled=false;}};
 }
+function remoteKey(row){const source=row.item?.communitySource;return source?source.id+'/'+row.kind+'/'+source.originalId:row.result?row.result.listing.id+'/'+row.kind+'/'+row.id:row.key;}
+function isHidden(row){return (DB.libraryHidden||[]).includes(remoteKey(row));}
+function removeEntry(row){
+ if(row.local&&(Workbench.isBaseline?.(row.kind,row.item.id)||(SEED[row.kind]||[]).some(x=>x.id===row.item.id)))throw Error('Built-in mod items cannot be deleted from this library.');
+ Workbench.record();
+ if(!row.local||row.item.communitySource){DB.libraryHidden=[...new Set([...(DB.libraryHidden||[]),remoteKey(row)])];}
+ if(row.local){const list=DB[row.kind]||[],index=list.indexOf(row.item);if(index<0)throw Error('This item is no longer in the library.');list.splice(index,1);
+  if(DB.packEdited)delete DB.packEdited[row.item.id];
+  DB.removed=(DB.removed||[]).filter(x=>!(x.kind===row.kind&&x.id===row.item.id));
+  if(SEL[row.kind]===row.item.id)SEL[row.kind]=list[0]?.id;
+  if(focused?.kind===row.kind&&focused.key===token(row.item))focused=null;
+ }
+ touch();
+}
+function addonPackageProject(selected,options){
+ if(!selected.length)throw Error('Select at least one item.');
+ if(!String(options.name||'').trim()||!String(options.version||'').trim())throw Error('Enter a package name and version.');
+ AddonExport.ensure(DB,SEED);const allowed=new Set(AddonExport.custom(DB,SEED));
+ if(selected.some(item=>!allowed.has(item)))throw Error('This package supports custom rigs, containers, pouches and backpacks. Adaptations belong in the adapted items library.');
+ const project=clone(DB),ids=new Set(selected.map(item=>item.addonItemId));
+ project.independentAddon={id:options.id,name:options.name.trim(),version:options.version.trim(),excluded:AddonExport.custom(project,SEED).filter(item=>!ids.has(item.addonItemId)).map(item=>item.addonItemId)};
+ return project;
+}
+function addonPackageDialog(rows){
+ const {body}=dialog('Create an add-on package'),all=rows.filter(row=>['rigs','boxes','pouches','packs'].includes(row.kind)&&!row.item.adopt&&(row.local||row.result));
+ if(!all.length){body.textContent='Create or import an add-on item first.';return;}
+ DB.libraryPackage=DB.libraryPackage||{id:crypto.randomUUID(),name:'My add-on package',version:'1.0',excluded:[]};const settings=DB.libraryPackage;
+ const field=(text,value)=>{const label=document.createElement('label');label.textContent=text;const input=document.createElement('input');input.value=value;label.appendChild(input);body.appendChild(label);return input;};
+ const name=field('Package name',settings.name),version=field('Version',settings.version),checks=[];
+ const note=document.createElement('p');note.textContent='Choose items for one new add-on ZIP. Include custom ingredients used by their recipes too. This package has its own item IDs; it does not replace the source add-ons.';body.appendChild(note);
+ for(const row of all){const labelNode=document.createElement('label');labelNode.style.display='block';const check=document.createElement('input');check.type='checkbox';check.checked=!(settings.excluded||[]).includes(row.key);labelNode.append(check,document.createTextNode(' '+label(row.item)+' · '+row.kind));body.appendChild(labelNode);checks.push({row,check});}
+ const save=()=>{Object.assign(settings,{name:name.value,version:version.value,excluded:checks.filter(x=>!x.check.checked).map(x=>x.row.key)});touch();};body.addEventListener('change',save);
+ const status=document.createElement('p');status.setAttribute('role','status');const button=document.createElement('button');button.className='tool primary';button.textContent='Download package ZIP';body.append(button,status);
+ button.onclick=async()=>{button.disabled=true;try{save();const selected=[];for(const {row,check} of checks)if(check.checked)selected.push(row.local?row.item:await importPack(row.result,row.kind,row.id,false));const project=addonPackageProject(selected,settings);const result=await AddonExport.build(project,SEED);touch();const url=URL.createObjectURL(await result.blob),link=document.createElement('a');link.href=url;link.download=root.ZonebenchAddonFilename(settings.name,settings.version);document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);status.textContent='Package downloaded.';}catch(e){status.textContent=e.message;}finally{button.disabled=false;}};
+}
 function saveAdaptation(){const item=resolve();if(!item||!AdaptationExport.isUserAdaptation(SEED,focused.kind,item))throw Error('Choose an adapted item first.');AdaptationExport.plan(DB,SEED,focused.kind,item);item.adaptationSaved=true;touch();choose('adaptations');}
 async function exportFocused(){
  const item=resolve();if(!item)throw Error('Select an item first.');
@@ -94,5 +129,5 @@ async function exportFocused(){
  const result=await AddonExport.build(project,SEED),blob=await result.blob,url=URL.createObjectURL(blob),link=document.createElement('a');
  link.href=url;link.download=root.ZonebenchAddonFilename(project.independentAddon.name,project.independentAddon.version);document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
 }
-root.EditorLibrary={focusedFindings,saveAdaptation,inspect,packageDialog,adapt,label,exportFocused,getFilters:source=>filters[source]||{},saveFilters:(source,value)=>filters[source]=value,entries,choose,select,resolve,open,importPack,route,get scope(){return scope;},get focused(){return focused;},clear(){focused=null;},isFocused:kind=>!!focused&&focused.kind===kind};
+root.EditorLibrary={removeEntry,isHidden,addonPackageDialog,addonPackageProject,focusedFindings,saveAdaptation,inspect,packageDialog,adapt,label,exportFocused,getFilters:source=>filters[source]||{},saveFilters:(source,value)=>filters[source]=value,entries,choose,select,resolve,open,importPack,route,get scope(){return scope;},get focused(){return focused;},clear(){focused=null;},isFocused:kind=>!!focused&&focused.kind===kind};
 })(globalThis);
