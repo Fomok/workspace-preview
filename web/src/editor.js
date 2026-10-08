@@ -788,6 +788,13 @@ function takeover(P, it){
     "Nothing, unless you say so. Every tick here overwrites something the "
     + "other mod decided, so they are all off to begin with."));
   TAKEOVER.forEach(([key,label,why])=>{
+    if(it.adaptationId){
+      if(key==='drops' && TAB==='boxes')return;
+      if(key==='craft' && TAB==='boxes')return;
+      if(key==='repair' && TAB!=='rigs')return;
+      if(key==='drops'){label='Include in Squared Away NPC drops';why='Uses the existing rank and tier settings. Adds this item to the rig or pouch pool; does not change global chances.';}
+    }
+
     /* A CONTAINER STILL HAS NO RECIPE. Rigs derive one from their
        pockets and pouches have an editor of their own; a container is
        neither, so the tick would open a card that does not exist. */
@@ -842,6 +849,8 @@ function shelfCard(P, it){
 
 /* WHAT AN ADOPTED ITEM IS, said once. */
 function adoptNote(P, it, one){
+  if(it.adaptationId){const n=el('div','note');n.textContent='This compatibility patch changes the installed section '+it.id+'. It keeps its artwork and model. Name, price, repair, crafting and trader changes are optional in Advanced settings. The source item must exist; a missing source can stop the game loading. Converted rigs and containers need newly spawned items for testing because their engine class changes.';P.appendChild(n);return;}
+
   /* WHAT IT SAYS HAS TO FOLLOW WHAT IS TICKED. This used to promise
      that their name and price stayed theirs, which stopped being true
      the moment the take-over card grew - and a notice that contradicts
@@ -1406,6 +1415,8 @@ function inheritedDrops(tier, pcol){
   });
 }
 function dropCard(it, tier, pcol){
+  if(it.adaptationId){const c=el('div','card');c.textContent=it.own?.drops?'NPC drops enabled. This item joins the existing '+(TAB==='rigs'?'rig':'pouch')+' tier '+tier+' pool. Drop chances follow Squared Away MCM settings.':'NPC drops are unchanged. Enable Include in Squared Away NPC drops under Advanced settings to add it to the existing pool.';return c;}
+
   const c = el("div","card");
   const own = it.drop != null;
 

@@ -40,7 +40,7 @@ function organize(P,it){
   aside.replaceChildren();const title=document.createElement('h2');title.textContent=root.EditorLibrary?.label(it)||it.name||it.id;aside.appendChild(title);
   const label=document.createElement('p');label.className='eyebrow';label.textContent='INVENTORY PREVIEW';aside.appendChild(label);
   aside.appendChild(fitPreview(it,220,190));
-  const footprint=document.createElement('p');footprint.className='hint';footprint.textContent=(it.cellw||2)+' × '+(it.cellh||2)+' cells in inventory';aside.appendChild(footprint);
+  const footprint=document.createElement('p');footprint.className='hint';footprint.textContent=it.adopt&&!it.own?.look?'Original item artwork and inventory size are preserved.':(it.cellw||2)+' × '+(it.cellh||2)+' cells in inventory';aside.appendChild(footprint);
   if(['rigs','boxes','pouches'].includes(TAB))aside.appendChild(AddonPreview.layoutView({kind:TAB,item:it}));
   Workbench.efficiency(aside,TAB,it);
   if(TAB==='packs'){const shape=EMIT.packSize(it.size)||EMIT.packSize(DB.packDefault);if(shape)aside.appendChild(packPreview(shape));}
@@ -73,7 +73,7 @@ function focused(P,it){
  if(title){title.textContent=EditorLibrary.label(it);header.appendChild(title);}if(tools)header.appendChild(tools);
  const actions=document.createElement('div');actions.className='focused-actions';
  for(const [text,tab] of [['Review changes','changes'],['Check project','check']]){const button=document.createElement('button');button.className='tool';button.textContent=text;button.onclick=()=>Site.go(tab);actions.appendChild(button);}
- const download=document.createElement('button');download.className='tool primary';download.textContent='Export';download.onclick=async()=>{download.disabled=true;try{await EditorLibrary.exportFocused();}catch(error){let message=header.querySelector('[role=alert]');if(!message){message=document.createElement('p');message.setAttribute('role','alert');header.appendChild(message);}message.textContent=error.message;}finally{download.disabled=false;}};actions.appendChild(download);
+ const download=document.createElement('button');download.className='tool primary';download.textContent=it.adopt?'Download compatibility patch':'Export';download.onclick=async()=>{download.disabled=true;try{await EditorLibrary.exportFocused();}catch(error){let message=header.querySelector('[role=alert]');if(!message){message=document.createElement('p');message.setAttribute('role','alert');header.appendChild(message);}message.textContent=error.message;}finally{download.disabled=false;}};actions.appendChild(download);
  if(typeof COMMUNITY_EDIT!=='undefined'&&COMMUNITY_EDIT){const backUpdate=document.createElement('button');backUpdate.className='tool';backUpdate.textContent='Back to add-on update';backUpdate.onclick=()=>Site.go('catalog');actions.prepend(backUpdate);}
  header.appendChild(actions);P.prepend(breadcrumb,header);
 }
