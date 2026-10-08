@@ -8,7 +8,7 @@ function token(item){return item.addonItemId||item.id;}
 function entries(source=scope){return kinds.flatMap(kind=>(DB[kind]||[]).filter(item=>{
  const baseline=Workbench.isBaseline?Workbench.isBaseline(kind,item.id):(SEED[kind]||[]).some(x=>x.id===item.id);
  const adapted=AdaptationExport.isUserAdaptation(SEED,kind,item);
- return source==='adaptations'?adapted:source==='mod'?baseline:(!baseline||!!item.communitySource)&&!adapted;
+ return source==='adaptations'?adapted:source==='mod'?baseline:(!baseline||!!item.communitySource||item.optionalLibrarySaved)&&!adapted;
 }).map(item=>({kind,id:item.id,key:token(item),item,local:true,source:item.communitySource?.name||item.communitySource?.id||(source==='mod'?'Squared Away':source==='adaptations'?'My adaptations':'My creations'),status:Workbench.status(kind,item)})));}
 function adapt(kind,id,name,drops=false){
  if(!['rigs','boxes','pouches','packs'].includes(kind))throw Error('Choose an item type.');
@@ -84,6 +84,7 @@ function packageDialog(){
 function remoteKey(row){const source=row.item?.communitySource;return source?source.id+'/'+row.kind+'/'+source.originalId:row.result?row.result.listing.id+'/'+row.kind+'/'+row.id:row.key;}
 function isHidden(row){return (DB.libraryHidden||[]).includes(remoteKey(row));}
 function removeEntry(row){
+ if(row.local&&row.item.optionalLibrarySaved){Workbench.record();const original=Workbench.baseline?.(row.kind,row.item.id)||(SEED[row.kind]||[]).find(x=>x.id===row.item.id);if(!original)throw Error('Mod default unavailable.');DB[row.kind][DB[row.kind].indexOf(row.item)]=clone(original);if(DB.packEdited)delete DB.packEdited[row.item.id];touch();return;}
  if(row.local&&(Workbench.isBaseline?.(row.kind,row.item.id)||(SEED[row.kind]||[]).some(x=>x.id===row.item.id)))throw Error('Built-in mod items cannot be deleted from this library.');
  Workbench.record();
  if(!row.local||row.item.communitySource){DB.libraryHidden=[...new Set([...(DB.libraryHidden||[]),remoteKey(row)])];}
@@ -104,23 +105,53 @@ function addonPackageProject(selected,options){
  project.independentAddon={id:options.id,name:options.name.trim(),version:options.version.trim(),excluded:AddonExport.custom(project,SEED).filter(item=>!ids.has(item.addonItemId)).map(item=>item.addonItemId)};
  return project;
 }
+function saveModItem(){
+ const item=resolve();if(!item||scope!=='mod')throw Error('Open a mod item first.');
+ Workbench.record();item.optionalLibrarySaved=true;item.modOverrideId=item.modOverrideId||crypto.randomUUID();touch();choose('addons');
+}
+function modOverridePlan(item,reference=id=>id){
+ const kind=kinds.find(k=>(DB[k]||[]).includes(item));if(!kind||!item.optionalLibrarySaved)throw Error('Select a saved mod edit.');
+ const source=clone(item),base=Workbench.baseline?.(kind,item.id)||(SEED[kind]||[]).find(x=>x.id===item.id)||{};
+ const changed=keys=>keys.some(key=>JSON.stringify(item[key])!==JSON.stringify(base[key]));
+ source.adopt=true;source.adaptationId=item.modOverrideId;
+ source.own={size:true,name:changed(['name','descr']),price:changed(['cost','weight']),look:!!item.icon&&changed(['icon','fit','cellw','cellh']),craft:!!item.craft&&changed(['craft']),repair:kind==='rigs'&&changed(['parts','yield','repair','repairBonus','slots']),shelves:changed(['shelves']),drops:false};
+ if(source.craft?.parts)source.craft.parts=source.craft.parts.map(([id,count])=>[reference(id),count]);
+ for(const key of ['parts','yield'])if(Array.isArray(source[key]))source[key]=source[key].map(reference);
+ return AdaptationExport.plan(DB,SEED,kind,source);
+}
+async function buildLibraryPackage(selected,settings){
+ if(!selected.length)throw Error('Select at least one item.');
+ if(!String(settings.name||'').trim()||!String(settings.version||'').trim())throw Error('Enter a package name and version.');
+ const edits=selected.filter(item=>item.optionalLibrarySaved),custom=selected.filter(item=>!item.optionalLibrarySaved),files=[],overrides=[];
+ // Validate every saved edit before building textures or assembling a download.
+ const project=custom.length?addonPackageProject(custom,settings):null,customPlan=project?AddonExport.plan(project,SEED):null;
+ const mapping=new Map((customPlan?.manifest.items||[]).map(x=>[x.sourceId,x.id])),customIds=new Set(AddonExport.custom(DB,SEED).map(x=>x.id));
+ const reference=id=>{if(customIds.has(id)&&!mapping.has(id))throw Error('Select the custom ingredient used by a saved mod edit: '+id);return mapping.get(id)||id;};
+ const plans=edits.map(item=>modOverridePlan(item,reference));
+ if(project){const result=await AddonExport.build(project,SEED);files.push(...result.files.filter(f=>f.name!=='INSTALL.txt'));}
+ for(const plan of plans){await AdaptationExport.materialize(plan);files.push(...plan.files);overrides.push(plan.manifest);}
+ const paths=files.map(f=>f.name);if(new Set(paths).size!==paths.length)throw Error('Package has conflicting filenames.');
+ files.push({name:'library-package.json',bytes:BUILD.utf8(JSON.stringify({name:settings.name,version:settings.version,overrides},null,2))},{name:'INSTALL.txt',bytes:BUILD.utf8('Install below Squared Away and required source add-ons in MO2. Saved mod edits override their original item IDs; custom items use this package namespace. Other patches for the same mod item may conflict. Replace the previous package when updating.\n')});
+ return {blob:BUILD.zip(files),files};
+}
 function addonPackageDialog(rows){
- const {body}=dialog('Create an add-on package'),all=rows.filter(row=>['rigs','boxes','pouches','packs'].includes(row.kind)&&!row.item.adopt&&(row.local||row.result));
+ const {body}=dialog('Create an add-on package'),all=rows.filter(row=>(row.item.optionalLibrarySaved||['rigs','boxes','pouches','packs'].includes(row.kind)&&!row.item.adopt)&&(row.local||row.result));
  if(!all.length){body.textContent='Create or import an add-on item first.';return;}
  DB.libraryPackage=DB.libraryPackage||{id:crypto.randomUUID(),name:'My add-on package',version:'1.0',excluded:[]};const settings=DB.libraryPackage;
  const field=(text,value)=>{const label=document.createElement('label');label.textContent=text;const input=document.createElement('input');input.value=value;label.appendChild(input);body.appendChild(label);return input;};
  const name=field('Package name',settings.name),version=field('Version',settings.version),checks=[];
- const note=document.createElement('p');note.textContent='Choose items for one new add-on ZIP. Include custom ingredients used by their recipes too. This package has its own item IDs; it does not replace the source add-ons.';body.appendChild(note);
+ const note=document.createElement('p');note.textContent='Choose items for one new add-on ZIP. Include custom ingredients used by their recipes too. Custom items get package IDs. Saved mod edits retain their original IDs and override those items.';body.appendChild(note);
  for(const row of all){const labelNode=document.createElement('label');labelNode.style.display='block';const check=document.createElement('input');check.type='checkbox';check.checked=!(settings.excluded||[]).includes(row.key);labelNode.append(check,document.createTextNode(' '+label(row.item)+' · '+row.kind));body.appendChild(labelNode);checks.push({row,check});}
  const save=()=>{Object.assign(settings,{name:name.value,version:version.value,excluded:checks.filter(x=>!x.check.checked).map(x=>x.row.key)});touch();};body.addEventListener('change',save);
  const status=document.createElement('p');status.setAttribute('role','status');const button=document.createElement('button');button.className='tool primary';button.textContent='Download package ZIP';body.append(button,status);
- button.onclick=async()=>{button.disabled=true;try{save();const selected=[];for(const {row,check} of checks)if(check.checked)selected.push(row.local?row.item:await importPack(row.result,row.kind,row.id,false));const project=addonPackageProject(selected,settings);const result=await AddonExport.build(project,SEED);touch();const url=URL.createObjectURL(await result.blob),link=document.createElement('a');link.href=url;link.download=root.ZonebenchAddonFilename(settings.name,settings.version);document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);status.textContent='Package downloaded.';}catch(e){status.textContent=e.message;}finally{button.disabled=false;}};
+ button.onclick=async()=>{button.disabled=true;try{save();const selected=[];for(const {row,check} of checks)if(check.checked)selected.push(row.local?row.item:await importPack(row.result,row.kind,row.id,false));const result=await buildLibraryPackage(selected,settings);touch();const url=URL.createObjectURL(await result.blob),link=document.createElement('a');link.href=url;link.download=root.ZonebenchAddonFilename(settings.name,settings.version);document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);status.textContent='Package downloaded.';}catch(e){status.textContent=e.message;}finally{button.disabled=false;}};
 }
 function saveAdaptation(){const item=resolve();if(!item||!AdaptationExport.isUserAdaptation(SEED,focused.kind,item))throw Error('Choose an adapted item first.');AdaptationExport.plan(DB,SEED,focused.kind,item);item.adaptationSaved=true;touch();choose('adaptations');}
 async function exportFocused(){
  const item=resolve();if(!item)throw Error('Select an item first.');
+ if(scope==='mod'){saveModItem();return;}
+ if(item.optionalLibrarySaved){addonPackageDialog(entries('addons'));return;}
  if(item.adopt){await AdaptationExport.download(DB,SEED,focused.kind,item);return;}
- if(scope==='mod'){Site.go('build');return;}
  if(!item.communitySource?.id&&!item.builderAddonId){Site.go('addonexport');return;}
  const project=clone(DB),source=item.communitySource;
  const addonId=source?await CommunityDownload.identity(source.id):item.builderAddonId;
@@ -129,5 +160,5 @@ async function exportFocused(){
  const result=await AddonExport.build(project,SEED),blob=await result.blob,url=URL.createObjectURL(blob),link=document.createElement('a');
  link.href=url;link.download=root.ZonebenchAddonFilename(project.independentAddon.name,project.independentAddon.version);document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
 }
-root.EditorLibrary={removeEntry,isHidden,addonPackageDialog,addonPackageProject,focusedFindings,saveAdaptation,inspect,packageDialog,adapt,label,exportFocused,getFilters:source=>filters[source]||{},saveFilters:(source,value)=>filters[source]=value,entries,choose,select,resolve,open,importPack,route,get scope(){return scope;},get focused(){return focused;},clear(){focused=null;},isFocused:kind=>!!focused&&focused.kind===kind};
+root.EditorLibrary={saveModItem,modOverridePlan,buildLibraryPackage,removeEntry,isHidden,addonPackageDialog,addonPackageProject,focusedFindings,saveAdaptation,inspect,packageDialog,adapt,label,exportFocused,getFilters:source=>filters[source]||{},saveFilters:(source,value)=>filters[source]=value,entries,choose,select,resolve,open,importPack,route,get scope(){return scope;},get focused(){return focused;},clear(){focused=null;},isFocused:kind=>!!focused&&focused.kind===kind};
 })(globalThis);

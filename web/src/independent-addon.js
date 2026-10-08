@@ -130,7 +130,7 @@ async function build(db,seed){const p=plan(db,seed),canvas=document.createElemen
  p.files.push({name:'addon.json',bytes:BUILD.utf8(JSON.stringify(p.manifest,null,2))});
  if(p.manifest.requiredAddons?.length)p.files.push({name:'REQUIRED-ADDONS.txt',bytes:BUILD.utf8('Enable these add-ons alongside this item. Its crafting recipe uses their items.\n'+p.manifest.requiredAddons.map(x=>x.name+' ('+x.version+') - '+x.id).join('\n'))});
  p.files.push({name:'INSTALL.txt',bytes:BUILD.utf8('SQUARED AWAY INDEPENDENT ADD-ON\nInstall below Squared Away 2.0.4 in MO2. Multiple independent add-ons may be enabled together. Keep the Squared Away 2.0.3 engine.\nReplace this add-on to update it; keep its ID. Save your ZoneBench project before making another add-on.\nExports selected NEW rigs, containers, pouches and backpacks. Existing-item edits and global settings are excluded. Models are supplied by Squared Away. Custom model paths require their own assets.\nDo not remove an add-on while that save still contains its items.\n')});
- return {blob:BUILD.zip(p.files),manifest:p.manifest};
+ return {blob:BUILD.zip(p.files),manifest:p.manifest,files:p.files};
 }
 function render(P,db,seed,save,legacy){
  const a=ensure(db,seed),node=(tag,text)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;return e;};

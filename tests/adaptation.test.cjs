@@ -43,3 +43,14 @@ test('adapted library excludes baseline backpacks and unsaved drafts but keeps p
  const section=Object.keys(a.c.EMIT.readPacks(a.seed.files['configs/items/settings/zzz_grid_packs.ltx']).sec)[0];const base={id:section,adopt:true};db.packs=[base];assert(section,'baseline config contains backpacks');
  assert.throws(()=>a.c.AdaptationExport.packagePlan(db,a.seed,[{kind:'packs',item:base}],{name:'Test',version:'1'}),/Save this adaptation/);
 });
+
+test('saved mod overrides preserve source ID and export changed settings without baseline textures',()=>{
+ const a=setup('rigs');const item=JSON.parse(JSON.stringify(a.seed.rigs[0]));item.optionalLibrarySaved=true;item.modOverrideId=crypto.randomUUID();item.cost+=100;item.repair='outfit_heavy';a.db.rigs=[item];
+ Object.assign(a.c,{DB:a.db,SEL:{},Workbench:{baseline:(kind,id)=>a.seed[kind].find(x=>x.id===id)},touch(){}});
+ vm.runInContext(fs.readFileSync('web/src/editor-library.js','utf8'),a.c);
+ const p=a.c.EditorLibrary.modOverridePlan(item),s=texts(p);assert.equal(p.manifest.sourceSection,item.id);assert(s.includes('cost = '+item.cost));assert.match(s,/repair_type = outfit_heavy/);assert(!p.picture);assert(!s.includes('icons_texture'));
+});
+
+test('saved military backpack override validates capacity without inheriting from itself',()=>{
+ const a=setup('packs',{size:true});a.item.id='equ_military_pack';a.item.size='10x11';const p=a.plan();assert.match(texts(p),/equ_military_pack = 10x11/);assert(!texts(p).includes('zb_validation'));
+});

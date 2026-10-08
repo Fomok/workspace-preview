@@ -2,7 +2,7 @@
 (function(root){
 'use strict';
 const clone=x=>JSON.parse(JSON.stringify(x));
-const kinds=['rigs','boxes','pouches','packs'];
+const kinds=['rigs','boxes','pouches','packs','items'];
 const idPattern=/^[a-z][a-z0-9_]*$/;
 function plan(db,seed,kind,source){
  if(!kinds.includes(kind)||!source?.adopt)throw Error('Select an adapted item.');
@@ -16,10 +16,10 @@ function plan(db,seed,kind,source){
  const block=(section,keys)=>'!['+section+']\r\n'+Object.entries(keys).map(([k,v])=>k+' = '+v).join('\r\n')+'\r\n';
  // Reuse the current item validator, including geometric validation, without exporting its generated identities/artwork.
  const check=clone(r);delete check.adopt;delete check.borrowed;check.new=true;check.icon=check.icon||seed.rigs.find(x=>x.icon).icon;check.name=check.name||check.id;
- if(kind==='packs'){check.newItem=true;check.parent='equ_military_pack';}
+ if(kind==='packs'){check.newItem=true;check.parent='equ_military_pack';check.id='zb_validation_'+suffix;}
  if(!own.craft)delete check.craft;
  const checkdb={...mini,[kind]:[check],families:db.families||{}};
- AddonExport.plan(checkdb,seed);
+ if(kind!=='items')AddonExport.plan(checkdb,{...seed,[kind]:(Array.isArray(seed[kind])?seed[kind]:[]).filter(item=>item.id!==check.id)});
  mini[kind].push(r);
  let keys={};
  if(kind==='rigs'||kind==='pouches')keys=Object.fromEntries(EMIT.adoptKeys(r));
@@ -31,7 +31,7 @@ function plan(db,seed,kind,source){
   else if(family){keys.amp_box_takes=suffix+'_rules';mini.families[keys.amp_box_takes]=clone(family);put('configs/items/mod_amp_boxes_'+suffix+'.ltx',EMIT.boxRules(mini,''));}
   else throw Error('Unknown container rule: '+r.takes);
  }
- if(kind!=='packs'){
+ if(['rigs','boxes','pouches'].includes(kind)){
   Object.assign(keys,{class:kind==='pouches'?'II_ATTCH':'II_CONTR',belt:false,dont_stack:true,amp_rig:kind==='rigs',amp_box:kind==='boxes',amp_pouch:kind==='pouches',slot:kind==='rigs'?15:-1,restore_slot_from_config:true});
   if(kind==='rigs'&&!r.pins?.length)keys.amp_layout='';
   const use='zzz_armor_mag_pouches.'+(kind==='pouches'?'pouch_no_install':'rig_no_install');keys.use1_functor=use;keys.use1_action_functor=use;
@@ -109,5 +109,5 @@ async function buildPackage(db,seed,selected,options){
  return {blob:BUILD.zip(files),manifest:result.manifest};
 }
 async function downloadPackage(db,seed,selected,options){const result=await buildPackage(db,seed,selected,options);touch();const url=URL.createObjectURL(await result.blob),link=document.createElement('a');link.href=url;link.download=root.ZonebenchAddonFilename(result.manifest.name,result.manifest.addonVersion);document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);}
-root.AdaptationExport={plan,build,download,isUserAdaptation,entries,packagePlan,buildPackage,downloadPackage};
+root.AdaptationExport={materialize,plan,build,download,isUserAdaptation,entries,packagePlan,buildPackage,downloadPackage};
 })(globalThis);

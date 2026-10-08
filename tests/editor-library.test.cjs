@@ -1,7 +1,7 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs');
 function setup(){
  const DB={rigs:[{id:'base',name:'Base rig'}],boxes:[{id:'box',takes:'meds'}],pouches:[],packs:[],items:[],families:{meds:{allow:['old']}}};
- const context=vm.createContext({DB,SEED:JSON.parse(JSON.stringify(DB)),SEL:{},Workbench:{status:()=> 'Default',record(){}},ZB:{validateAddon(pack){if(!pack.items?.length)throw Error('Invalid pack');}},CommunityDownload:{identity:async x=>'stable-'+x},touch(){},Site:{go(tab){context.tab=tab;}}});
+ const context=vm.createContext({crypto:require('node:crypto'),DB,SEED:JSON.parse(JSON.stringify(DB)),SEL:{},Workbench:{status:()=> 'Default',record(){}},ZB:{validateAddon(pack){if(!pack.items?.length)throw Error('Invalid pack');}},CommunityDownload:{identity:async x=>'stable-'+x},touch(){},Site:{go(tab){context.tab=tab;}}});
  vm.runInContext(fs.readFileSync('web/src/emit.js','utf8'),context);vm.runInContext(fs.readFileSync('web/src/adaptation-export.js','utf8'),context);
  vm.runInContext(fs.readFileSync('web/src/editor-library.js','utf8'),context);return {db:DB,context,library:context.EditorLibrary};
 }
@@ -75,4 +75,11 @@ test('library package exports exactly the selected local items using its own sta
  const opts={id:'package-id',name:'Mixed gear',version:'1.2'},project=library.addonPackageProject([second],opts);
  assert.deepEqual(Array.from(project.independentAddon.excluded),['one']);assert.equal(project.independentAddon.id,'package-id');assert.equal(db.independentAddon,undefined);
  assert.throws(()=>library.addonPackageProject([],opts),/Select/);assert.throws(()=>library.addonPackageProject([db.rigs[0]],opts),/custom rigs/);
+});
+
+test('saving a mod edit adds it to optional library with original ID and removing it restores default',()=>{
+ const {db,library}=setup();const item=db.rigs[0];item.name='Edited rig';library.open(library.entries('mod')[0],'mod');library.saveModItem();
+ assert.equal(item.id,'base');assert(item.modOverrideId);assert.equal(library.entries('addons').length,1);assert.equal(library.entries('mod').length,2);
+ const uuid=item.modOverrideId;library.open(library.entries('mod')[0],'mod');library.saveModItem();assert.equal(item.modOverrideId,uuid);assert.equal(db.rigs.length,1);
+ library.removeEntry(library.entries('addons')[0]);assert.equal(db.rigs[0].name,'Base rig');assert.equal(library.entries('addons').length,0);
 });
