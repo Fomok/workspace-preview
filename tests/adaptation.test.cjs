@@ -28,7 +28,7 @@ test('package rejects empty selection, duplicate entries and colliding adaptatio
 test('focused review and validation stay in dialogs and package control is available',()=>{
  const view=fs.readFileSync('web/src/editor-view.js','utf8'),library=fs.readFileSync('web/src/editor-library.js','utf8');
  assert(view.includes('EditorLibrary.inspect(tab)'));assert(!view.includes('button.onclick=()=>Site.go(tab)'));
- assert(view.includes('EditorLibrary.saveAdaptation()'));assert(library.includes("d.showModal()"));
+ assert(view.includes('LibraryWorkflow.saveFocused()'));assert(library.includes("d.showModal()"));
 });
 
 test('adapted library excludes baseline backpacks and unsaved drafts but keeps previous user adaptations',()=>{

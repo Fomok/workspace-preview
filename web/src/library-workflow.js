@@ -1,0 +1,47 @@
+/* Library saves and versioned packages. All state stays in the local project. */
+(function(root){
+const L=root.EditorLibrary,kinds=['rigs','boxes','pouches','packs','items'],clone=x=>JSON.parse(JSON.stringify(x));
+const metadata=new Set(['librarySignature','libraryDraft','builderStep','builderStage','optionalLibrarySaved','adaptationSaved','modOverrideId','adaptationId','addonItemId','communitySource','new','borrowed','iconNew','iconKept','rows']);
+const canonical=x=>Array.isArray(x)?x.map(canonical):x&&typeof x==='object'?Object.fromEntries(Object.keys(x).sort().filter(k=>!metadata.has(k)).map(k=>[k,canonical(x[k])])):x;
+function signature(item){const s=JSON.stringify(canonical(item));let a=2166136261,b=5381;for(let i=0;i<s.length;i++){a=Math.imul(a^s.charCodeAt(i),16777619);b=Math.imul(b,33)^s.charCodeAt(i);}return s.length+':'+(a>>>0).toString(16)+':'+(b>>>0).toString(16);}
+function ref(row){return {kind:row.kind,key:row.item.addonItemId||row.item.id,name:L.label(row.item),type:type(row)};}
+function find(r){const item=(DB[r.kind]||[]).find(x=>(x.addonItemId||x.id)===r.key);return item?{kind:r.kind,key:r.key,id:item.id,item,local:true}:null;}
+function native(row){if(!row.local)return row;const found=find(ref(row));if(!found)throw Error('This item is no longer in your library.');return found;}
+function baseline(row){return Workbench.isBaseline?.(row.kind,row.item.id)||false;}
+function type(row){return row.item.optionalLibrarySaved||baseline(row)?'Mod edit':AdaptationExport.isUserAdaptation(SEED,row.kind,row.item)?'Adaptation':'New item';}
+function state(row){if(!row.local)return 'Online';const item=row.item;if(item.libraryDraft||item.adaptationSaved===false)return 'Draft';if(item.librarySignature&&item.librarySignature!==signature(item))return 'Unsaved changes';return 'Saved';}
+function remember(row){row=native(row);if(row.local&&!row.item.librarySignature&&!row.item.libraryDraft&&row.item.adaptationSaved!==false){row.item.librarySignature=signature(row.item);touch();}}
+function dependencies(row){const id=row.item.id;return kinds.flatMap(kind=>(DB[kind]||[]).filter(item=>item!==row.item&&(item.craft?.parts?.some(p=>p[0]===id)||item.parts?.includes(id)||item.yield?.includes(id)||item.parent===id)).map(item=>L.label(item)));}
+function removalLabel(row){return type(row)==='Mod edit'?'Restore mod default':type(row)==='Adaptation'?'Remove adaptation':row.local?'Delete custom item':'Remove from library';}
+let undo=null;
+function remove(row){row=native(row);const old=clone({item:row.item,hidden:DB.libraryHidden||[],packEdited:DB.packEdited||{},removed:DB.removed||[]});L.removeEntry(row);undo={row,old};}
+function undoRemoval(){if(!undo)return null;const {row,old}=undo;if(row.local){const list=DB[row.kind]||[],index=list.findIndex(x=>x.id===old.item.id);if(index>=0&&!old.item.optionalLibrarySaved)throw Error('An item with this ID already exists.');if(index>=0)list[index]=old.item;else list.push(old.item);DB[row.kind]=list;}
+ const key=row.item.communitySource?row.item.communitySource.id+'/'+row.kind+'/'+row.item.communitySource.originalId:row.result?row.result.listing.id+'/'+row.kind+'/'+row.id:row.key;
+ if(!old.hidden.includes(key))DB.libraryHidden=(DB.libraryHidden||[]).filter(x=>x!==key);
+ if(Object.hasOwn(old.packEdited,row.item.id))(DB.packEdited||(DB.packEdited={}))[row.item.id]=old.packEdited[row.item.id];
+ undo=null;touch();return {...row,item:row.local?old.item:row.item};}
+function customSelection(item){const all=AddonExport.custom(DB,SEED),selected=new Set([item]);let again=true;while(again){again=false;for(const x of [...selected]){const refs=[...(x.craft?.parts||[]).map(p=>p[0]),...(x.parts||[]),...(x.yield||[]),x.parent];for(const y of all)if(refs.includes(y.id)&&!selected.has(y)){selected.add(y);again=true;}}}return [...selected];}
+function check(row){row=native(row);if(type(row)==='Adaptation')return AdaptationExport.plan(DB,SEED,row.kind,row.item);
+ if(type(row)==='Mod edit'){const was=row.item.optionalLibrarySaved;row.item.optionalLibrarySaved=true;row.item.modOverrideId=row.item.modOverrideId||crypto.randomUUID();try{return L.modOverridePlan(row.item);}finally{row.item.optionalLibrarySaved=was;}}
+ const project=L.addonPackageProject(customSelection(row.item),{id:DB.independentAddon.id,name:L.label(row.item),version:'1.0'});return AddonExport.plan(project,SEED);}
+function save(row,navigate=true){row=native(row);if(!row.local)throw Error('Open the online item first.');check(row);if(type(row)==='Mod edit'){row.item.optionalLibrarySaved=true;row.item.modOverrideId=row.item.modOverrideId||crypto.randomUUID();}if(type(row)==='Adaptation')row.item.adaptationSaved=true;row.item.libraryDraft=false;row.item.librarySignature=signature(row.item);touch();if(navigate)L.choose(type(row)==='Adaptation'?'adaptations':'addons');}
+function saveFocused(){const item=L.resolve();if(!item)throw Error('Choose an item first.');save({kind:L.focused.kind,item,local:true});}
+function packages(){
+ if(!DB.savedLibraryPackages){DB.savedLibraryPackages=[];
+  for(const [source,legacy] of [['addons',DB.libraryPackage],['adaptations',DB.adaptationPackage]])if(legacy){const rows=L.entries(source).filter(r=>state(r)==='Saved'&&!L.isHidden(r)&&!(legacy.excluded||[]).includes(source==='adaptations'?r.item.id:r.key));if(rows.length)DB.savedLibraryPackages.push({id:legacy.id||crypto.randomUUID(),source,name:legacy.name,version:legacy.version,items:rows.map(ref)});}
+  if(DB.savedLibraryPackages.length)touch();
+ }return DB.savedLibraryPackages;
+}
+function resolvePackage(p){return p.items.map(r=>{const row=find(r);return row&&(r.type!=='Mod edit'||row.item.optionalLibrarySaved)?row:{...r,missing:true};});}
+function packageStatus(p){const rows=resolvePackage(p);if(rows.some(r=>r.missing))return 'Missing items';if(!p.exported)return 'Not downloaded';if(Object.keys(p.exported).length!==rows.length||rows.some(r=>p.exported[r.kind+'/'+r.key]!==signature(r.item)))return 'Items changed';return p.exportedVersion!==p.version||p.exportedName!==p.name?'Package updated':'Up to date';}
+function options(source){return {id:crypto.randomUUID(),source,name:source==='adaptations'?'My compatibility patch':'My add-on package',version:'1.0',items:[]};}
+async function prepare(rows){const out=[];for(const row of rows){if(row.missing)throw Error('Missing item: '+row.name);const item=row.local?native(row).item:await L.importPack(row.result,row.kind,row.id,false);out.push({kind:row.kind,item,local:true,key:item.addonItemId||item.id,id:item.id});}return out;}
+function review(rows,settings){rows=rows.map(native);if(!rows.length)throw Error('Select at least one item.');for(const row of rows){if(!row.local||row.missing)throw Error('An item is unavailable.');if(state(row)!=='Saved')throw Error('Save '+L.label(row.item)+' to its library before packaging.');}
+ const p=settings.source==='adaptations'?AdaptationExport.packagePlan(DB,SEED,rows,settings):L.planLibraryPackage(rows.map(r=>r.item),settings);
+ const files=p.files||p.manifest.files;
+ return {files,requiredAddons:p.requiredAddons||[],items:rows.map(row=>({name:L.label(row.item),id:row.item.id,kind:row.kind,type:type(row),changes:type(row)==='Mod edit'?Workbench.differences(Workbench.baseline(row.kind,row.item.id),row.item).filter(d=>!metadata.has(d.key)&&d.key!=='fit').map(d=>({key:d.key,before:d.key==='icon'?'Original texture':d.before,after:d.key==='icon'?'Replacement texture':d.after})):[]}))};}
+function savePackage(rows,settings){review(rows,settings);const record={...clone(settings),items:rows.map(ref)};const list=packages(),index=list.findIndex(p=>p.id===record.id);if(index>=0)list[index]=record;else list.push(record);touch();return record;}
+async function download(rows,settings){rows=rows.map(native);review(rows,settings);const result=settings.source==='adaptations'?await AdaptationExport.buildPackage(DB,SEED,rows,settings):await L.buildLibraryPackage(rows.map(r=>r.item),settings);const blob=await result.blob,url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=root.ZonebenchAddonFilename(settings.name,settings.version);document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);const record=savePackage(rows,settings);record.exported=Object.fromEntries(rows.map(r=>[r.kind+'/'+ref(r).key,signature(r.item)]));record.exportedVersion=settings.version;record.exportedName=settings.name;touch();return record;}
+async function downloadFocused(){const item=L.resolve(),row={kind:L.focused.kind,item,local:true};if(!item)throw Error('Choose an item first.');check(row);if(type(row)==='Mod edit')save(row,false);let result;if(type(row)==='Adaptation'){await AdaptationExport.download(DB,SEED,row.kind,item);return;}const id=item.modOverrideId||item.builderAddonId||DB.independentAddon.id;result=await L.buildLibraryPackage([item],{id,name:L.label(item),version:'1.0'});const url=URL.createObjectURL(await result.blob),a=document.createElement('a');a.href=url;a.download=root.ZonebenchAddonFilename(L.label(item),'1.0');document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);}
+root.LibraryWorkflow={available:source=>L.entries(source).filter(row=>state(row)==='Saved'&&!L.isHidden(row)),signature,ref,find,type,state,remember,dependencies,removalLabel,remove,undoRemoval,check,save,saveFocused,packages,resolvePackage,packageStatus,options,prepare,review,savePackage,download,downloadFocused};
+})(globalThis);

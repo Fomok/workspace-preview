@@ -1,7 +1,7 @@
 {
-  "revision": 4,
+  "revision": 5,
   "exportRevision": 1,
-  "title": "Adapt existing game and mod items",
-  "message": "Edit existing items now includes an adaptation workflow. Keep the source item ID and artwork, choose its Squared Away storage behavior, and download a separate compatibility patch. Existing add-ons do not need to be downloaded again.",
+  "title": "Libraries and saved packages",
+  "message": "Save items to My add-ons or Adaptations, select tiles to create a package, and reopen saved packages for updates. Removal now offers Undo. Your existing items are kept.",
   "requiresRedownload": false
 }

@@ -5,7 +5,7 @@ const kinds=['rigs','boxes','pouches','packs','items'];
 const clone=x=>JSON.parse(JSON.stringify(x));
 const stable=x=>JSON.stringify(sort(x));
 function sort(x){if(Array.isArray(x))return x.map(sort);if(x&&typeof x==='object')return Object.fromEntries(Object.keys(x).sort().map(k=>[k,sort(x[k])]));return x;}
-const ignored=new Set(['iconNew','iconKept','communitySource','new','removed','edited','rows']);
+const ignored=new Set(['iconNew','iconKept','communitySource','new','removed','edited','rows','librarySignature','libraryDraft','optionalLibrarySaved','modOverrideId','adaptationSaved']);
 function comparable(it){const out={};for(const [k,v] of Object.entries(it||{})){if(ignored.has(k))continue;if(k==='fit'&&(!v||(v.zoom??1)===1&&!(v.dx||0)&&!(v.dy||0)))continue;if(v===undefined)continue;out[k]=v;}return out;}
 function differences(a,b){a=comparable(a);b=comparable(b);return [...new Set([...Object.keys(a),...Object.keys(b)])].filter(k=>stable(a[k])!==stable(b[k])).map(key=>({key,before:a[key],after:b[key]}));}
 class History{

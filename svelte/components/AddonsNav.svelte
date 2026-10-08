@@ -5,8 +5,8 @@
  const entries=[
   ['addons','Browse add-ons','Find rigs, containers and pouches.'],
   ['editor/create','Create an add-on','Build items in your current project.'],
-  ['editor/library/addons','Edit add-on items','Open your created and downloaded items.'],
-  ['editor/library/adaptations','Adapted items library','Save adaptations and create compatibility packages.'],
+  ['editor/library/addons','My add-ons','Open your created and downloaded items.'],
+  ['editor/library/adaptations','Adaptations','Save adaptations and create compatibility packages.'],
   ['editor/share','Publish an add-on','Choose the items you want to share.'],
   ['addons/mine','My published add-ons','Edit, update or unpublish your listings.']
  ];
