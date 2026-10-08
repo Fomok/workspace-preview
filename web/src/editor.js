@@ -3432,7 +3432,7 @@ function checkFindings(){
          picture is drawn with nothing - a blank rectangle where the
          icon goes. Said plainly, because the mod's own audit calls it
          a failure and somebody should know why before they see it. */
-      if(it.new && !it.icon)
+      if(it.new && !it.icon && (!it.adopt || it.own?.look))
         soft.push("<b>"+esc(it.name||it.id)+"</b> has no picture. It will "
           +"build and work, and it will be a blank square in your bag until "
           +"you drop a PNG on it.");

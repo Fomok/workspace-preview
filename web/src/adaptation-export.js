@@ -69,12 +69,37 @@ function plan(db,seed,kind,source){
  const manifest={format:'zonebench-adaptation',version:1,id:source.adaptationId,name:r.name||r.id,addonVersion:'1.0',sourceSection:r.id,kind,requires:'Squared Away 2.0.6 and the mod that defines '+r.id,files:files.map(f=>f.name)};
  return {files,picture,texture:'gamedata/textures/ui/zonebench/'+suffix+'.dds',manifest};
 }
-async function build(db,seed,kind,item){
- const p=plan(db,seed,kind,item);
+async function materialize(p){
  if(p.picture){const e=p.picture,w=2**Math.ceil(Math.log2(Math.max(4,(e.rect.x+e.rect.w)*50))),h=2**Math.ceil(Math.log2(Math.max(4,(e.rect.y+e.rect.h)*50))),canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;const ctx=canvas.getContext('2d'),im=await BUILD.fitPicture(e.icon,e.rect.w*50,e.rect.h*50,e.fit,false);ctx.putImageData(im,e.rect.x*50,e.rect.y*50);p.files.push({name:p.texture,bytes:BUILD.ddsFrom(ctx.getImageData(0,0,w,h))});p.manifest.files.push(p.texture);}
+ return p;
+}
+async function build(db,seed,kind,item){
+ const p=await materialize(plan(db,seed,kind,item));
  p.files.push({name:'adaptation.json',bytes:BUILD.utf8(JSON.stringify(p.manifest,null,2))},{name:'INSTALL.txt',bytes:BUILD.utf8('SQUARED AWAY ITEM ADAPTATION\nRequires the installed source item: '+item.id+'\nInstall below Squared Away and the mod defining that item in MO2. This changes the existing section, not a new item. Different patches for the same item can conflict.\nRigs and containers change engine class. Test with newly spawned items on a separate save; existing instances may not convert safely. Other mods may require script compatibility changes.\nNo source textures are bundled unless explicitly replaced. Only selected overrides are included. NPC drops use Squared Away rank/tier settings when opted in.\n')});
  return {blob:BUILD.zip(p.files),manifest:p.manifest};
 }
 async function download(db,seed,kind,item){const result=await build(db,seed,kind,item);touch();const url=URL.createObjectURL(await result.blob),link=document.createElement('a');link.href=url;link.download=root.ZonebenchAddonFilename((item.name||item.id)+' adaptation','1.0');document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);}
-root.AdaptationExport={plan,build,download};
+function entries(db){return kinds.flatMap(kind=>(db[kind]||[]).filter(item=>item.adopt).map(item=>({kind,item})));}
+function packagePlan(db,seed,selected,options={}){
+ if(!selected.length)throw Error('Select at least one adapted item.');
+ const name=String(options.name||'').trim(),version=String(options.version||'').trim();
+ if(!name||!version)throw Error('Enter a package name and version.');
+ const seen=new Set(),paths=new Set(),plans=[];
+ for(const entry of selected){
+  if(!(db[entry.kind]||[]).includes(entry.item))throw Error('Selected item is no longer in this project.');
+  if(seen.has(entry.item.id))throw Error('The same source item is selected more than once.');seen.add(entry.item.id);
+  const p=plan(db,seed,entry.kind,entry.item);
+  for(const path of [...p.manifest.files,...(p.picture?[p.texture]:[])]){if(paths.has(path))throw Error('Two adaptations have the same file identity. Recreate one adaptation before exporting.');paths.add(path);}
+  plans.push(p);
+ }
+ return {plans,manifest:{format:'zonebench-adaptation-package',version:1,name,addonVersion:version,items:plans.map(p=>p.manifest),requires:'Squared Away 2.0.6 and all source mods',files:[...paths]}};
+}
+async function buildPackage(db,seed,selected,options){
+ const result=packagePlan(db,seed,selected,options),files=[];
+ for(const p of result.plans){await materialize(p);files.push(...p.files);}
+ files.push({name:'adaptation.json',bytes:BUILD.utf8(JSON.stringify(result.manifest,null,2))},{name:'INSTALL.txt',bytes:BUILD.utf8('SQUARED AWAY ADAPTATION PACKAGE\nInstall below Squared Away and ALL source mods in MO2.\nRequired original item sections:\n'+selected.map(e=>e.item.id).join('\n')+'\nThis changes existing items. Patches targeting the same item can conflict. Test converted rigs and containers with newly spawned items on a separate save.\n')});
+ return {blob:BUILD.zip(files),manifest:result.manifest};
+}
+async function downloadPackage(db,seed,selected,options){const result=await buildPackage(db,seed,selected,options);touch();const url=URL.createObjectURL(await result.blob),link=document.createElement('a');link.href=url;link.download=root.ZonebenchAddonFilename(result.manifest.name,result.manifest.addonVersion);document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);}
+root.AdaptationExport={plan,build,download,entries,packagePlan,buildPackage,downloadPackage};
 })(globalThis);

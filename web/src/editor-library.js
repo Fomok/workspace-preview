@@ -46,6 +46,32 @@ async function importPack(result,kind,id){
  Workbench.record();DB.families=families;for(const entry of incoming)(DB[entry.kind]||(DB[entry.kind]=[])).push(entry.item);
  touch();const item=DB[kind].find(x=>x.id===mapping.get(id));open({kind,item},'addons');
 }
+function dialog(title){
+ const d=document.createElement('dialog');d.className='addon-dialog';d.setAttribute('aria-label',title);
+ const head=document.createElement('div');head.className='addon-dialog-header';const h=document.createElement('strong');h.textContent=title;
+ const close=document.createElement('button');close.className='tool';close.textContent='Back to editor';close.onclick=()=>d.close();head.append(h,close);
+ const body=document.createElement('div');body.className='addon-dialog-body';d.append(head,body);d.addEventListener('close',()=>d.remove());document.body.appendChild(d);d.showModal();return {d,body};
+}
+function inspect(mode){
+ const {d,body}=dialog(mode==='changes'?'Review changes':'Check project');
+ if(mode==='changes'){Workbench.changes(body);body.addEventListener('click',e=>{if(e.target.closest('button'))d.close();});return;}
+ const findings=checkFindings();
+ for(const {kind,item} of AdaptationExport.entries(DB)){try{AdaptationExport.plan(DB,SEED,kind,item);}catch(e){findings.bad.push(esc(label(item)+': '+e.message));}}
+ const title=document.createElement('p');title.textContent=findings.bad.length?findings.bad.length+' issue(s) to fix.':'No blocking issues found. In-game compatibility still needs testing.';body.appendChild(title);
+ for(const [messages,cls] of [[findings.bad,'warn'],[findings.soft,'hint']])for(const message of messages){const p=document.createElement('p');p.className=cls;p.innerHTML=message;body.appendChild(p);}
+}
+function packageDialog(){
+ const {body}=dialog('Download adaptation package'),all=AdaptationExport.entries(DB),settings=DB.adaptationPackage||{name:'My compatibility patch',version:'1.0',excluded:[]};
+ if(!all.length){body.textContent='Adapt a game or mod item first. Your adapted items will appear here.';return;}
+ const field=(text,value)=>{const label=document.createElement('label');label.textContent=text;const input=document.createElement('input');input.value=value;label.appendChild(input);body.appendChild(label);return input;};
+ const name=field('Package name',settings.name),version=field('Version',settings.version),checks=[];
+ const note=document.createElement('p');note.textContent='Select adapted items from any category. Install this one ZIP below Squared Away and all source mods.';body.appendChild(note);
+ for(const entry of all){const row=document.createElement('label');row.style.display='block';const check=document.createElement('input');check.type='checkbox';check.checked=!(settings.excluded||[]).includes(entry.item.id);row.append(check,document.createTextNode(' '+label(entry.item)+' · '+entry.kind+' · '+entry.item.id));body.appendChild(row);checks.push({entry,check});}
+ const save=()=>{DB.adaptationPackage={name:name.value,version:version.value,excluded:checks.filter(x=>!x.check.checked).map(x=>x.entry.item.id)};touch();};
+ body.addEventListener('change',save);
+ const status=document.createElement('p');status.setAttribute('role','status');const button=document.createElement('button');button.className='tool primary';button.textContent='Download package ZIP';body.append(button,status);
+ button.onclick=async()=>{button.disabled=true;status.textContent='Checking and packing selected items…';try{save();await AdaptationExport.downloadPackage(DB,SEED,checks.filter(x=>x.check.checked).map(x=>x.entry),DB.adaptationPackage);status.textContent='Package downloaded.';}catch(e){status.textContent=e.message;}finally{button.disabled=false;}};
+}
 async function exportFocused(){
  const item=resolve();if(!item)throw Error('Select an item first.');
  if(item.adopt){await AdaptationExport.download(DB,SEED,focused.kind,item);return;}
@@ -58,5 +84,5 @@ async function exportFocused(){
  const result=await AddonExport.build(project,SEED),blob=await result.blob,url=URL.createObjectURL(blob),link=document.createElement('a');
  link.href=url;link.download=root.ZonebenchAddonFilename(project.independentAddon.name,project.independentAddon.version);document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
 }
-root.EditorLibrary={adapt,label,exportFocused,getFilters:source=>filters[source]||{},saveFilters:(source,value)=>filters[source]=value,entries,choose,select,resolve,open,importPack,route,get scope(){return scope;},get focused(){return focused;},clear(){focused=null;},isFocused:kind=>!!focused&&focused.kind===kind};
+root.EditorLibrary={inspect,packageDialog,adapt,label,exportFocused,getFilters:source=>filters[source]||{},saveFilters:(source,value)=>filters[source]=value,entries,choose,select,resolve,open,importPack,route,get scope(){return scope;},get focused(){return focused;},clear(){focused=null;},isFocused:kind=>!!focused&&focused.kind===kind};
 })(globalThis);
